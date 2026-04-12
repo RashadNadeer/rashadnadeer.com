@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rashadnadeer.com/sitemap.xml

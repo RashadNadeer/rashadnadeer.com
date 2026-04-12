@@ -1200,13 +1200,6 @@
 
             <!-- Contact form -->
             <div class="lg:col-span-3 fade-in">
-                <!--
-                    GOOGLE FORMS SETUP:
-                    1. Create a Google Form with fields: Name, Email, Subject, Message
-                    2. Get the form's action URL (right-click "Submit" → Inspect → find "action" attribute)
-                    3. Get each field's entry ID (inspect each input, find "name" attribute like "entry.XXXXXXXXX")
-                    4. Replace GOOGLE_FORM_URL and FIELD_MAP values in the <script> at the bottom of the page
-                -->
                 <form id="contact-form" novalidate
                       class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 space-y-5">
                     <div class="grid sm:grid-cols-2 gap-5">
@@ -1325,17 +1318,6 @@
     }
 
     // ── Contact form → Google Forms ───────────────────
-    //
-    // SETUP INSTRUCTIONS:
-    //   1. Go to Google Forms → create a form with 4 short-answer questions:
-    //      Full Name | Email Address | Subject | Message
-    //   2. Click the 3-dot menu → "Get pre-filled link"
-    //   3. Fill each field → click "Get link" → copy the URL
-    //   4. From that URL, extract:
-    //      - The form ID  (the long string between /d/e/ and /viewform)
-    //      - Each entry.XXXXXXXXX value for each field
-    //   5. Paste them below replacing the placeholder values.
-    //
     const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd0DiF7fMQ17URo-Px92U1vz19UpmmjfIqFTzNY3koLAWFPvQ/formResponse';
     const FIELD_MAP = {
         name:    'entry.1032382718',
