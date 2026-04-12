@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agile &amp; Product Owner | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy:   '#0C1220',
+                        accent: '#4F62F5',
+                        teal:   '#0D9488',
+                        surface:'#EDF2F7',
+                        dark:   '#111827',
+                        warm:   '#FAFAF8',
+                    },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+
+        /* Sidebar */
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(13,148,136,.08); border-left-color:rgba(13,148,136,.4); }
+        .week-item.active { background:rgba(13,148,136,.12); border-left-color:#0D9488; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#0D9488; border-color:#0D9488; background:rgba(13,148,136,.1); }
+        .week-item.active .view-btn { color:#0D9488; border-color:rgba(13,148,136,.5); background:rgba(13,148,136,.12); }
+
+        /* Right panel */
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+
+        /* Topic cards */
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#0D9488; background:rgba(13,148,136,.02); box-shadow:0 2px 8px rgba(13,148,136,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#0D9488; }
+
+        /* Template cards */
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #99f6e4; border-radius:10px; margin-bottom:8px; background:rgba(13,148,136,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#0D9488; background:rgba(13,148,136,.07); box-shadow:0 2px 8px rgba(13,148,136,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(13,148,136,.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#0D9488; font-weight:500; margin-top:2px; }
+
+        /* Notes */
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title {
+            font-size:1.2rem; font-weight:800; color:#0C1220;
+            margin-top:2.25rem; margin-bottom:0.75rem;
+            padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7;
+        }
+        .notes-content .sub-title {
+            font-size:0.95rem; font-weight:700; color:#0D9488;
+            margin-top:1.5rem; margin-bottom:0.4rem;
+            text-transform:uppercase; letter-spacing:0.04em;
+        }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#0D9488; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#0D9488; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+
+        @media(max-width:768px) {
+            #sidebar { display:none; }
+            #state-topics, #state-notes { padding:20px; }
+        }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete Agile & Scrum learning module — Agile manifesto, Scrum framework, Product Owner role, backlog management, sprint ceremonies, and Kanban." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/agile-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 bg-teal/10 text-teal text-[11px] font-semibold px-3 py-1 rounded-full">
+            <i class="fas fa-repeat text-[9px]"></i> Agile &amp; Product Owner
+        </span>
+        <a href="index.html" class="text-gray-400 hover:text-teal text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">Agile &amp; Product Owner</div>
+                <div class="sidebar-week-count">5 modules &middot; 48 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Agile Foundations</span>
+            <span class="week-meta">12 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">Product Owner (CSPO)</span>
+            <span class="week-meta">12 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Scrum Master (CSM)</span>
+            <span class="week-meta">8 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Backlog & Prioritization</span>
+            <span class="week-meta">8 topics + 3 templates</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">Kanban</span>
+            <span class="week-meta">8 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+            </div>
+        </aside>
+
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(13,148,136,.1)">
+                        <i class="fas fa-repeat text-2xl" style="color:#0D9488"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">Agile &amp; Product Owner</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to read detailed notes — from Agile foundations to CSPO, CSM, Kanban and prioritization.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">5 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">48 Topics</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">3 Templates</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Agile Foundations`,
+    topics: [
+    { title: `The Waterfall Model`, content: `__H__ The Waterfall Model
+
+Waterfall is the traditional approach to software development where work flows sequentially through fixed phases — requirements, design, build, testing, and deployment. Each phase must be fully completed before the next begins, and going back is expensive and slow. It made sense in an era when software was built like physical infrastructure, but it struggles badly with changing requirements.
+
+__SUB__ Why Waterfall Falls Short
+The core problem with Waterfall is that it front-loads all decision-making before a single line of code is written. By the time the software is delivered, the business environment may have shifted, users may have changed their minds, and the original requirements may no longer reflect what's actually needed. Feedback only arrives at the very end — too late to act on without starting over.
+
+__LI__ All requirements must be defined upfront, which is rarely possible in practice
+__LI__ Testing happens late in the cycle — defects discovered then are the most expensive to fix
+__LI__ No working software is visible to stakeholders until the project is nearly complete
+__LI__ Changing scope mid-project triggers formal change requests, delays, and cost overruns
+__LI__ Teams work in silos — handoffs between phases often lose context and create friction
+
+__SUB__ When Waterfall Still Makes Sense
+Waterfall isn't universally wrong. It works in environments where requirements are truly fixed, the solution is well-understood, and the cost of changing course mid-way is prohibitive. Large civil engineering projects, regulatory compliance systems with locked specifications, or defence contracts with fixed deliverables are examples where Waterfall remains appropriate. The key insight is: choose the model that matches the nature of your work.` },
+    { title: `The Agile Manifesto & Core Values`, content: `__H__ The Agile Manifesto & Core Values
+
+In February 2001, seventeen software practitioners gathered in Snowbird, Utah and produced a document that would change how software is built. The Agile Manifesto is not a methodology — it's a declaration of values. It emerged from frustration with heavyweight, documentation-driven processes that were failing to deliver real value to customers.
+
+__SUB__ The Four Core Values
+The Manifesto states four value pairs — and critically, it does not dismiss the right side of each pair. The phrasing is deliberate: 'we value the items on the left MORE than the items on the right.'
+
+__LI__ Individuals and interactions OVER processes and tools — People solve problems. Processes support people, they don't replace them.
+__LI__ Working software OVER comprehensive documentation — A running product tells you more than a 500-page spec ever will.
+__LI__ Customer collaboration OVER contract negotiation — Customers don't always know what they want until they see it. Build in collaboration.
+__LI__ Responding to change OVER following a plan — Markets shift. Users evolve. Your plan must be able to evolve too.
+
+__SUB__ What This Means in Practice
+Agile is fundamentally about shortening feedback loops. Instead of building for 12 months and then finding out you built the wrong thing, you build for 2 weeks, show it, learn, and adjust. The core assumption is that uncertainty is normal and that embracing change produces better outcomes than resisting it. Agile doesn't mean no planning — it means planning at the right level of granularity and revisiting those plans frequently.` },
+    { title: `The 12 Agile Principles`, content: `__H__ The 12 Agile Principles
+
+The Agile Manifesto is supported by 12 principles that give it practical grounding. These principles are worth reading slowly — not as a checklist, but as a philosophy. They push back against the assumption that software development is predictable, controllable, and linear.
+
+__SUB__ Delivery & Customer Focus
+The first principle is the most important: deliver working software frequently, with a preference for shorter timescales. Every other principle flows from this. Customers get real value, teams get real feedback, and the business gets to course-correct before a bad decision compounds.
+
+__LI__ Customer satisfaction through early and continuous delivery of valuable software
+__LI__ Welcome changing requirements, even late in development — Agile harnesses change for competitive advantage
+__LI__ Deliver working software frequently — from a couple of weeks to a couple of months, shorter timescale preferred
+__LI__ Business people and developers must work together daily throughout the project
+
+__SUB__ People, Trust & Technical Excellence
+Several principles address how teams should be structured and how work should feel. Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done. The most efficient method of conveying information is face-to-face conversation. Agile also insists on technical excellence — continuous attention to good design enhances agility. The principles explicitly state that simplicity — the art of maximising the amount of work not done — is essential.
+
+__LI__ Motivated individuals over process-driven workers — trust is the prerequisite
+__LI__ Sustainable pace — Agile processes promote sustainable development, indefinitely
+__LI__ Continuous attention to technical excellence and good design
+__LI__ The best architectures, requirements and designs emerge from self-organising teams
+__LI__ Regular reflection and adjustment — the team tunes its behaviour at defined intervals` },
+    { title: `Waterfall vs Agile — When to Use Each`, content: `__H__ Waterfall vs Agile — When to Use Each
+
+The choice between Waterfall and Agile is not a matter of which is 'better' — it's a matter of which fits the nature of your problem. Understanding when to apply each approach is itself a sign of maturity.
+
+__SUB__ Key Differentiators
+Waterfall assumes requirements are stable and fully knowable upfront. Agile assumes they will evolve. Waterfall delivers one large release at the end. Agile delivers continuously. Waterfall measures progress by phase completion. Agile measures it by working software.
+
+__LI__ Requirements stability: Waterfall needs them fixed; Agile expects them to evolve
+__LI__ Delivery rhythm: Waterfall is big-bang; Agile is incremental and frequent
+__LI__ Risk management: Waterfall discovers risk late; Agile surfaces risk early through working software
+__LI__ Customer involvement: Waterfall defines and steps back; Agile keeps customers engaged throughout
+__LI__ Team structure: Waterfall uses specialist silos; Agile uses cross-functional teams
+
+__SUB__ Decision Heuristic
+If you can fully define what you need before work begins, and the cost of change is very high, Waterfall may be appropriate. If your users' needs are unclear, the market is evolving, or you need to validate assumptions before committing, Agile is the stronger choice. Most software products sit firmly in the second category.` },
+    { title: `Agile Frameworks Overview`, content: `__H__ Agile Frameworks Overview
+
+Agile is a mindset, not a specific set of practices. Multiple frameworks have been developed to give teams a concrete way to operate within the Agile philosophy. Each has a different focus and suits different contexts.
+
+__SUB__ Scrum
+Scrum is the most widely adopted Agile framework. It organises work into fixed-length iterations called Sprints (1–4 weeks), with defined roles (Product Owner, Scrum Master, Developers), events (Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective), and artifacts (Product Backlog, Sprint Backlog, Increment). Scrum is prescriptive by design — its rules create structure that forces transparency and enables inspection and adaptation.
+
+__SUB__ Kanban
+Kanban is a flow-based system focused on visualising work, limiting work in progress (WIP), and managing flow. Unlike Scrum, Kanban has no iterations, no defined roles, and no prescribed events. It's a method for evolving your current process by making work visible and identifying bottlenecks. Kanban is especially powerful for teams doing ongoing operational work or support work where the volume and nature of requests is unpredictable.
+
+__LI__ Scrum: time-boxed iterations, defined roles, structured events — good for product development
+__LI__ Kanban: flow-based, no iterations, WIP limits, bottleneck focus — good for ops and support teams
+__LI__ SAFe (Scaled Agile Framework): enterprise-scale Agile across multiple teams and portfolios
+__LI__ LeSS (Large-Scale Scrum): applying Scrum principles to large teams with minimal additional complexity
+__LI__ Extreme Programming (XP): engineering-focused practices like TDD, pair programming, continuous integration
+
+__SUB__ Choosing a Framework
+Scrum works well when building a product with a clear Product Owner and the ability to plan in short iterations. Kanban works well when work arrives unpredictably and needs to be prioritised and processed continuously. Many teams use a hybrid — Scrum's Sprint structure with Kanban's visual board and WIP limits — often called Scrumban.` },
+    { title: `The Scrum Framework at a Glance`, content: `__H__ The Scrum Framework at a Glance
+
+Scrum is built on three pillars: Transparency (everyone has a shared understanding of the work), Inspection (Scrum events provide regular opportunities to inspect progress and adapt), and Adaptation (when inspection reveals a problem, Scrum creates immediate opportunities to adjust). These three pillars make Scrum an empirical process — one that relies on evidence and experience rather than plans and predictions.
+
+__SUB__ How a Sprint Works
+A Sprint is a time-box of one month or less during which the Scrum Team creates a usable, potentially releasable Increment. Sprints have a consistent length throughout the development effort. A new Sprint begins immediately after the conclusion of the previous Sprint. During the Sprint, no changes are made that would endanger the Sprint Goal, quality does not decrease, the Product Backlog is refined as needed, and scope may be clarified and renegotiated as more is learned.
+
+__LI__ Sprint length: typically 1–2 weeks for most teams, never longer than one month
+__LI__ Sprint Goal: a single objective that gives the Sprint coherence and focus
+__LI__ Sprint Backlog: the plan the Developers make visible — selected items plus how to achieve the Sprint Goal
+__LI__ Increment: the sum of all Product Backlog items completed during a Sprint — must meet the Definition of Done
+
+__SUB__ The Three Pillars in Practice
+Transparency means the Sprint Backlog, burndown, and definition of done are visible to everyone. Inspection happens at the Daily Scrum (inspect progress toward the Sprint Goal), Sprint Review (inspect the Increment), and Sprint Retrospective (inspect how the team is working). Adaptation happens when inspection reveals something useful — the team adjusts the plan, the process, or the product accordingly. These aren't bureaucratic ceremonies — they're the feedback loops that make Scrum work.` },
+    { title: `Scrum Roles — Three Accountabilities`, content: `__H__ Scrum Roles — Three Accountabilities
+
+Scrum defines three accountabilities, not job titles. The Scrum Guide 2020 deliberately moved away from the word 'role' to emphasise that these are distinct sets of responsibilities, not organisational positions. A single person might hold one of these accountabilities or none, depending on context.
+
+__SUB__ Product Owner
+The Product Owner is accountable for maximising the value of the product resulting from the Scrum Team's work. They own the Product Backlog — ordering it, communicating it, and ensuring it is transparent and understood. The PO is one person, not a committee. When a committee makes PO decisions, accountability disappears and speed slows. The PO must have the authority to say no to requests that don't serve the product vision.
+
+__SUB__ Scrum Master
+The Scrum Master is accountable for the Scrum Team's effectiveness. They help everyone understand and enact Scrum theory and practice. Crucially, the Scrum Master is not a project manager — they have no authority over the Developers and no ability to instruct stakeholders. Their influence is through coaching, facilitation, and removing impediments. A great SM works to make themselves unnecessary over time by growing a self-managing team.
+
+__SUB__ Developers
+Developers are the people in the Scrum Team who are committed to creating any aspect of a usable Increment each Sprint. They are responsible for creating a plan for the Sprint (the Sprint Backlog), adhering to the Definition of Done, adapting their plan each day toward the Sprint Goal, and holding each other accountable as professionals.
+
+__LI__ PO owns the WHAT and WHY — the backlog and product direction
+__LI__ SM owns the HOW of Scrum — the process, the team's health, and removing blockers
+__LI__ Developers own the HOW of building — the technical execution and Sprint planning
+__LI__ No hierarchy within the Scrum Team — all three accountabilities are equally important` },
+    { title: `Scrum Events — Five Ceremonies`, content: `__H__ Scrum Events — Five Ceremonies
+
+Scrum prescribes five formal events. These are not optional ceremonies to be skipped when things get busy — they are the inspection and adaptation opportunities that give Scrum its rhythm and learning capability. When teams skip Scrum events, they lose the feedback loops that prevent small problems from becoming large ones.
+
+__SUB__ Sprint Planning
+Sprint Planning initiates the Sprint. The Scrum Team collaboratively defines what can be delivered in the Sprint and how that work will be achieved. The PO ensures the team understands the most important items. The Developers select how much they can complete. Together they craft the Sprint Goal — a single sentence that gives the Sprint purpose beyond just a list of tasks. Sprint Planning should last no longer than 8 hours for a one-month Sprint.
+
+__SUB__ Daily Scrum
+The Daily Scrum is a 15-minute event for the Developers. Its purpose is to inspect progress toward the Sprint Goal and adapt the Sprint Backlog. It's not a status report to management — it's a planning session for the next 24 hours. The three questions format ('What did I do? What will I do? Any blockers?') is just one way to run it. The goal is that the team leaves with a shared plan for the day.
+
+__LI__ Sprint Planning: up to 8 hours — defines Sprint Goal and initial Sprint Backlog
+__LI__ Daily Scrum: 15 minutes — inspect Sprint Goal progress, adapt the plan
+__LI__ Sprint Review: up to 4 hours — present Increment to stakeholders, gather feedback, update backlog
+__LI__ Sprint Retrospective: up to 3 hours — inspect how the team worked together and improve
+__LI__ Backlog Refinement: not a formal Scrum event but a critical ongoing activity
+
+__SUB__ Sprint Review & Retrospective
+The Sprint Review is about the product — the Scrum Team presents the completed Increment to stakeholders, discusses what was done, collects feedback, and updates the Product Backlog accordingly. The Sprint Retrospective is about the process — how did the team work together? What went well? What could improve? Every Sprint ends with a concrete commitment to at least one improvement action.` },
+    { title: `Scrum Artifacts & Commitments`, content: `__H__ Scrum Artifacts & Commitments
+
+Scrum defines three artifacts — each with an associated commitment that gives them meaning and purpose. The commitments exist to reinforce empiricism and to ensure artifacts provide information that increases transparency and focuses direction.
+
+__SUB__ Product Backlog & Product Goal
+The Product Backlog is an ordered list of everything that is known to be needed in the product. It is the single source of work for the Scrum Team. The Product Backlog is never complete — as long as a product exists, its Backlog exists. Items higher in the Backlog are more refined, smaller, and better understood than items lower down. The Product Goal describes a future state of the product — it is the long-term objective for the Scrum Team to work toward.
+
+__LI__ Ordered, not prioritised — the PO decides the single best ordering, not just categories
+__LI__ Refined continuously — items are broken down, estimated, and clarified as they move up the backlog
+__LI__ Product Goal is the commitment for the Product Backlog — the north star the team is working toward
+
+__SUB__ Sprint Backlog & Sprint Goal
+The Sprint Backlog is the plan made by and for the Developers. It is composed of the Sprint Goal (why), the set of Product Backlog items selected for the Sprint (what), and the plan for delivering the Increment (how). The Sprint Goal is the commitment for the Sprint Backlog — a single objective that provides flexibility to the Developers about the exact work needed to achieve it.
+
+__SUB__ Increment & Definition of Done
+An Increment is a concrete stepping stone toward the Product Goal. Each Increment is additive to all prior Increments. The Definition of Done (DoD) is the commitment for the Increment — a formal description of the state of the Increment when it meets the quality standards required for the product. Work cannot be considered part of an Increment unless it meets the DoD. If a PBI does not meet the DoD, it cannot be released or even presented at Sprint Review.` },
+    { title: `Definition of Done (DoD)`, content: `__H__ Definition of Done (DoD)
+
+The Definition of Done is one of the most important and most misunderstood concepts in Scrum. Teams that skip or weaken it end up with hidden technical debt, undone work, and false confidence in their progress. A strong DoD is a quality gate — the minimum standard that every piece of completed work must meet.
+
+__SUB__ What Belongs in a DoD
+A DoD is not a checklist of user acceptance criteria for a specific story — those are Acceptance Criteria. The DoD applies universally to every item the team completes. Typical DoD items include: code reviewed, unit tests written and passing, integration tests passing, no known defects introduced, documentation updated, code merged to main branch, feature deployed to staging. The specific items depend on the team's context and the standards the organisation requires.
+
+__LI__ Code reviewed by at least one other developer
+__LI__ All automated tests passing (unit, integration, regression)
+__LI__ No new technical debt introduced without a logged and acknowledged trade-off
+__LI__ Feature tested in an environment that mirrors production
+__LI__ Acceptance criteria for the story verified and signed off
+__LI__ Any dependent documentation updated
+
+__SUB__ DoD as a Team Agreement
+The DoD is created by the Scrum Team and should be revisited in each Retrospective. If the team's DoD is too weak, quality suffers. If it's too strict for the team's current capability, stories never finish. The right DoD stretches the team without breaking flow. When a new team is formed, they often start with a minimal DoD and strengthen it over time as their engineering practices mature. The DoD should be visible, agreed upon, and non-negotiable — bypassing it is not 'moving fast', it's borrowing from the future.` },
+    { title: `The Full Sprint Cadence`, content: `__H__ The Full Sprint Cadence
+
+Understanding how all Scrum elements work together in a real Sprint reveals why each component exists. The Sprint cadence is not a set of meetings bolted onto development — it's an integrated feedback system where each event creates input for the next.
+
+__SUB__ A Sprint from Start to Finish
+Sprint Planning sets the Sprint Goal and Sprint Backlog. Developers then work through the Sprint, inspecting progress each day in the Daily Scrum and adapting the plan. The Sprint Backlog is a living document — tasks are added, removed, or refined as the team learns. Near the end of the Sprint, the team ensures the Increment meets the Definition of Done. The Sprint Review brings in stakeholders to inspect the Increment and update the Product Backlog based on new information. The Retrospective closes the Sprint with a focus on improving how the team works.
+
+__LI__ Day 1: Sprint Planning — commit to Sprint Goal, pull items into Sprint Backlog
+__LI__ Days 1–9 (in a 2-week Sprint): Development — Daily Scrum each day to adapt
+__LI__ Day 9–10: Ensure Increment meets Definition of Done
+__LI__ Day 10 part 1: Sprint Review — demonstrate to stakeholders, update backlog
+__LI__ Day 10 part 2: Sprint Retrospective — improve the team's way of working
+__LI__ Day 11: New Sprint begins immediately
+
+__SUB__ Why the Cadence Matters
+The Sprint cadence creates rhythm — teams know what to expect, stakeholders know when to engage, and the organisation gets a regular pulse of working software. Teams that skip events, extend Sprints, or blur the boundaries between Sprints lose this rhythm and with it the predictability and transparency that Scrum provides.` },
+    { title: `Continuous Improvement in Scrum`, content: `__H__ Continuous Improvement in Scrum
+
+The Sprint Retrospective is the engine of continuous improvement in Scrum. It is the team's protected time to step back from the work and ask: how are we working together, and how could we work better? Done well, the Retrospective produces concrete improvement actions — not just conversation.
+
+__SUB__ Running an Effective Retrospective
+A strong Retrospective has five phases: Set the Stage (create psychological safety), Gather Data (what happened this Sprint?), Generate Insights (why did those things happen?), Decide What to Do (choose 1–2 concrete improvements), and Close the Retrospective (confirm commitment and thank the team). The Scrum Master facilitates but does not control — the insights and actions must come from the Developers.
+
+__LI__ Use different formats to prevent Retrospectives from becoming repetitive — Start/Stop/Continue, 4Ls, Sailboat
+__LI__ Focus on systems and processes, not individual blame
+__LI__ Commit to at most 2-3 improvement actions — too many and none get done
+__LI__ Track previous action items at the start of each Retro to build accountability
+__LI__ Psychological safety is the prerequisite — if people don't feel safe, they won't speak honestly
+
+__SUB__ The Compound Effect of Improvement
+A team that improves by just 1% per Sprint will be dramatically more effective after six months than a team that runs the same process unchanged. The Retrospective is the mechanism for capturing that improvement. Teams that consistently run strong Retrospectives build engineering excellence, communication skills, and team trust over time — none of which are visible in a single Sprint but all of which compound powerfully.` }
+    ]
+  },
+  {
+    id: 1,
+    name: `Product Owner (CSPO)`,
+    topics: [
+    { title: `What is a Product Owner?`, content: `__H__ What is a Product Owner?
+
+The Product Owner is the person accountable for maximising the value of the product resulting from the Scrum Team's work. This is a single, named individual — not a committee, not a proxy, not a rotating role. The Scrum Guide is deliberate about this: when accountability is diffused, it disappears. The PO holds the product vision, owns the backlog, and is the team's primary interface with the business and the customer.
+
+__SUB__ Core Responsibilities
+The PO's three primary responsibilities are: developing and communicating the Product Goal, creating and clearly communicating Product Backlog Items (PBIs), and ordering the Product Backlog for maximum value. Each of these sounds simple but requires significant skill. 'Ordering for maximum value' in particular demands business acumen, user empathy, and the ability to make difficult trade-offs.
+
+__LI__ Owns the Product Backlog — solely responsible for its content, ordering, and clarity
+__LI__ Communicates the Product Goal — ensures the team always understands what they're working toward and why
+__LI__ Represents the customer — brings the voice of the user into every conversation
+__LI__ Makes priority decisions — says yes to what matters and no to what doesn't
+__LI__ Accepts or rejects completed work — the PO verifies that Acceptance Criteria are met
+
+__SUB__ Authority the PO Must Have
+A PO without authority is a messenger, not an owner. For the role to function, the organisation must give the PO decision-making power over the Product Backlog — management cannot overrule backlog ordering without undermining the entire Scrum structure. The PO must have direct access to stakeholders and customers, not filtered access through intermediaries. And the PO must be able to say no — protecting the team from scope creep and stakeholder pressure is one of the most valuable things a PO does.` },
+    { title: `Product Owner vs Product Manager`, content: `__H__ Product Owner vs Product Manager
+
+Product Owner and Product Manager are sometimes the same person and sometimes different roles — but they have distinct scopes of focus. Understanding the difference is important for organisations designing their product structure and for individuals navigating their career.
+
+__SUB__ Where They Differ
+The Product Owner role is defined within Scrum and is primarily focused on the delivery team — managing the backlog, participating in Sprint events, and ensuring the team has clarity on what to build and why. The Product Manager is a broader business role focused on market positioning, product strategy, pricing, go-to-market, and customer research across a product's entire lifecycle. The PM works at a strategic level; the PO works at a tactical, Sprint-level.
+
+__LI__ PO: focused on the Scrum Team, the Sprint, and the Product Backlog
+__LI__ PM: focused on the market, the business model, and the product's strategic position
+__LI__ PO: measures success by value delivered per Sprint
+__LI__ PM: measures success by revenue, market share, NPS, and long-term OKRs
+__LI__ In large organisations: distinct roles — PO translates PM strategy into backlog items
+__LI__ In startups: often the same person wearing both hats simultaneously
+
+__SUB__ Working Together
+In organisations where both roles exist, the PM feeds the PO. The PM defines the product vision and strategy; the PO translates that into actionable, refined backlog items the Scrum Team can execute. Misalignment between these two creates confusion — developers receive conflicting priorities and the team loses confidence in its direction. Alignment between PM and PO is one of the most important relationship dynamics in a product organisation.` },
+    { title: `Traits of a Great Product Owner`, content: `__H__ Traits of a Great Product Owner
+
+Being a Product Owner is far more than managing a backlog. The best POs combine domain knowledge, interpersonal skill, strategic thinking, and the courage to make hard decisions. These traits are not taught in a CSPO course — they're developed through practice, reflection, and exposure to real product problems.
+
+__SUB__ Decision-Making & Availability
+A PO who defers every decision to a committee or takes days to respond to team questions is a bottleneck. Developers need answers. When a question sits unanswered, teams either block or make assumptions — both are costly. Great POs are available, responsive, and decisive. They've done enough thinking about the product that they can answer questions confidently without escalating everything.
+
+__LI__ Decisive: makes timely calls on priority, scope, and acceptance without constant escalation
+__LI__ Available: accessible to the Dev Team daily — questions get answered within hours, not days
+__LI__ Visionary: articulates a compelling product vision and connects every backlog item to it
+__LI__ Data-driven: uses metrics and user research to validate decisions, not just instinct
+__LI__ Empathetic: genuinely understands user pain points and advocates for them in every conversation
+__LI__ Collaborative: co-creates with the team rather than dictating — earns trust by listening
+
+__SUB__ The Courage to Say No
+One of the hardest and most important traits of a great PO is the willingness to say no. Stakeholders, executives, and customers constantly request features. A PO who says yes to everything ends up with a bloated backlog, an overloaded team, and a product that tries to do everything and does nothing well. Saying no — or more precisely, 'not now' — requires clarity about the product vision and the confidence to hold that line under pressure.` },
+    { title: `Crafting a Compelling Product Vision`, content: `__H__ Crafting a Compelling Product Vision
+
+The product vision is the north star — the long-term aspirational statement of what the product exists to achieve. A great vision is stable enough to outlast multiple Sprints and compelling enough to unite the team, the stakeholders, and the customers around a shared direction. Without a vision, backlog decisions become arbitrary, and the team loses the ability to say no to anything.
+
+__SUB__ The Geoffrey Moore Vision Template
+One of the most practical formats for writing a product vision is Geoffrey Moore's elevator pitch template: 'FOR [target customer] WHO [has this need or problem], THE [product name] IS A [product category] THAT [delivers this key benefit]. UNLIKE [current alternative], OUR PRODUCT [primary differentiator].' This structure forces clarity about who you're serving, what problem you're solving, and why your solution is different.
+
+__LI__ Target customer: be specific — 'everyone' is not a customer segment
+__LI__ Need or opportunity: what problem exists that your product addresses
+__LI__ Category: what kind of product is it — this sets expectations
+__LI__ Key benefit: the one thing that matters most to your customer
+__LI__ Differentiator: what makes your product different from alternatives already available
+
+__SUB__ Characteristics of a Lasting Vision
+A good product vision is achievable within 3–5 years — ambitious but not delusional. It is customer-centric: it answers 'who benefits and why?' rather than describing features or technology. It is stable enough that it doesn't change every Quarter — the vision survives Sprint decisions while the roadmap flexes. And it is clear enough to act as a filter: any proposed feature should be testable against the vision. If it doesn't serve the vision, it doesn't belong in the backlog.` },
+    { title: `Product Goal & Product Roadmap`, content: `__H__ Product Goal & Product Roadmap
+
+Between the long-term product vision and the Sprint-level backlog sits an important middle layer: the Product Goal and the Product Roadmap. These translate vision into direction and direction into sequenced delivery.
+
+__SUB__ The Product Goal
+The Product Goal is the intermediate-term objective for the Scrum Team. It's more specific than the vision and more durable than a Sprint Goal. A team works toward a single Product Goal at a time — once achieved (or abandoned), a new Product Goal is set. The Product Goal gives the team strategic focus without micromanaging the path. It answers: 'what are we specifically trying to achieve in the next 3–6 months?'
+
+__LI__ One Product Goal at a time — focus prevents the team from pulling in multiple directions simultaneously
+__LI__ Measurable — a good Product Goal has clear success criteria so you know when you've achieved it
+__LI__ Communicated widely — the team, stakeholders, and leadership should all understand the current goal
+__LI__ Connects Sprint Goals — each Sprint Goal should be a step toward the Product Goal
+
+__SUB__ The Product Roadmap
+A product roadmap is a strategic communication tool — it shows the direction and priorities for the product over time. A good roadmap is outcome-oriented (focused on what value will be delivered and when, not which features) and intentionally flexible (specific near-term, directional long-term). Roadmaps are not contracts — they're best guesses based on current knowledge, updated regularly as new information arrives. Presenting a roadmap as a firm commitment sets up disappointment when priorities inevitably shift.` },
+    { title: `Stakeholder Identification & Mapping`, content: `__H__ Stakeholder Identification & Mapping
+
+One of the most underrated skills in product ownership is stakeholder management. The PO is the interface between the Scrum Team and everyone outside it — and 'everyone outside it' includes people with very different needs, levels of technical understanding, and political weight in the organisation.
+
+__SUB__ Who Are Stakeholders?
+Stakeholders are anyone with an interest in the product or the ability to influence it. This includes customers, users, business executives, sales teams, marketing, legal and compliance, support teams, and sometimes regulators. Not all stakeholders have equal influence or equal interest — and managing them as if they do wastes everyone's time.
+
+__LI__ High interest, high influence: engage deeply — these people can make or break decisions
+__LI__ High influence, low interest: keep informed at a high level — brief, regular updates suffice
+__LI__ High interest, low influence: involve in feedback loops — they provide valuable ground-level insight
+__LI__ Low interest, low influence: monitor occasionally — don't over-invest in this quadrant
+
+__SUB__ Managing Stakeholder Expectations
+The most common PO mistake with stakeholders is over-promising. A PO who says yes to every stakeholder request to avoid conflict creates an unmanageable backlog and erodes team trust. Better practice: be transparent about the current Product Goal, show the roadmap's direction, and explain the prioritisation rationale. When stakeholders understand WHY decisions are made — not just what the decision is — they're far more likely to accept outcomes they disagree with.` },
+    { title: `Writing Great User Stories`, content: `__H__ Writing Great User Stories
+
+A user story is a lightweight description of a feature told from the perspective of the person who will use it. User stories are not requirements documents — they are conversation starters. The value of a user story is not in the card itself but in the discussion it triggers between the PO, the Developers, and often the users.
+
+__SUB__ The Standard Format & Why It Works
+The most common format is: 'As a [type of user], I want [some goal] so that [some reason].' This structure matters because it keeps the focus on the user's motivation, not the technical implementation. 'As a returning customer, I want to save my payment details so that I can check out faster next time' is a user story. 'Add payment storage to the database' is a task — it describes implementation, not user value.
+
+__LI__ As a [user type]: forces specificity about who the feature serves — 'user' alone is too vague
+__LI__ I want [goal]: describes the desired capability, not the technical solution
+__LI__ So that [reason]: the most important part — the 'why' that justifies building this at all
+__LI__ INVEST criteria: good stories are Independent, Negotiable, Valuable, Estimable, Small, Testable
+
+__SUB__ What Makes Stories Fail
+User stories fail when they're written by developers without user input, when they're too large to complete in a Sprint (Epics that haven't been split), when they're too technical to have meaningful Acceptance Criteria, or when the 'so that' clause is missing or meaningless. The surest sign of a bad user story is one where the team can't explain who benefits from it and why that benefit matters to the product's success.` },
+    { title: `Acceptance Criteria`, content: `__H__ Acceptance Criteria
+
+Acceptance Criteria (AC) define the conditions under which a user story is considered complete. They are the contract between the PO and the Developers — both parties should be able to read the AC and agree unambiguously on whether the story is done. Without clear AC, 'done' is a matter of interpretation — and that ambiguity is expensive.
+
+__SUB__ Writing Effective Acceptance Criteria
+AC should be written in plain language, not technical jargon. They should be testable — each criterion should have a clear pass/fail outcome. They should cover the happy path (what happens when everything works), edge cases (what happens at boundaries), and error states (what happens when things go wrong). A useful format is the Given-When-Then structure: 'GIVEN [a context], WHEN [an action occurs], THEN [the expected outcome].'
+
+__LI__ Given-When-Then: precise, testable, and eliminates ambiguity from story completion
+__LI__ Cover the happy path first, then edge cases, then error handling
+__LI__ Each criterion should be independently testable — avoid compound criteria
+__LI__ Write AC before Sprint Planning, not during development — this prevents scope creep mid-Sprint
+__LI__ AC are not exhaustive test plans — they're the minimum bar the story must clear
+
+__SUB__ AC vs Definition of Done
+Acceptance Criteria are specific to a single user story — they describe what that particular story must do to be accepted. The Definition of Done applies universally to all stories — it describes the quality standards every story must meet regardless of its specific functionality. A story must meet both its own AC and the team's DoD to be considered complete.` },
+    { title: `Story Splitting — Breaking Down Epics`, content: `__H__ Story Splitting — Breaking Down Epics
+
+Epics are large bodies of work that are too big to complete in a single Sprint. Splitting Epics into Sprint-sized stories is one of the most important and most difficult skills in backlog management. Done poorly, splits create artificial divisions that leave no working software at the end of a Sprint. Done well, splits produce genuinely independent, valuable stories that each deliver something real.
+
+__SUB__ Why Splitting Matters
+If a story is too large, Developers can't commit to finishing it in a Sprint. Unfinished stories at Sprint end are one of the leading causes of velocity instability and team frustration. Splitting forces clarity — you have to understand the work well enough to break it into smaller pieces, and that understanding itself often surfaces hidden complexity or incorrect assumptions early.
+
+__LI__ Split by workflow step: instead of 'user can complete the checkout process', split by each step
+__LI__ Split by data variation: 'process credit card payment' and 'process PayPal payment' separately
+__LI__ Split by user role: different user types may need the same feature in different ways
+__LI__ Split by happy path vs edge cases: implement core functionality first, error handling separately
+__LI__ Split by spike vs implementation: research uncertainty as a separate story before building
+
+__SUB__ What NOT to Split By
+Don't split by architectural layer — 'backend API for checkout' and 'frontend for checkout' is not a good split because neither delivers working software that a user can evaluate. Every split should produce a story that, when complete, delivers some visible value or learning. If completing the split story doesn't result in something shippable or testable, the split is wrong.` },
+    { title: `Backlog Refinement`, content: `__H__ Backlog Refinement
+
+Backlog Refinement (sometimes called Backlog Grooming) is the ongoing activity through which the PO and the Developers add detail, estimates, and order to Product Backlog Items. It is not a formal Scrum event, but it is critical — without regular refinement, Sprint Planning becomes a fire drill and the team plans poorly.
+
+__SUB__ What Happens in Refinement
+In a typical refinement session, the team reviews upcoming backlog items, clarifies ambiguities, splits large stories into smaller ones, adds or validates Acceptance Criteria, and estimates the work. The PO provides context about why each item matters. Developers raise technical concerns, ask clarifying questions, and surface dependencies. Together they produce a backlog where the top items are fully ready for the next Sprint Planning.
+
+__LI__ Frequency: most teams run refinement 1–2 times per Sprint, mid-Sprint
+__LI__ Duration: typically 1–2 hours — refinement should not exceed 10% of the Sprint's total capacity
+__LI__ Participants: PO and the full Scrum Team — Scrum Master may or may not facilitate
+__LI__ Output: top 2-3 Sprints' worth of work is refined, estimated, and prioritised
+__LI__ The PO should come prepared — stories should have initial AC drafted before the session
+
+__SUB__ Signs of Poor Refinement
+If Sprint Planning regularly runs long, if Developers frequently discover unexpected complexity during the Sprint, or if stories are frequently returned to the backlog unfinished, the root cause is usually insufficient refinement. These are expensive problems — they disrupt velocity, frustrate developers, and erode stakeholder trust in the team's ability to deliver predictably.` },
+    { title: `The PO's Role in Sprint Events`, content: `__H__ The PO's Role in Sprint Events
+
+The PO participates in some Scrum events as an active contributor and is optional or absent in others. Understanding this distinction helps POs use their time effectively and avoid becoming a bottleneck in events that don't require them.
+
+__SUB__ Sprint Planning
+The PO is a key participant in Sprint Planning. They present the highest-priority items, explain the business context and value of each, and answer Developers' clarifying questions. The PO proposes a Sprint Goal — the Developers negotiate and accept it. Once the Sprint Goal is set, the Developers take ownership of the Sprint Backlog. The PO does not tell Developers how to build — only what to build and why.
+
+__LI__ Sprint Planning: PO presents items, explains value, proposes Sprint Goal — essential participant
+__LI__ Daily Scrum: PO is NOT required — this is a Developer event; PO shouldn't be running it
+__LI__ Sprint Review: PO leads — presents Sprint Goal achievement, demonstrates Increment, gathers feedback
+__LI__ Sprint Retrospective: PO participates as a full team member — inspects and improves team process
+__LI__ Backlog Refinement: PO is the lead — explains context, clarifies requirements, orders items
+
+__SUB__ Accepting Work at Sprint Review
+One of the PO's most important moments is the Sprint Review. After Developers present the Increment, the PO verifies that each completed item meets its Acceptance Criteria. The PO can accept work (mark it done and potentially releasable) or reject it (return it to the backlog for completion). This is not a bureaucratic gate — it's the PO exercising quality oversight and maintaining accountability for what the team delivers.` },
+    { title: `Release Planning & PO Metrics`, content: `__H__ Release Planning & PO Metrics
+
+Beyond managing the Sprint-level backlog, the PO is responsible for planning how and when the product evolves for users and the market. Release planning uses velocity as a forecasting tool and product metrics as a measure of whether released features are actually delivering value.
+
+__SUB__ Release Planning with Velocity
+Once a team has a stable velocity — a consistent number of story points completed per Sprint — the PO can forecast when features will be ready. If the team averages 40 points per Sprint and the next release requires 160 points of work, that's roughly 4 Sprints. This is a forecast, not a commitment. Velocity fluctuates based on team composition, complexity, and external factors. Good POs communicate forecasts with appropriate uncertainty rather than false precision.
+
+__LI__ Velocity: average story points completed per Sprint over the last 3-5 Sprints
+__LI__ Release forecast: total remaining scope ÷ average velocity = estimated Sprints to completion
+__LI__ Cone of uncertainty: near-term forecasts are more reliable; far-term ones carry significant variance
+__LI__ Fixed-date releases: scope must flex — you can't fix date, scope, and quality simultaneously
+
+__SUB__ PO Metrics — Outcomes Over Outputs
+Feature delivery is not success. A PO who measures success by the number of stories shipped is measuring outputs. What matters is outcomes — did the feature change user behaviour in the desired direction? Metrics a good PO tracks include user adoption of new features, task completion rates, NPS or CSAT changes, revenue impact of features, and bug rates related to delivered work. OKRs are a powerful framework for connecting product decisions to measurable business outcomes.` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Scrum Master (CSM)`,
+    topics: [
+    { title: `The Scrum Master Accountability`, content: `__H__ The Scrum Master Accountability
+
+The Scrum Master is accountable for the Scrum Team's effectiveness. This is a deliberate and carefully chosen word — not 'responsible for delivery', not 'manager of the team', not 'Agile project manager'. The SM is accountable for how well the team practices Scrum and for ensuring that the environment enables the team to do its best work.
+
+__SUB__ Three Dimensions of Accountability
+The SM serves the Scrum Team by coaching members in self-management and cross-functionality, helping the team focus on creating high-value Increments, and facilitating Scrum events as requested or needed. The SM serves the Product Owner by helping find techniques for effective Product Goal and backlog management, helping the Scrum Team understand the need for clear PBIs, and helping establish empirical product planning. The SM serves the organisation by leading, training, and coaching the organisation in its Scrum adoption.
+
+__LI__ For the Scrum Team: coaching, facilitation, impediment removal, protecting the team's focus
+__LI__ For the Product Owner: backlog practices, transparent communication, stakeholder facilitation
+__LI__ For the organisation: change agent — driving Agile adoption beyond the immediate team
+
+__SUB__ What the SM is NOT
+The Scrum Master is not the team's task manager. They do not assign work to Developers or instruct the team on technical decisions. They are not a buffer between management and the team that filters information. They are not the person who runs all the meetings while everyone else passively participates. A team that relies entirely on the SM to run their process hasn't yet developed the self-management that Scrum requires.` },
+    { title: `SM vs Manager vs Agile Coach`, content: `__H__ SM vs Manager vs Agile Coach
+
+The Scrum Master role is often confused with traditional management and with the role of an Agile Coach. Understanding the distinctions helps organisations place people correctly and helps SMs understand the boundaries of their accountability.
+
+__SUB__ Key Differences
+A traditional Manager has direct authority over people — they set objectives, evaluate performance, and make hiring decisions. A Scrum Master has no formal authority over the Developers. Their influence comes from expertise, coaching, and facilitation. An Agile Coach typically works at a broader organisational level — across multiple teams, portfolios, or the leadership layer — helping an entire organisation adopt Agile thinking. A Scrum Master is team-focused. A Coaching Agile Coach is organisation-focused.
+
+__LI__ Manager: hierarchical authority, performance evaluation, resource allocation
+__LI__ Scrum Master: no authority over team members, influence through coaching and facilitation
+__LI__ Agile Coach: organisation-wide, works across teams and with leadership, more strategic
+__LI__ SM and Manager: can coexist if the Manager understands servant leadership — but requires clear role boundaries
+__LI__ Overlap: all three need facilitation skills, conflict resolution skills, and deep Agile knowledge
+
+__SUB__ The Right Stance at the Right Time
+A great SM shifts between four stances depending on what the team needs: teacher (when the team needs to understand Scrum theory), coach (when the team needs to develop a new skill or behaviour), mentor (when the team needs someone to share experience), and facilitator (when the team needs a neutral party to guide a conversation). Staying stuck in one stance regardless of context is a common SM failure mode.` },
+    { title: `The Four Stances of a Scrum Master`, content: `__H__ The Four Stances of a Scrum Master
+
+Effective Scrum Masters don't have one mode of operating. They read the team's needs in the moment and choose the stance that will be most helpful. This is what separates a process enforcer from a genuine servant leader.
+
+__SUB__ Teacher, Coach, Mentor, Facilitator
+As a Teacher, the SM shares knowledge about Scrum theory, Agile principles, and their practical implications. This is appropriate when the team is new to Scrum or when a concept is being misapplied. As a Coach, the SM asks powerful questions to help the team discover their own answers — 'What do you think is causing this?' rather than 'Here's what's causing this.' As a Mentor, the SM draws on personal experience: 'When I faced something similar, here's what worked and what didn't.' As a Facilitator, the SM creates the conditions for productive conversation without driving the outcome.
+
+__LI__ Teacher: use when sharing Scrum theory or correcting misunderstanding of frameworks
+__LI__ Coach: use when the team has the capability but needs to find their own path — most powerful stance
+__LI__ Mentor: use when sharing personal experience is more valuable than asking questions
+__LI__ Facilitator: use in Retrospectives, conflict resolution, and complex decision-making sessions
+
+__SUB__ Choosing the Right Stance
+The art is in reading the situation. A new team in their first Sprint needs teaching. A team that keeps making the same mistake may need coaching to discover why. A team that trusts the SM may benefit from mentoring about real-world experience. A team in conflict needs facilitation. Using the Coach stance when someone needs direct teaching leaves them frustrated. Using the Teacher stance when someone needs coaching leaves them dependent.` },
+    { title: `Servant Leadership in Practice`, content: `__H__ Servant Leadership in Practice
+
+Servant leadership is the philosophical foundation of the Scrum Master role. It is the practice of leading by serving — placing the needs and growth of the team ahead of the SM's own authority, recognition, or comfort. This is not passive leadership; it is active, intentional, and often more demanding than directive leadership.
+
+__SUB__ What Servant Leadership Looks Like
+Servant leaders listen deeply before speaking. They ask questions more than they give answers. They celebrate team success rather than personal achievement. They remove obstacles rather than delegating their removal. They build psychological safety — the condition under which teams can take risks, admit mistakes, and offer honest feedback — by modelling vulnerability themselves.
+
+__LI__ Listen actively: understand what is being said and what is not being said
+__LI__ Build psychological safety: make it safe to speak up, make mistakes, and challenge the status quo
+__LI__ Remove blockers without being asked: anticipate what the team needs before they have to ask
+__LI__ Empower rather than control: coach the team to solve their own problems, don't solve for them
+__LI__ Protect the team: shield developers from external interruptions and political noise during the Sprint
+
+__SUB__ Leading Without Authority
+The SM's challenge — and their superpower — is that they have no formal authority. Every outcome they achieve is through influence, trust, and relationship. This requires a level of interpersonal skill that directive leaders rarely develop. When a SM earns the team's trust, they can challenge norms, introduce new practices, and drive meaningful change. When they don't, they're just a meeting facilitator with a fancy title.` },
+    { title: `Facilitating the Sprint Retrospective`, content: `__H__ Facilitating the Sprint Retrospective
+
+The Sprint Retrospective is the most important event the Scrum Master facilitates. It is the team's primary continuous improvement mechanism — the structured space to reflect on how they're working and commit to doing it better. Done well, Retrospectives build psychological safety, surface real problems, and produce genuine improvements. Done poorly, they become boring rituals that teams resent.
+
+__SUB__ Retrospective Formats That Work
+The most common format — Start/Stop/Continue — is simple and effective but can become stale. Other useful formats include: the 4Ls (Liked, Learned, Lacked, Longed For), the Sailboat (wind = things helping us, anchors = things slowing us, rocks = risks ahead, island = our goal), Mad Sad Glad (emotional framing to surface hidden feelings), and Timeline Retrospectives (plot key events from the Sprint chronologically to identify patterns).
+
+__LI__ Start/Stop/Continue: simple, direct — good for teams new to Retrospectives
+__LI__ 4Ls (Liked, Learned, Lacked, Longed For): richer data, surfaces learning alongside frustration
+__LI__ Sailboat: visual metaphor — great for team building and making systemic issues visible
+__LI__ Timeline: maps events chronologically — reveals patterns across the Sprint
+__LI__ Vary formats every few Sprints — routine Retros lose energy and produce superficial feedback
+
+__SUB__ From Conversation to Action
+The most common Retrospective failure is leaving without concrete action items. 'We should communicate better' is not an action item — 'We will run a 30-minute sync every Tuesday between Dev and QA' is. Action items must be specific, owned by a named individual, and measurable enough to be assessed at the next Retrospective. The Scrum Master holds the team accountable by opening each Retrospective with a review of the previous Sprint's commitments.` },
+    { title: `Tuckman's Team Development Model`, content: `__H__ Tuckman's Team Development Model
+
+Tuckman's model describes the stages teams move through as they form and mature. Understanding this model helps Scrum Masters calibrate their intervention style — a team in Forming needs different support than a team in Performing.
+
+__SUB__ The Four Stages
+Forming: Team members are polite, uncertain, and look to leadership for guidance. Conflict is avoided. Storming: Differences emerge, conflicts arise, roles are contested. This is uncomfortable but necessary — teams that skip Storming have superficial cohesion that cracks under pressure. Norming: The team establishes shared norms, trust builds, and conflict becomes productive. Performing: The team operates with high autonomy, strong trust, and clear shared purpose. Performance is high and stable.
+
+__LI__ Forming: provide structure, clarity of purpose, and early wins — team needs direction
+__LI__ Storming: facilitate conflict productively, build trust, coach through disagreements — don't suppress conflict
+__LI__ Norming: reinforce positive norms, step back, encourage self-management — team is finding its rhythm
+__LI__ Performing: get out of the way — facilitate rather than lead, protect the team's autonomy
+__LI__ Adjourning (later addition): teams that complete or disband need acknowledgement and closure
+
+__SUB__ SM's Role at Each Stage
+In Forming, the SM teaches and structures. In Storming, the SM coaches through conflict and facilitates difficult conversations. In Norming, the SM reinforces emerging good habits and gradually reduces direct intervention. In Performing, the SM's main job is to protect the team's flow and occasionally challenge them to grow further. A SM who keeps teaching a Performing team hasn't recognised that the team no longer needs a teacher.` },
+    { title: `Impediment Management`, content: `__H__ Impediment Management
+
+Removing impediments is one of the most visible and valued things a Scrum Master does — but it's also the most frequently misunderstood. The SM's job is not to solve every problem personally. It is to ensure that impediments are resolved — which sometimes means solving them directly, but more often means connecting the right people, escalating appropriately, or coaching the team to resolve their own blockers.
+
+__SUB__ Types of Impediments
+Impediments fall into two broad categories: team-level blockers (things the team could resolve themselves with coaching — unclear requirements, missing team agreements, interpersonal conflict) and organisational blockers (things outside the team's control — vendor delays, infrastructure access, policy constraints, cross-team dependencies). The SM should handle team-level blockers through coaching and facilitate resolution of organisational blockers through escalation and relationship management.
+
+__LI__ Technical blockers: missing access, broken environments, tooling issues — resolve quickly
+__LI__ Process blockers: unclear requirements, missing decisions from PO — often a refinement problem
+__LI__ Dependency blockers: another team's work is needed — requires cross-team coordination
+__LI__ Organisational blockers: policy, procurement, or management decisions required — need escalation
+__LI__ Interpersonal blockers: conflict within the team — requires facilitation and coaching
+
+__SUB__ The Impediment Log
+A visible impediment log — maintained by the SM and reviewed regularly — creates transparency and accountability. When blockers are logged and tracked, patterns emerge. If the same type of impediment recurs (e.g., late requirements, environment instability), that's a signal to address the root cause rather than the symptom. The Retrospective is the right venue to discuss recurring impediment patterns.` },
+    { title: `Scrum Metrics & Radiators`, content: `__H__ Scrum Metrics & Radiators
+
+Making work visible is a core principle of empirical process control. Information radiators — physical or digital displays that broadcast current team status — are one of the Scrum Master's most powerful tools for creating transparency and keeping stakeholders informed without consuming the team's time.
+
+__SUB__ Key Metrics to Track
+Velocity measures how much work a team completes per Sprint (in story points). It is a forecasting tool, not a performance KPI — comparing velocity between teams or using it to measure individual performance misses the point entirely. Burn-down charts show remaining work over time within a Sprint. Burn-up charts show completed work against total scope — they make scope changes visible in a way burn-downs do not. Cycle time measures how long a work item takes from start to finish.
+
+__LI__ Velocity: average story points per Sprint — use for forecasting, not for performance comparison
+__LI__ Sprint Burn-Down: remaining work vs time within a Sprint — surfaces pacing issues early
+__LI__ Release Burn-Up: completed work vs total scope — makes scope creep visible
+__LI__ Cycle Time: time from work starting to work done — key metric for flow-based teams
+__LI__ Team Health: regular pulse checks on psychological safety, clarity, and collaboration quality
+
+__SUB__ Using Metrics Well
+Metrics create transparency, but they can also create perverse incentives. Velocity can be gamed by inflating estimates. Burn-down charts can be manipulated by splitting stories late. The Scrum Master's role is to ensure that metrics serve the team's learning and the stakeholders' understanding — not to optimise the metrics themselves. When a team starts gaming metrics, it's a sign that the metric has become an end rather than a means.` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Backlog & Prioritization`,
+    topics: [
+    { title: `Why Backlog Prioritization Matters`, content: `__H__ Why Backlog Prioritization Matters
+
+Every team has more good ideas than time to build them. Prioritization is the discipline of choosing which good ideas to pursue now, which to pursue later, and which to abandon entirely. Without deliberate prioritization, teams default to the loudest voice in the room, the most recent request, or the work that feels most comfortable — none of which necessarily deliver the most value.
+
+__SUB__ The Cost of Poor Prioritization
+Poor prioritization doesn't just mean building the wrong things — it means the right things get delayed. Every Sprint spent on a low-value feature is a Sprint not spent on a high-value one. Over a product's life, these compounding opportunity costs can be the difference between a product that leads its market and one that falls behind it. Prioritization is one of the highest-leverage activities a Product Owner performs.
+
+__LI__ Misaligned priorities fragment team focus and reduce throughput
+__LI__ Low-value features shipped first delay high-value ones that customers are actually waiting for
+__LI__ Stakeholder-driven prioritization (loudest voice wins) destroys product coherence over time
+__LI__ Good prioritization creates a product that solves one or two problems exceptionally well
+__LI__ Every item in the backlog is a priority decision — ordering is the PO's core responsibility
+
+__SUB__ Multiple Techniques Exist for a Reason
+No single prioritization technique is universally correct. MoSCoW is fast but qualitative. WSJF is rigorous but requires data. Kano is powerful for customer satisfaction but complex to administer. RICE gives numerical scores but the inputs are estimates. A mature PO uses multiple techniques and knows which to apply in which context.` },
+    { title: `MoSCoW Method`, content: `__H__ MoSCoW Method
+
+MoSCoW is one of the most widely used prioritization techniques because of its simplicity and speed. It categorises backlog items into four buckets — Must Have, Should Have, Could Have, and Won't Have — and forces the team to make explicit trade-off decisions about scope.
+
+__SUB__ The Four Categories
+Must Have items are non-negotiable — without them the product or release cannot function or meet its core purpose. Should Have items are important but not critical — the product works without them, but their absence is felt. Could Have items are desirable but clearly lower priority — include them if there's capacity. Won't Have items are explicitly out of scope for this release — this is as important as the other categories because it closes the door on scope creep from these items.
+
+__LI__ Must Have: the minimum viable release — without these, don't ship
+__LI__ Should Have: significant value, no catastrophic consequence if deferred — plan to include but can slip
+__LI__ Could Have: nice-to-haves — include only if time and capacity allow
+__LI__ Won't Have: explicitly deferred — documenting these prevents the same conversation happening every Sprint
+__LI__ Typical split: Must (60%), Should (20%), Could (20%) — but this is a guideline, not a rule
+
+__SUB__ Where MoSCoW Works Best & Falls Short
+MoSCoW works best for release scoping conversations — it's a great tool for alignment meetings where the team and stakeholders need to agree quickly on what's in and out. It falls short when comparing items within the same category (all Musts feel equal but they're not) and when numeric precision is needed for forecasting. It is qualitative by nature, which is a strength in simplicity but a weakness in accuracy.` },
+    { title: `WSJF — Weighted Shortest Job First`, content: `__H__ WSJF — Weighted Shortest Job First
+
+WSJF (Weighted Shortest Job First) is a prioritization technique used in SAFe and advanced Agile environments. It is quantitative, data-driven, and deliberately accounts for the cost of delay — not just the benefit of a feature, but what it costs the business for every week that feature is NOT in the hands of users.
+
+__SUB__ The WSJF Formula
+WSJF = Cost of Delay ÷ Job Size (Duration). Cost of Delay is itself a composite of three factors: User/Business Value (how much value does this deliver to users?), Time Criticality (is there a time window that makes this more valuable now than later?), and Risk Reduction/Opportunity Enablement (does this unlock other work or reduce significant risk?). Job Size is an estimate of how long the work will take — smaller jobs with high cost of delay rise to the top.
+
+__LI__ User/Business Value: how much does this feature matter to users and the business — score 1–10 or 1/2/3/5/8
+__LI__ Time Criticality: does waiting cost us — regulatory deadline, seasonal demand, competitive pressure
+__LI__ Risk/Opportunity: does this unlock other features or reduce a significant risk
+__LI__ Job Size: relative estimate of duration — smaller is better all else being equal
+__LI__ WSJF score: sum of CoD components divided by Job Size — rank items by score, highest first
+
+__SUB__ When to Use WSJF
+WSJF is most valuable when comparing multiple high-priority items and needing a defensible, data-backed rationale for sequencing. It's particularly useful in large organisations where POs need to explain priority decisions to executives. The limitation is that the inputs are estimates — WSJF gives you a rigorous process for combining imprecise data, which is more useful than intuition alone but should not be treated as objective truth.` },
+    { title: `The Kano Model`, content: `__H__ The Kano Model
+
+The Kano Model, developed by Professor Noriaki Kano in the 1980s, is a customer satisfaction framework that classifies product features by how they affect user satisfaction. It distinguishes between features that dissatisfy when absent, features that satisfy when present, and features that delight unexpectedly.
+
+__SUB__ Three Core Feature Categories
+Basic Needs (Dissatisfiers) are features users expect by default. They don't make users happy when present — they just avoid dissatisfaction when absent. A car that steers is a basic need. An e-commerce site that processes payments is a basic need. Performance Needs (Satisfiers) are features where more is better. Faster checkout, higher image quality, faster load times — these scale linearly with satisfaction. Excitement Needs (Delighters) are unexpected features that create disproportionate satisfaction. Users don't ask for them because they don't know they're possible.
+
+__LI__ Basic Needs: table stakes — must have, but won't differentiate your product
+__LI__ Performance Needs: the features users compare between products — invest here to be competitive
+__LI__ Excitement Needs: innovation opportunities — surprise users and build loyalty
+__LI__ Indifferent features: users don't care either way — eliminate them to reduce complexity
+__LI__ Reverse features: features some users hate — segment your audience before implementing
+
+__SUB__ Kano's Lesson on Innovation
+The most important insight from Kano is that delight today becomes expectation tomorrow. Features that were excitement needs in 2010 (mobile-first design, instant search) are basic needs today. This means teams must continuously innovate rather than resting on current differentiators. The Kano model frames product strategy as a race against customer expectations.` },
+    { title: `RICE Framework`, content: `__H__ RICE Framework
+
+RICE is a quantitative prioritization framework that scores backlog items across four dimensions: Reach, Impact, Confidence, and Effort. It was developed by Intercom to bring data-driven rigour to prioritisation decisions that were previously based on gut feeling and stakeholder pressure.
+
+__SUB__ Calculating a RICE Score
+Reach measures how many users will be affected in a given time period (e.g., users per quarter). Impact estimates how much the feature will improve the experience for each user — typically scored on a scale (3 = massive, 2 = high, 1 = medium, 0.5 = low, 0.25 = minimal). Confidence reflects how certain you are about your Reach and Impact estimates — expressed as a percentage. Effort is the total person-months required to build it. The formula is: (Reach × Impact × Confidence) ÷ Effort.
+
+__LI__ Reach: users affected per quarter — use data from analytics where possible
+__LI__ Impact: per-user effect on your goal metric — be honest about the scale
+__LI__ Confidence: expressed as % — low confidence should reduce score, not inflate it
+__LI__ Effort: person-months of work — include design, development, QA, and maintenance
+__LI__ RICE Score = (Reach × Impact × Confidence%) ÷ Effort — rank highest scores first
+
+__SUB__ RICE's Strengths and Limitations
+RICE's main strength is that it makes assumptions explicit — when you write down your Reach and Confidence estimates, you're forced to examine whether you actually know what you think you know. Its main limitation is that the inputs are still estimates, and a confident team can game any scoring model. RICE works best as a structured conversation starter, not as a mechanical decision-maker.` },
+    { title: `Velocity in Scrum`, content: `__H__ Velocity in Scrum
+
+Velocity is the average amount of work a Scrum Team completes per Sprint, measured in story points. It is a forecasting tool — it helps the PO and team estimate how much can be delivered by a given date. It is emphatically NOT a performance metric, not a target to hit, and not a basis for comparing teams.
+
+__SUB__ How Velocity is Calculated
+At the end of each Sprint, the team tallies the story points of all fully completed items (items that meet the Definition of Done). Items that are partially complete are not counted — partial credit does not exist in Scrum. Velocity is then calculated as a rolling average of completed points over the last 3–5 Sprints. Using a rolling average smooths out natural variation and produces a more reliable forecast than any single Sprint's output.
+
+__LI__ Only count fully Done items — 90% complete is 0% done for velocity purposes
+__LI__ Rolling average of last 3-5 Sprints gives a more accurate picture than a single-Sprint snapshot
+__LI__ New teams have unstable velocity for the first 3-4 Sprints as they calibrate estimates
+__LI__ Velocity changes when team composition changes — re-establish baseline after team changes
+__LI__ Use ranges (low/mid/high velocity scenarios) for forecasting rather than single-point estimates
+
+__SUB__ The Misuse of Velocity
+The most common misuse of velocity is using it as a performance target. 'Why is your velocity lower than last Sprint?' treats velocity as a KPI — this incentivises story point inflation, rushed work, and a weakened Definition of Done. Velocity should be observed and used for planning, not managed as an outcome. When management starts measuring team performance by velocity, teams optimise for the metric rather than for value delivery.` },
+    { title: `Sprint Planning with Velocity`, content: `__H__ Sprint Planning with Velocity
+
+Sprint Planning uses historical velocity to make a realistic commitment for the Sprint. The team selects items from the top of the Product Backlog until they've selected enough work to fill their expected capacity. The Sprint Goal gives this selection purpose beyond just a list of tasks.
+
+__SUB__ The Planning Process
+Before Sprint Planning, the PO orders and refines the top of the backlog. At Sprint Planning, the Developers review their available capacity for the Sprint — accounting for meetings, leave, and other commitments. Using their historical velocity, they select how many story points' worth of work they can realistically complete. They then break selected stories into tasks, identify dependencies, and confirm a Sprint Goal.
+
+__LI__ Step 1: PO presents the most valuable items from the top of the backlog
+__LI__ Step 2: Developers discuss and clarify — ask questions, surface unknowns
+__LI__ Step 3: Developers select items until their velocity capacity is filled
+__LI__ Step 4: Developers create the Sprint plan — break into tasks, identify dependencies
+__LI__ Step 5: Team agrees on Sprint Goal — the 'why' that unifies the selected items
+
+__SUB__ Capacity vs Velocity
+Velocity and capacity are different things. Velocity tells you how much the team typically completes. Capacity tells you how much time the team has available in this specific Sprint. If a developer is on leave for half the Sprint, capacity is reduced — the team should pull fewer points regardless of their historical velocity. Always adjust for known capacity changes rather than blindly applying last Sprint's velocity.` },
+    { title: `Burn-Down & Burn-Up Charts`, content: `__H__ Burn-Down & Burn-Up Charts
+
+Burn-down and burn-up charts are visual tools for tracking progress within a Sprint or across a release. They make hidden progress — or lack of it — visible to the team and stakeholders, enabling early intervention when a Sprint or release is at risk.
+
+__SUB__ Sprint Burn-Down Chart
+A Sprint burn-down chart plots remaining work (story points or tasks) on the Y-axis against days of the Sprint on the X-axis. The ideal line shows how work should decrease linearly if everything goes to plan. The actual line shows what's really happening. A burn-down that's falling slower than the ideal line is a warning signal — the team is at risk of not completing the Sprint Goal. A flat line for multiple days means work has stalled and an impediment likely needs attention.
+
+__LI__ Flat line: work has stalled — surface in Daily Scrum, identify and remove the blocker
+__LI__ Burn-down rising: scope is being added during the Sprint — challenge this if it threatens the Sprint Goal
+__LI__ Steep drop at end: team sandbagged estimates or left all integration for the final days — both are problems
+__LI__ Burn-down is a team transparency tool, not a management reporting tool
+
+__SUB__ Burn-Up Chart — Why It's Better for Releases
+A burn-up chart plots completed work (rising from the bottom) against total scope (a line at the top). When scope increases, the scope line moves up — making scope creep visible in a way burn-downs cannot. For release planning, burn-up charts are superior because they show both progress and scope simultaneously. Stakeholders can immediately see whether new requests are being added faster than work is being completed, which is the root cause of most missed release dates.` }
+    ]
+  },
+  {
+    id: 4,
+    name: `Kanban`,
+    topics: [
+    { title: `What is Kanban?`, content: `__H__ What is Kanban?
+
+Kanban is a method for managing and improving work — not a software development methodology. It originated on the factory floors of Toyota in the 1940s as a scheduling system to control the flow of materials through a production process. David Anderson adapted these principles for knowledge work in the early 2000s, and Kanban has since become one of the most widely used approaches for managing ongoing, operational, or unpredictable work.
+
+__SUB__ Core Philosophy
+Kanban is built on one foundational insight: visualising work reveals where it gets stuck. Most organisations have invisible work — work that's started but not finished, work that's waiting for something, work that nobody knows about because it's in someone's head or email inbox. Making all work visible on a shared board transforms this invisible bottleneck into an actionable, manageable reality.
+
+__LI__ Visualise all work — if it's not on the board, it doesn't exist for planning purposes
+__LI__ Limit work in progress — starting more work than you can finish is the root cause of most delivery problems
+__LI__ Manage flow — the goal is smooth, predictable delivery, not maximum individual busyness
+__LI__ Make policies explicit — how work gets prioritised, reviewed, and completed should be written down
+__LI__ Improve collaboratively — small, incremental improvements to your current process compound over time
+
+__SUB__ Kanban vs Scrum
+Kanban has no iterations, no predefined roles, and no prescribed ceremonies — it can be layered on top of any existing process. Scrum prescribes a complete framework with roles, events, and artifacts. Kanban is a change management method; Scrum is an empirical process framework. Teams doing product development with clear sprints often choose Scrum. Teams doing ongoing support, operations, or maintenance work often choose Kanban. Many teams use both — Scrum's cadence with Kanban's visual board and WIP limits.` },
+    { title: `The 5 Core Properties of Kanban`, content: `__H__ The 5 Core Properties of Kanban
+
+The Kanban Method is built on five core properties. These are not rules imposed from outside — they're practices a team adopts incrementally to improve their current process. You don't need to implement all five at once, but each one addresses a specific type of waste or inefficiency.
+
+__SUB__ Visualise, Limit WIP, Manage Flow
+Visualising work means mapping your entire workflow onto a board — from the moment a request arrives to the moment it's delivered. Every column on the board represents a state in your workflow. Every card represents a piece of work. Making this visible changes how teams understand their own system. Limiting WIP is the Kanban practice that most immediately improves delivery speed — it forces the team to finish work before starting new work, which eliminates multitasking and reduces context-switching costs. Managing flow means actively monitoring how work moves through the system and intervening when it slows or stops.
+
+__LI__ Visualise: the board is a real-time picture of the team's work — make it honest and complete
+__LI__ Limit WIP: set explicit limits per column — when a column is full, no new work enters until something leaves
+__LI__ Manage Flow: measure and optimise how quickly work moves through your system
+
+__SUB__ Make Policies Explicit, Improve Collaboratively
+Making policies explicit means writing down the rules that govern how work moves through the board — what does 'done' mean in each column? Who can pull work? How is work prioritised? When most of these rules live in people's heads, inconsistency is inevitable. Writing them down creates shared understanding and surfaces disagreements before they become problems. Improving collaboratively means the team regularly reflects on the system and makes small, targeted changes — not a wholesale redesign. Kanban improvement is evolutionary, not revolutionary.` },
+    { title: `Designing Your Kanban Board`, content: `__H__ Designing Your Kanban Board
+
+A Kanban board is not just a whiteboard with sticky notes. A well-designed board accurately reflects the team's real workflow, makes the status of every piece of work immediately visible, and reveals bottlenecks without requiring anyone to ask for a status update.
+
+__SUB__ Mapping Your Workflow to Columns
+Start by mapping your actual workflow — not the idealised one, but what really happens to a piece of work from the moment it arrives to the moment it's delivered. Typical columns for a software team might be: Backlog → Ready → In Analysis → In Development → In Review → In Testing → Done. Each column should represent a distinct state — a real handoff or transformation — not just a label.
+
+__LI__ Map the real workflow, not the theoretical one — shadow a piece of work for a day if needed
+__LI__ Keep column names action-oriented: 'In Development' is clearer than just 'Development'
+__LI__ Consider split columns: 'Doing' and 'Done' sub-columns within each stage to show handoff readiness
+__LI__ Don't create columns for states that last less than an hour — granularity without insight is noise
+__LI__ Review and evolve the board — it should reflect current reality, not historical process
+
+__SUB__ WIP Limits on the Board
+WIP limits are written directly on the board — typically as a number in the column header (e.g., 'In Development [3]'). When a column is at its WIP limit, no new cards can enter until one leaves. This constraint forces a decision: either help a colleague finish something, or wait. This is the core Kanban mechanism — it makes the cost of multitasking visible and creates the right incentive to finish before starting.` },
+    { title: `WIP Limits — Why Less Work Means Faster Delivery`, content: `__H__ WIP Limits — Why Less Work Means Faster Delivery
+
+Limiting Work in Progress is the most counterintuitive and most powerful practice in Kanban. It seems logical that working on more things in parallel would lead to more getting done. Little's Law — a theorem from queuing theory — proves this wrong.
+
+__SUB__ Little's Law
+Little's Law states: Average Completion Rate = WIP ÷ Average Cycle Time. This means that if your team has 20 items in progress and a cycle time of 10 days, your throughput is 2 items per day. If you reduce WIP to 10 items, either cycle time halves (still 2 items per day) or throughput increases. In practice, reducing WIP almost always reduces cycle time — because each piece of work gets more focused attention and moves faster through the system.
+
+__LI__ High WIP creates queues — work waits at every stage rather than flowing through
+__LI__ Context switching between multiple items wastes 15-40% of a developer's cognitive capacity
+__LI__ Lower WIP reveals bottlenecks — if In Review is always full, you have a review capacity problem
+__LI__ WIP limits create a pull system — work is pulled when capacity exists, not pushed when it's requested
+__LI__ Start by setting WIP limits higher than current state, then reduce gradually as flow improves
+
+__SUB__ Setting WIP Limits in Practice
+A good starting point for WIP limits is 1–2 items per person in a column. If a team of 3 is developing, a limit of 4–5 in the development column is reasonable — it allows some flexibility while preventing pileups. The 'right' WIP limit is not a formula — it's discovered through observation and experimentation. When a team first introduces WIP limits, they will feel uncomfortable. That discomfort is the system working correctly — it's making the invisible cost of overloading visible for the first time.` },
+    { title: `Kanban Flow Metrics`, content: `__H__ Kanban Flow Metrics
+
+Kanban teams measure their system's performance through flow metrics — data about how work moves through the board. Unlike velocity in Scrum (which measures output), flow metrics measure the health of the delivery system itself.
+
+__SUB__ The Four Essential Flow Metrics
+Throughput measures how many work items are completed per unit of time (e.g., 8 items per week). It is the primary output metric — more useful than story points because it's unit-free. Cycle Time measures how long a single item takes from the moment work starts to the moment it's delivered. Shorter cycle times mean faster feedback and less risk. Work in Progress (WIP) is the number of items actively being worked on at any moment. Flow Efficiency measures the ratio of active work time to total elapsed time — most teams are shocked to discover that work is actively worked on for only 10-15% of its cycle time; the rest is waiting.
+
+__LI__ Throughput: items completed per week — track over time to spot trends
+__LI__ Cycle Time: days from work start to delivery — aim for shorter and more consistent, not just fast
+__LI__ WIP: current count of in-progress items — should stay near your WIP limit
+__LI__ Flow Efficiency: (active work time ÷ total cycle time) × 100 — most teams are below 20%
+
+__SUB__ Using Flow Data to Improve
+Flow metrics reveal systemic problems that are invisible at the individual level. A rising cycle time trend suggests a bottleneck is developing somewhere in the system. High WIP consistently above the limit suggests the team isn't respecting limits or limits are set too high. Low throughput with high WIP confirms the classic Kanban problem: too many things in flight, nothing finishing. The Kanban cadences — regular meetings to review flow data — are where these patterns are discussed and improvements planned.` },
+    { title: `Cumulative Flow Diagram (CFD)`, content: `__H__ Cumulative Flow Diagram (CFD)
+
+The Cumulative Flow Diagram is the most powerful visualisation in Kanban. It plots the number of items in each workflow state over time, creating a set of stacked bands that reveal queue buildup, throughput trends, and cycle time in a single view.
+
+__SUB__ Reading a CFD
+In a healthy CFD, the bands are roughly parallel — work is flowing evenly through each stage. The vertical distance between the top of the 'Done' band and the top of the 'Started' band represents current WIP. The horizontal distance represents average cycle time. When a band widens, it means work is accumulating in that state — a bottleneck is forming. When a band narrows rapidly, work is moving out of that state faster than it's entering — usually because something upstream was cleared.
+
+__LI__ Parallel, evenly-spaced bands: healthy flow — no bottlenecks, consistent throughput
+__LI__ Widening band at one stage: bottleneck — work is entering faster than it's leaving
+__LI__ Flat top line (Done not growing): no work completing — urgent intervention needed
+__LI__ Steep step in the Done band: batch of work completed after a delay — irregular flow
+__LI__ Narrowing WIP gap: throughput increasing relative to starts — flow is improving
+
+__SUB__ CFD as a Conversation Tool
+One of the best uses of the CFD is as a shared reference point in Kanban cadence meetings. Rather than asking 'how's it going?', the team looks at the CFD together and asks 'what does the data tell us?' This shifts conversation from opinion to evidence — a fundamental shift that leads to better improvement decisions.` },
+    { title: `Kanban Cadences`, content: `__H__ Kanban Cadences
+
+While Kanban doesn't prescribe events the way Scrum does, the Kanban Method recommends a set of regular meetings called cadences. Each cadence has a different frequency and focus — together they replace ad-hoc, reactive conversations with structured, proactive feedback loops.
+
+__SUB__ The Key Kanban Cadences
+The Daily Standup (or Kanban Flow Meeting) is a brief daily sync focused on the board — where is work stuck? What needs attention today? Unlike the Scrum Daily Scrum, this is often focused on the board rather than individual updates. The Replenishment Meeting (weekly or bi-weekly) is where the team pulls new work into the ready column, prioritises the backlog, and ensures the pipeline is healthy. The Delivery Planning Meeting (bi-weekly or monthly) reviews what will be delivered and when, using flow metrics as the basis for forecasting.
+
+__LI__ Daily Standup: walk the board right to left — focus on blocked or stalled items first
+__LI__ Replenishment Meeting: pull new work based on downstream capacity — don't push
+__LI__ Delivery Planning: use throughput data to forecast delivery dates — replace gut feel with data
+__LI__ Service Delivery Review: (monthly) review metrics with stakeholders — transparency and accountability
+__LI__ Retrospective: (monthly or bi-monthly) improve the system — Kanban teams retrospect too
+
+__SUB__ Cadences vs Scrum Events
+Kanban cadences are lighter-touch than Scrum events — they're scheduled based on need, not forced into a Sprint rhythm. A support team may need daily replenishment; a product team may only need it weekly. The flexibility is a strength for teams doing unpredictable work, but it requires discipline to maintain — without the forcing function of a Sprint end, teams can slip into skipping meetings when they get busy, losing the feedback loops that keep the system healthy.` },
+    { title: `Kanban vs Scrum vs Scrumban`, content: `__H__ Kanban vs Scrum vs Scrumban
+
+Choosing between Kanban, Scrum, and Scrumban is a real decision teams face — and there's no universally correct answer. The right choice depends on the nature of the work, the team's maturity, and the organisation's needs.
+
+__SUB__ Side-by-Side Comparison
+Scrum works well when the work is project-like — there's a defined product goal, work can be planned in short iterations, and a structured team with clear roles can be assembled. Kanban works best when the work is operational and unpredictable — support tickets, maintenance requests, continuous delivery — where work arrives unpredictably and needs to be processed continuously. The team doesn't need the structure of Sprints because they're not planning toward a defined outcome.
+
+__LI__ Scrum: time-boxed, role-defined, event-driven — best for product development with a clear PO and roadmap
+__LI__ Kanban: flow-based, role-agnostic, cadence-driven — best for ops, support, and continuous delivery
+__LI__ Scrumban: Sprint structure + Kanban WIP limits and visual board — common hybrid in practice
+__LI__ Scrum is more prescriptive and harder to get right but provides stronger empirical process control
+__LI__ Kanban is easier to adopt (no role changes, no Sprint boundaries) but requires flow metric discipline
+
+__SUB__ Scrumban — The Practical Hybrid
+Many teams land on Scrumban — using Scrum's Sprint cadence and roles while adopting Kanban's WIP limits, visual board, and flow metric practices. This combination gives teams the planning rhythm of Scrum with the flow visibility of Kanban. It's particularly common in teams that started with Scrum but found their work pattern doesn't fit neatly into two-week iterations. Scrumban is not an official framework — it's a pragmatic adaptation that works when teams understand why they're making each choice.` }
+    ]
+  }
+];
+
+const TEMPLATES = [
+    { name: 'Backlog Prioritization Calculator', file: 'assets/templates/Backlog Prioritization Calculator.xlsx', icon: 'fa-calculator' },
+    { name: 'Sprint Velocity Tracker', file: 'assets/templates/Sprint Velocity Tracker.xlsx', icon: 'fa-gauge-high' },
+    { name: 'Sprint Retrospective Tracker', file: 'assets/templates/Sprint Retrospective Tracker.xlsx', icon: 'fa-rotate-left' },
+];
+const TEMPLATE_MODULE = 3;
+
+let activeWeek = null;
+
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+
+    let tmpl = '';
+    if (id === TEMPLATE_MODULE) {
+        tmpl = '<div class="mt-6 mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Templates</div>' +
+            TEMPLATES.map(t =>
+                '<a class="template-card" href="' + t.file + '" download>' +
+                '<div class="template-icon"><i class="fas ' + t.icon + ' text-sm" style="color:#0D9488"></i></div>' +
+                '<div><div class="template-title">' + t.name + '</div>' +
+                '<div class="template-meta"><i class="fas fa-download text-[9px] mr-1"></i>Download Excel Template</div></div></a>'
+            ).join('');
+    }
+
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics' +
+        (id === TEMPLATE_MODULE ? ' &nbsp;&middot;&nbsp; 3 templates' : '') + '</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards + tmpl;
+}
+
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) {
+            html += '<div class="section-title">' + t.slice(6) + '</div>';
+        } else if (t.startsWith('__SUB__ ')) {
+            html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        } else if (t.startsWith('__LI__ ')) {
+            html += '<div class="bullet">' + t.slice(7) + '</div>';
+        } else {
+            html += '<p>' + t + '</p>';
+        }
+    }
+    return html;
+}
+
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#0D9488">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

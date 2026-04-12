@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PM Foundations | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C1220', accent: '#4F62F5', teal: '#0D9488',
+                        surface: '#EDF2F7', dark: '#111827', warm: '#FAFAF8'
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+        .topic-panel { display: none; }
+        .topic-panel.active { display: block; }
+        .side-link {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            padding: 0.45rem 0.75rem; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 500; color: #64748b;
+            cursor: pointer; transition: all 0.18s ease;
+            border-left: 2px solid transparent; line-height: 1.4;
+        }
+        .side-link:hover { color: #4F62F5; background: rgba(79,98,245,0.05); border-left-color: #4F62F5; }
+        .side-link.active { color: #4F62F5; background: rgba(79,98,245,0.07); border-left-color: #4F62F5; font-weight: 600; }
+        .topic-pill {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: #fff;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap;
+        }
+        .topic-pill:hover { border-color: #4F62F5; color: #4F62F5; }
+        .topic-pill.active { background: #4F62F5; border-color: #4F62F5; color: #fff; }
+        .notes h2 {
+            font-size: 1.15rem; font-weight: 800; color: #0C1220;
+            margin-top: 1.75rem; margin-bottom: 0.5rem;
+            padding-bottom: 0.35rem; border-bottom: 2px solid #EDF2F7;
+        }
+        .notes h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+        .notes p { font-size: 0.9rem; line-height: 1.85; color: #374151; margin-bottom: 0.85rem; }
+        .notes ul { list-style: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes ol { list-style: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes li { font-size: 0.9rem; line-height: 1.8; color: #374151; margin-bottom: 0.3rem; }
+        .notes strong { color: #0C1220; font-weight: 700; }
+        .notes img { max-width: 100%; border-radius: 10px; margin: 14px 0; border: 1px solid #e2e8f0; }
+        .callout-blue { background: #f8faff; border-left: 3px solid #4F62F5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-amber { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-teal  { background: #f0fdfa; border-left: 3px solid #0D9488; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+    <meta name="description" content="PM Foundations — PM roles, product life cycle, responsibilities, and why product managers exist." />
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w0.html" />
+</head>
+<body class="bg-warm text-dark">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-arrow-left text-xs"></i> Learning Hub
+        </a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="bg-navy pt-20 pb-8 border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10">
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <span class="text-accent font-semibold">PM Foundations</span>
+        </div>
+        <div class="flex flex-wrap items-start justify-between gap-5 mb-7">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Foundations Module</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">6 Topics</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">Self-paced</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">PM Foundations</h1>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <span class="px-4 py-2 bg-white/10 text-gray-500 text-sm rounded-lg cursor-not-allowed">← Prev</span>
+                <a href="pm-w1.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 1 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showTopic('t0')" id="pill-t0" class="topic-pill active">Different Types of PM Roles</button>
+            <button onclick="showTopic('t1')" id="pill-t1" class="topic-pill ">Product Life Cycle</button>
+            <button onclick="showTopic('t2')" id="pill-t2" class="topic-pill ">Product Management Myths</button>
+            <button onclick="showTopic('t3')" id="pill-t3" class="topic-pill ">Responsibilities of a Product …</button>
+            <button onclick="showTopic('t4')" id="pill-t4" class="topic-pill ">Who is a Product Manager</button>
+            <button onclick="showTopic('t5')" id="pill-t5" class="topic-pill ">Why Do We Need a Product Manag…</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="flex gap-10">
+        <aside class="hidden lg:block w-60 flex-shrink-0">
+            <div class="sticky top-24 space-y-4">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Module</div>
+                    <div class="font-bold text-navy text-sm">PM Foundations</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Foundations Module · 6 topics</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Topics</div>
+                    <div class="space-y-0.5">
+                        <div onclick="showTopic('t0')" id="side-t0" class="side-link active">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Different Types of PM Roles
+                        </div>
+                        <div onclick="showTopic('t1')" id="side-t1" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Product Life Cycle
+                        </div>
+                        <div onclick="showTopic('t2')" id="side-t2" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Product Management Myths
+                        </div>
+                        <div onclick="showTopic('t3')" id="side-t3" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Responsibilities of a Product Manager
+                        </div>
+                        <div onclick="showTopic('t4')" id="side-t4" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Who is a Product Manager
+                        </div>
+                        <div onclick="showTopic('t5')" id="side-t5" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Why Do We Need a Product Manager
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <main class="flex-1 min-w-0">
+
+            <!-- TOPIC: Different Types of PM Roles -->
+            <div id="panel-t0" class="topic-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 1 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Different Types of PM Roles</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Different Types of PM Roles</strong></h2>
+<p>Although Product Manager is the term we use in every field and every company, the roles and responsibilities vary a lot depending on the company, the field and the products.</p>
+<p>We can classify Product Managers in different ways. Here is one of the ways:</p>
+<ul>
+<li><strong>The Growth PM</strong> — identifies the company's growth opportunities and directs the team's efforts to drive them. The growth PM works on improving a specific business metric to grow revenue and profits in the long term. Key skillsets: experimentation, optimization, marketing, monetization.</li>
+</ul>
+<ul>
+<li><strong>The Design PM</strong> — focuses on customer pain points and tries to solve them through product changes. They majorly work on new features. Key skillsets: user-centred design, holistic product thinking, user empathy, end-to-end UX.</li>
+</ul>
+<ul>
+<li><strong>The Technical PM (TPM)</strong> — focuses more on technical aspects of product development. A TPM mainly works with the engineering team to fulfil business goals. Requires good knowledge of how tech works — many engineers transition into TPM roles.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t1')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Product Life Cycle <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Product Life Cycle -->
+            <div id="panel-t1" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 2 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Product Life Cycle</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Product Life Cycle</strong></h2>
+<p>Products, like people, have life cycles. There are five stages: development, introduction, growth, maturity, and decline.</p>
+<img src="assets/pm-images/Product Life Cycle/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<ul>
+<li><strong>Development</strong> — raw ideas are refined into a marketable concept. Market research is conducted and the product is built based on insights.</li>
+</ul>
+<ul>
+<li><strong>Introduction</strong> — consumers are first made aware of the product. Focus is on creating awareness, building demand, and establishing early adopters. Keep doing product discovery and quantitative research at this stage.</li>
+</ul>
+<ul>
+<li><strong>Growth</strong> — consumers begin to believe in the product's capabilities. Demand and profits are both rising. This is one of the easiest times to market a product.</li>
+</ul>
+<ul>
+<li><strong>Maturity</strong> — sales grow at a slow but steady pace. Rapid growth has ended and supply has balanced with demand. Branding, price and product differentiation becomes critical to maintain market share.</li>
+</ul>
+<ul>
+<li><strong>Decline</strong> — marked by a decrease in sales. Out-of-date products are often replaced by modern alternatives and may experience a rapid drop in popularity.</li>
+</ul>
+<strong>Examples:</strong>
+<ul>
+<li>The typewriter → decline stage.</li>
+</ul>
+<ul>
+<li>Smartphones → maturity stage.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t2')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Product Management Myths <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Product Management Myths -->
+            <div id="panel-t2" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 3 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Product Management Myths</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Product Management Myths</strong></h2>
+<ul>
+<li><strong>Myth 1: A PM's role is well-defined</strong> — PM is the most overloaded term in the industry. The role varies with organisation, product, people, and stage of project delivery. A PM in a large org focuses on one area; in a startup, they do everything.</li>
+</ul>
+<ul>
+<li><strong>Myth 2: PMs are "mini-CEOs" of their product</strong> — PMs don't have direct authority over most things. Even senior product leaders only have hiring/firing control over their direct reports. A CEO controls all company resources; a PM controls very little.</li>
+</ul>
+<ul>
+<li><strong>Myth 3: PMs do the managing, others do the work</strong> — PMs are expected to get their hands dirty. Everything nobody else wants to do falls into the PM's hands. PMs listen, diffuse tensions, switch contexts repeatedly, and influence through credibility.</li>
+</ul>
+<ul>
+<li><strong>Myth 4: Product Management is all about building products</strong> — Any product goes through two phases: Problem phase and Solution phase. Building comes in the Solution phase, but exploring the Problem phase thoroughly is equally important. A good PM must understand the market and identify customer needs.</li>
+</ul>
+<ul>
+<li><strong>Myth 5: The PM is responsible for all the ideas</strong> — Good PMs work with their teams and stakeholders to generate ideas. Good ideas can come from anywhere.</li>
+</ul>
+<ul>
+<li><strong>Myth 6: Product Management is only for technical people</strong> — PM doesn't require a technical background. Technical knowledge is helpful but not necessary. A basic understanding of tech is needed, but strong analytical and user empathy skills matter more.</li>
+</ul>
+<ul>
+<li><strong>Myth 7: A PM's job is done once the product is launched</strong> — PMs continue to monitor the product's performance, gather feedback, and make improvements over time. Much of a PM's job involves managing existing products.</li>
+</ul>
+<ul>
+<li><strong>Myth 8: Product Managers only work in software companies</strong> — Product management spans retail, healthcare, finance, and beyond. A PM's core skill is problem solving, which applies in any industry.</li>
+</ul>
+<ul>
+<li><strong>Myth 9: Being a PM is easy!</strong> — You have to attend every product meeting, have context of everything going on, come up with solutions to problems others throw at you, know which problem to prioritise, and understand design, tech, data, and marketing simultaneously. It's anything but easy.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t3')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Responsibilities of a Product Manager <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Responsibilities of a Product Manager -->
+            <div id="panel-t3" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 4 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Responsibilities of a Product Manager</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Responsibilities of a Product Manager</strong></h2>
+<p>A PM's responsibilities can be summarised like this:</p>
+<ul>
+<li>Once a PM knows the problem to be solved, the workflow starts with research about users, market, and competitors alongside careful planning.</li>
+</ul>
+<ul>
+<li>Then follows design and writing detailed specifications. The engineering team does the heavy lifting and the PM guides how the product shapes up through constant feedback.</li>
+</ul>
+<ul>
+<li>The PM works to release the product to market. Go-to-market activities dominate at this phase.</li>
+</ul>
+<ul>
+<li>The cycle completes with the PM consuming analytics and feedback data to improve the product in the next cycle.</li>
+</ul>
+<p>A PM is specifically responsible for:</p>
+<ul>
+<li>Talking to customers</li>
+</ul>
+<ul>
+<li>Identifying problems to solve</li>
+</ul>
+<ul>
+<li>Product backlog management</li>
+</ul>
+<ul>
+<li>Strategic planning</li>
+</ul>
+<ul>
+<li>Specs for new features</li>
+</ul>
+<ul>
+<li>Meeting with other teams</li>
+</ul>
+<ul>
+<li>Product data analysis</li>
+</ul>
+<ul>
+<li>Documentation</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t4')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Who is a Product Manager <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Who is a Product Manager -->
+            <div id="panel-t4" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 5 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Who is a Product Manager</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Who is a Product Manager?</strong></h2>
+<p>One of my mentors once told me — a Product Manager is a representative of everyone who is not present in the meeting. That's perhaps the best description of a PM.</p>
+<p>All products have many moving parts and associated teams doing very different work: designers building UI/UX, tech teams working on scale, founders with specific goals, and marketing teams acquiring users. These teams don't always communicate with each other — they're all in the loop with one person: the Product Manager.</p>
+<p>A PM has all the context about the product from ideation to its goals. They're also the rightful advocate of the customer in the product development organisation.</p>
+<p>In a more technical way: a product manager connects business strategy, design knowledge, and customer needs to develop a product that is relevant, feasible, and valuable. PMs optimise a product to achieve business goals and user necessities while maximising return on investment.</p>
+<img src="assets/pm-images/Who is a Product Manager/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<p>Does this mean all PMs are the same? Not at all. Every product has a different set of customers, tech stack, and business model.</p>
+<ul>
+<li>An API product manager serving developer customers needs strong technical skills.</li>
+</ul>
+<ul>
+<li>A B2C consumer PM serving millions of users needs to be highly quantitative.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t5')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Why Do We Need a Product Manager <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Why Do We Need a Product Manager -->
+            <div id="panel-t5" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 6 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Why Do We Need a Product Manager</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Why Do We Need a Product Manager?</strong></h2>
+<p>To answer that, let's imagine a world with no product managers.</p>
+<p>We have 3 groups involved in the product development process:</p>
+<ul>
+<li><strong>Users</strong> — have a pain point they want solved.</li>
+</ul>
+<ul>
+<li><strong>Business</strong> — wants to achieve goals and generate shareholder value.</li>
+</ul>
+<ul>
+<li><strong>Development team</strong> — wants to build something they find meaningful.</li>
+</ul>
+<p>The motivation and goals for all three groups are very different:</p>
+<ul>
+<li>Users might want services without cost; the business wants to charge them.</li>
+</ul>
+<ul>
+<li>The dev team wants to build cool things; users want very specific things.</li>
+</ul>
+<p>This is where the product jumps in. A great product solves the pains of the customer, the business, and the product development team simultaneously.</p>
+<p>And who handles everything related to the product? The Product Manager.</p>
+<p>A PM helps guide a team in discovering and developing the right product for users.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-8 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">Mohammad Rashad Nadeer Kutty — PM Learning</div>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub</a>
+    </div>
+</footer>
+
+<script>
+    function showTopic(id) {
+        document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.side-link').forEach(s => s.classList.remove('active'));
+        document.getElementById('panel-' + id).classList.add('active');
+        document.getElementById('pill-' + id).classList.add('active');
+        document.getElementById('side-' + id).classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>

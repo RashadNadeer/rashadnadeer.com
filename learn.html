@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learning Hub | Mohammad Rashad Nadeer Kutty</title>
+    <meta name="description" content="Mohammad Rashad Nadeer Kutty's personal learning hub covering Product Management, Cloud Engineering, Business Analysis, and professional development resources." />
+    <meta name="robots" content="index, follow" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy:   '#0C1220',
+                        accent: '#4F62F5',
+                        teal:   '#0D9488',
+                        surface:'#EDF2F7',
+                        dark:   '#111827',
+                        warm:   '#FAFAF8',
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+
+        /* Tab system */
+        .tab-btn { transition: all 0.2s ease; }
+        .tab-btn.active {
+            background: #4F62F5;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(79,98,245,0.25);
+        }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Case study card expand */
+        .cs-body { display: none; }
+        .cs-body.open { display: block; }
+        .cs-chevron { transition: transform 0.25s ease; }
+        .cs-chevron.open { transform: rotate(180deg); }
+
+        /* Playbook sidebar */
+        .play-link {
+            display: block;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #64748b;
+            border-left: 2px solid transparent;
+            border-radius: 0 4px 4px 0;
+            transition: all 0.18s ease;
+            cursor: pointer;
+        }
+        .play-link:hover { color: #4F62F5; border-left-color: #4F62F5; background: rgba(79,98,245,0.05); }
+        .play-link.active { color: #4F62F5; border-left-color: #4F62F5; background: rgba(79,98,245,0.07); font-weight: 600; }
+
+        .play-section { display: none; }
+        .play-section.active { display: block; }
+
+        /* Hero gradient stripe */
+        .hero-stripe { background: linear-gradient(90deg, transparent, #4F62F5 30%, #818CF8 60%, transparent); }
+
+        /* Resource card hover */
+        .res-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .res-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px -8px rgba(79,98,245,0.13); }
+
+        /* PM week panel */
+        .pm-week-panel.hidden { display: none; }
+        .pm-week-tab { transition: all 0.2s ease; }
+        .pm-week-tab.active-week { background: #4F62F5; color: #fff; border-color: #4F62F5; }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="canonical" href="https://rashadnadeer.com/learn.html" />
+</head>
+
+<body class="bg-surface text-dark">
+
+<!-- ── NAV ── -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy backdrop-blur-md border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-2xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <div class="flex items-center gap-6">
+            <a href="index.html#about"           class="text-gray-400 hover:text-white text-sm font-medium transition-colors hidden md:block">About</a>
+            <a href="index.html#experience"      class="text-gray-400 hover:text-white text-sm font-medium transition-colors hidden md:block">Experience</a>
+            <a href="index.html#certifications"  class="text-gray-400 hover:text-white text-sm font-medium transition-colors hidden md:block">Certifications</a>
+            <a href="learn.html" class="bg-accent text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">Learning Hub</a>
+            <a href="index.html#contact" class="border border-white/20 text-gray-300 hover:border-accent hover:text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="pt-24 pb-16 bg-navy relative overflow-hidden">
+    <div class="absolute top-0 left-0 right-0 h-[2px] hero-stripe"></div>
+    <div class="absolute top-0 left-0 w-[600px] h-[500px] bg-accent/8 rounded-full blur-[120px] pointer-events-none -translate-x-1/3 -translate-y-1/3"></div>
+    <div class="absolute bottom-0 right-0 w-[400px] h-[300px] bg-teal/6 rounded-full blur-[100px] pointer-events-none translate-x-1/4 translate-y-1/4"></div>
+    <div class="max-w-[1400px] mx-auto px-10 relative z-10">
+        <div class="inline-flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
+            <i class="fas fa-book-open text-accent text-xs"></i>
+            <span class="text-gray-300 text-sm">Continuous Learning</span>
+        </div>
+        <h1 class="text-5xl font-extrabold text-gray-100 tracking-tight mb-5">Learning Hub</h1>
+        <p class="text-gray-400 text-lg max-w-2xl leading-relaxed mb-10">
+            A structured view of my ongoing learning across Product Management, Cloud and Support Engineering, and professional skills — turning study into practice.
+        </p>
+        <!-- Stats -->
+        <div class="flex flex-wrap gap-8 pt-8 border-t border-white/10">
+            <div>
+                <div class="text-2xl font-bold text-gray-100">61</div>
+                <div class="text-gray-500 text-sm mt-0.5">PM Topics</div>
+            </div>
+            <div class="pl-8 border-l border-white/10">
+                <div class="text-2xl font-bold text-gray-100">15+</div>
+                <div class="text-gray-500 text-sm mt-0.5">Technical Topics</div>
+            </div>
+            <div class="pl-8 border-l border-white/10">
+                <div class="text-2xl font-bold text-gray-100">35+</div>
+                <div class="text-gray-500 text-sm mt-0.5">Learning Guides</div>
+            </div>
+            <div class="pl-8 border-l border-white/10">
+                <div class="text-2xl font-bold text-gray-100">12</div>
+                <div class="text-gray-500 text-sm mt-0.5">Professional Templates</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── TABS ── -->
+<div class="bg-warm border-b border-gray-200 sticky top-[65px] z-40">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex gap-3">
+        <button onclick="switchTab('pm')" id="tab-pm" class="tab-btn active px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:text-navy">
+            <i class="fas fa-lightbulb mr-2"></i>Product Management
+        </button>
+        <button onclick="switchTab('sdlc')" id="tab-sdlc" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:text-navy">
+            <i class="fas fa-diagram-project mr-2"></i>SDLC
+        </button>
+        <button onclick="switchTab('tech')" id="tab-tech" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:text-navy">
+            <i class="fas fa-server mr-2"></i>Technical Playbook
+            <span class="ml-2 text-[10px] font-bold uppercase tracking-wide text-amber-500 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">WIP</span>
+        </button>
+        <button onclick="switchTab('resources')" id="tab-resources" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:text-navy">
+            <i class="fas fa-folder-open mr-2"></i>Resource Library
+        </button>
+    </div>
+</div>
+
+<div class="max-w-[1400px] mx-auto px-10 py-12">
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 — PM CASE STUDIES
+══════════════════════════════════════════════ -->
+<div id="panel-pm" class="tab-panel active">
+
+    <!-- Header — description + stats only, no button -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-extrabold text-navy mb-2">Product Management</h2>
+        <p class="text-gray-500 max-w-2xl text-[15px]">An 8-week structured learning programme covering PM fundamentals, user research, product design, growth, metrics, tech, and roadmapping — built from real course notes and applied to live products.</p>
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+            <span class="bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full">8 Modules</span>
+            <span class="bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full">61 Topics</span>
+            <span class="bg-surface text-gray-500 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Self-paced</span>
+            <a href="pm-learning.html" class="inline-flex items-center gap-2 bg-accent text-white text-xs font-bold px-4 py-1.5 rounded-full hover:bg-accent/90 transition-all shadow-sm">
+                <i class="fas fa-graduation-cap"></i> Open Module
+            </a>
+        </div>
+    </div>
+
+    <!-- 8-week learning journey — each card opens its own dedicated module -->
+    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4 mb-12">
+
+        <!-- Foundations -->
+        <a href="pm-w0.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-accent/40 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-seedling text-accent text-xs"></i>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Foundations</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-accent transition-colors">PM Foundations</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">What is a PM, responsibilities, role types, myths, and the product life cycle.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">6 topics</span>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 1 -->
+        <a href="pm-w1.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-teal/40 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-teal/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-teal">W1</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Problem Solving</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-teal transition-colors">Problem Solving Mindset</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">5 Whys, MECE, Issue Trees, KPI Trees, Product Thinking, and the Opportunity Solution Tree.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">9 topics</span>
+                <span class="text-[10px] font-bold text-teal uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 2 -->
+        <a href="pm-w2.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-purple-300 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-purple-600">W2</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">User Research</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-purple-700 transition-colors">Discovery & Research</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">JTBD, personas, segments, journey maps, design thinking, and turning insights into decisions.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">9 topics</span>
+                <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 3 -->
+        <a href="pm-w3.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-orange-300 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-orange-500">W3</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Ideation</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-orange-600 transition-colors">Ideation & Design</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">Ideation techniques, wireframes, user flows, MVP validation, storyboarding and mind maps.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">8 topics</span>
+                <span class="text-[10px] font-bold text-orange-500 uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 4 -->
+        <a href="pm-w4.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-green-300 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-green-600">W4</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Growth</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-green-700 transition-colors">Product Growth</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">AARRR framework, growth loops, flywheels, growth channels, and product-led growth.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">6 topics</span>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 5 -->
+        <a href="pm-w5.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-accent/40 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-accent">W5</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Metrics</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-accent transition-colors">Metrics & Analytics</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">North Star metrics, cohort analysis, funnels, A/B testing, events design, and root cause analysis.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">8 topics</span>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 6 -->
+        <a href="pm-w6.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-slate-300 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-slate-600">W6</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Tech</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-slate-700 transition-colors">Tech & SQL</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">APIs, databases, system design, technical debt, webhooks, and SQL for product decisions.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">7 topics</span>
+                <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+        <!-- Week 7 -->
+        <a href="pm-w7.html" class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col hover:border-navy/20 hover:shadow-md transition-all no-underline">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 bg-navy/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-navy">W7</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Roadmap</span>
+            </div>
+            <div class="font-bold text-navy text-sm mb-1.5 group-hover:text-accent transition-colors">Product Roadmap</div>
+            <p class="text-xs text-gray-500 leading-relaxed flex-1">OKRs, prioritisation, stakeholder management, customer feedback, PRDs, and roadmapping.</p>
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">6 topics</span>
+                <span class="text-[10px] font-bold text-navy uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- Related modules — go deeper on adjacent skills -->
+    <div class="mb-10">
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Go Deeper</div>
+        <div class="grid md:grid-cols-3 gap-5">
+
+            <!-- Product Discovery -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(8,145,178,.1)">
+                        <i class="fas fa-magnifying-glass text-sm" style="color:#0891B2"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">Product Discovery</div>
+                        <div class="text-xs text-gray-400 mt-0.5">4 modules · 10 topics</div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Dual-track Agile, user research, personas, JTBD, usability testing, RICE, Kano, and outcome-based roadmapping.</p>
+                <a href="pd-learning.html" class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg text-white w-fit" style="background:#0891B2">
+                    <i class="fas fa-arrow-right text-[10px]"></i> Open Module
+                </a>
+            </div>
+
+            <!-- OKRs -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(217,119,6,.1)">
+                        <i class="fas fa-bullseye text-sm" style="color:#D97706"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">OKRs & Strategic Planning</div>
+                        <div class="text-xs text-gray-400 mt-0.5">4 modules · 11 topics · 1 template</div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Writing great Objectives and Key Results, cascading alignment, quarterly cadence, honest grading, and strategy hierarchy.</p>
+                <a href="okr-learning.html" class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg text-white w-fit" style="background:#D97706">
+                    <i class="fas fa-arrow-right text-[10px]"></i> Open Module
+                </a>
+            </div>
+
+            <!-- UX/UI -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(124,58,237,.1)">
+                        <i class="fas fa-layer-group text-sm" style="color:#7C3AED"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">UX/UI Design Fundamentals</div>
+                        <div class="text-xs text-gray-400 mt-0.5">6 modules · 13 topics</div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Double Diamond, IA, wireframing, prototyping, usability testing, visual design, Gestalt principles, and design systems.</p>
+                <a href="ux-learning.html" class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg text-white w-fit" style="background:#7C3AED">
+                    <i class="fas fa-arrow-right text-[10px]"></i> Open Module
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+<!-- end panel-pm -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — SDLC
+══════════════════════════════════════════════ -->
+<div id="panel-sdlc" class="tab-panel">
+
+    <div class="flex flex-wrap items-start justify-between gap-6 mb-10">
+        <div>
+            <h2 class="text-3xl font-extrabold text-navy mb-2">SDLC — Software Development Lifecycle</h2>
+            <p class="text-gray-500 max-w-2xl">Three disciplines that together cover how software is planned, analysed, and delivered — Agile methodology, Business Analysis, and Project Management. Each is a standalone profession; together they represent the full delivery toolkit.</p>
+        </div>
+    </div>
+
+    <!-- 3 module cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+
+        <!-- Agile & PO -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center bg-teal/10 flex-shrink-0">
+                    <i class="fas fa-repeat text-teal text-sm"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-navy text-sm">Agile &amp; Product Owner</div>
+                    <div class="text-xs text-gray-400 mt-0.5">5 modules · 48 topics · 3 templates</div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">Agile foundations, Scrum framework, CSPO, CSM, backlog prioritisation, Kanban and flow metrics — with downloadable Excel templates.</p>
+            <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                <li class="flex items-start gap-2"><span class="text-teal">→</span> Agile Manifesto, Scrum roles, events &amp; artifacts</li>
+                <li class="flex items-start gap-2"><span class="text-teal">→</span> Product Owner: vision, backlog, user stories, CSPO</li>
+                <li class="flex items-start gap-2"><span class="text-teal">→</span> Scrum Master: servant leadership, coaching, CSM</li>
+                <li class="flex items-start gap-2"><span class="text-teal">→</span> MoSCoW, WSJF, RICE, velocity, Kanban &amp; CFD</li>
+            </ul>
+            <a href="agile-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white bg-teal hover:bg-teal/90 transition-all w-fit">
+                <i class="fas fa-arrow-right text-xs"></i> Open Module
+            </a>
+        </div>
+
+        <!-- Business Analysis -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(99,102,241,.1)">
+                    <i class="fas fa-sitemap text-sm" style="color:#6366F1"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-navy text-sm">Business Analysis</div>
+                    <div class="text-xs text-gray-400 mt-0.5">4 modules · 9 topics · 2 templates</div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">BA role and accountability, requirements types, elicitation techniques, use cases vs user stories, BPMN process modelling, gap analysis, BRD documentation, and BA in Agile.</p>
+            <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                <li class="flex items-start gap-2"><span style="color:#6366F1">→</span> BA vs PM vs PO — where the boundaries sit</li>
+                <li class="flex items-start gap-2"><span style="color:#6366F1">→</span> Business, stakeholder, solution &amp; transition requirements</li>
+                <li class="flex items-start gap-2"><span style="color:#6366F1">→</span> Elicitation: interviews, workshops, observation</li>
+                <li class="flex items-start gap-2"><span style="color:#6366F1">→</span> BPMN, gap analysis, BRD, traceability matrix</li>
+            </ul>
+            <a href="ba-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white transition-all w-fit" style="background:#6366F1">
+                <i class="fas fa-arrow-right text-xs"></i> Open Module
+            </a>
+        </div>
+
+        <!-- Project Management -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(124,58,237,.1)">
+                    <i class="fas fa-clipboard-list text-sm" style="color:#7C3AED"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-navy text-sm">Project Management</div>
+                    <div class="text-xs text-gray-400 mt-0.5">5 modules · 11 topics · 4 templates</div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">PMBOK process groups and knowledge areas, WBS, critical path, Earned Value Management, risk registers, stakeholder management, RACI, quality, procurement, and Agile/hybrid PM.</p>
+            <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                <li class="flex items-start gap-2"><span style="color:#7C3AED">→</span> Triple constraint, PMBOK 5 process groups</li>
+                <li class="flex items-start gap-2"><span style="color:#7C3AED">→</span> WBS, critical path, EVM — SPI, CPI, forecasting</li>
+                <li class="flex items-start gap-2"><span style="color:#7C3AED">→</span> Risk register, RACI, communications planning</li>
+                <li class="flex items-start gap-2"><span style="color:#7C3AED">→</span> Agile PM, hybrid delivery, PMP preparation</li>
+            </ul>
+            <a href="proj-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white transition-all w-fit" style="background:#7C3AED">
+                <i class="fas fa-arrow-right text-xs"></i> Open Module
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Additional SDLC modules -->
+    <div class="mt-10">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="h-px flex-1 bg-gray-200"></div>
+            <span class="text-xs font-bold uppercase tracking-widest text-gray-400 px-2">Also in SDLC</span>
+            <div class="h-px flex-1 bg-gray-200"></div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6 mb-10">
+
+            <!-- Testing & QA -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(220,38,38,.1)">
+                        <i class="fas fa-flask text-sm" style="color:#DC2626"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">Software Testing &amp; QA</div>
+                        <div class="text-xs text-gray-400 mt-0.5">8 modules · 15 topics</div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">Testing fundamentals, STLC, manual vs automated testing, test pyramid, Selenium, API testing, performance testing, test management, and defect lifecycle.</p>
+                <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                    <li class="flex items-start gap-2"><span style="color:#DC2626">→</span> Testing types — unit, integration, system, UAT</li>
+                    <li class="flex items-start gap-2"><span style="color:#DC2626">→</span> Test case design — equivalence, boundary, exploratory</li>
+                    <li class="flex items-start gap-2"><span style="color:#DC2626">→</span> Test pyramid, automation strategy, Selenium basics</li>
+                    <li class="flex items-start gap-2"><span style="color:#DC2626">→</span> Defect lifecycle, severity vs priority, regression</li>
+                </ul>
+                <a href="test-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white transition-all w-fit" style="background:#DC2626">
+                    <i class="fas fa-arrow-right text-xs"></i> Open Module
+                </a>
+            </div>
+
+            <!-- Change Management -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(2,132,199,.1)">
+                        <i class="fas fa-arrows-spin text-sm" style="color:#0284C7"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">Change Management (ADKAR)</div>
+                        <div class="text-xs text-gray-400 mt-0.5">6 modules · 12 topics</div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">Why change fails, the ADKAR model, change sponsorship, resistance management, communication and training planning, Kotter's 8 steps, and sustaining change.</p>
+                <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                    <li class="flex items-start gap-2"><span style="color:#0284C7">→</span> ADKAR — Awareness, Desire, Knowledge, Ability, Reinforcement</li>
+                    <li class="flex items-start gap-2"><span style="color:#0284C7">→</span> Sponsorship, resistance management, coalition building</li>
+                    <li class="flex items-start gap-2"><span style="color:#0284C7">→</span> Change impact assessment and readiness analysis</li>
+                    <li class="flex items-start gap-2"><span style="color:#0284C7">→</span> Kotter's 8 steps, Lewin's model, sustaining change</li>
+                </ul>
+                <a href="change-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white transition-all w-fit" style="background:#0284C7">
+                    <i class="fas fa-arrow-right text-xs"></i> Open Module
+                </a>
+            </div>
+
+            <!-- Lean & Six Sigma -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(5,150,105,.1)">
+                        <i class="fas fa-chart-simple text-sm" style="color:#059669"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy text-sm">Lean &amp; Six Sigma</div>
+                        <div class="text-xs text-gray-400 mt-0.5">8 modules · 15 topics</div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">Lean philosophy and waste elimination, value stream mapping, DMAIC methodology, statistical process control, Six Sigma belts, Design for Six Sigma, and Lean-Agile integration.</p>
+                <ul class="space-y-1.5 text-xs text-gray-500 mb-5">
+                    <li class="flex items-start gap-2"><span style="color:#059669">→</span> 8 wastes (DOWNTIME), 5S, value stream mapping</li>
+                    <li class="flex items-start gap-2"><span style="color:#059669">→</span> DMAIC — Define, Measure, Analyse, Improve, Control</li>
+                    <li class="flex items-start gap-2"><span style="color:#059669">→</span> Cause &amp; effect, control charts, Cpk, FMEA</li>
+                    <li class="flex items-start gap-2"><span style="color:#059669">→</span> Six Sigma belts, Lean-Agile, design for quality</li>
+                </ul>
+                <a href="lean-learning.html" class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg text-white transition-all w-fit" style="background:#059669">
+                    <i class="fas fa-arrow-right text-xs"></i> Open Module
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Templates summary -->
+    <div class="bg-surface rounded-2xl p-6">
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Templates Included Across SDLC Modules</div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-teal text-[10px]"></i> Backlog Prioritization Calculator</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-teal text-[10px]"></i> Sprint Velocity Tracker</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-teal text-[10px]"></i> Sprint Retrospective Tracker</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#6366F1"></i> Stakeholder Register</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#6366F1"></i> Change Request Log</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#7C3AED"></i> Project Risk Register</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#7C3AED"></i> Project Status Report (RAG)</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#7C3AED"></i> Resource &amp; Capacity Planner</div>
+            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check text-xs" style="color:#7C3AED"></i> Change Request Log</div>
+        </div>
+    </div>
+
+</div>
+<!-- end panel-sdlc -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 7 — TECHNICAL PLAYBOOK
+══════════════════════════════════════════════ -->
+<div id="panel-tech" class="tab-panel">
+
+    <!-- Under Construction banner -->
+    <div class="flex items-center justify-end gap-2 mb-6">
+        <span class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-4 py-2 rounded-full">
+            <i class="fas fa-hard-hat text-amber-500"></i>
+            Under Construction — more topics being added
+        </span>
+    </div>
+
+    <div class="flex gap-8">
+
+        <!-- Sidebar -->
+        <aside class="hidden lg:block w-52 flex-shrink-0">
+            <div class="sticky top-[130px] space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-2 mb-3">Topics</div>
+                <div onclick="switchPlay('cloud')"    id="play-cloud"    class="play-link active">Cloud and AWS Fundamentals</div>
+                <div onclick="switchPlay('devops')"   id="play-devops"   class="play-link">DevOps and CI/CD</div>
+                <div onclick="switchPlay('monitor')"  id="play-monitor"  class="play-link">Monitoring and Observability</div>
+                <div onclick="switchPlay('incident')" id="play-incident" class="play-link">Incident Management</div>
+                <div onclick="switchPlay('sql')"      id="play-sql"      class="play-link">SQL for Support</div>
+                <div onclick="switchPlay('trouble')"  id="play-trouble"  class="play-link">Troubleshooting Frameworks</div>
+                <div onclick="switchPlay('api')"      id="play-api"      class="play-link">API Fundamentals</div>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+
+            <!-- Cloud and AWS -->
+            <div id="ps-cloud" class="play-section active">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-cloud text-[10px]"></i> Cloud and AWS</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">Cloud and AWS Fundamentals</h3>
+                    <p class="text-gray-500 text-sm">Core AWS services, the shared responsibility model, and how cloud infrastructure underpins modern enterprise platforms.</p>
+                    <a href="aws-learning.html" class="mt-3 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg text-white transition-all" style="background:#EA580C">
+                        <i class="fas fa-graduation-cap text-[10px]"></i> Full AWS Cloud Computing Module — 8 modules · 18 topics
+                    </a>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">AWS Core Services</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Compute</div><p class="text-xs text-gray-500">EC2 (virtual machines), Lambda (serverless functions), ECS/EKS (containers). Understanding when to use each and the trade-offs between managed and unmanaged compute.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Storage</div><p class="text-xs text-gray-500">S3 (object storage), EBS (block storage for EC2), EFS (shared file system). Key use cases: static assets in S3, database volumes on EBS, shared config files on EFS.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Networking</div><p class="text-xs text-gray-500">VPC, subnets (public vs private), Security Groups, NAT Gateway, and Route 53 (DNS). How traffic flows from internet to application inside a VPC.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Databases</div><p class="text-xs text-gray-500">RDS (managed relational), DynamoDB (NoSQL), ElastiCache (in-memory caching), Redshift (data warehouse). Choosing the right store for the access pattern.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">IAM</div><p class="text-xs text-gray-500">Identity and Access Management — users, groups, roles, policies. Principle of least privilege. How IAM roles are assumed by services (EC2 instance roles, Lambda execution roles).</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Messaging</div><p class="text-xs text-gray-500">SQS (queues), SNS (pub/sub notifications), EventBridge (event routing). Decoupling services so failures don't cascade across the system.</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">Shared Responsibility Model</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">AWS manages security <strong>of</strong> the cloud (physical hardware, data centres, hypervisor layer). Customers manage security <strong>in</strong> the cloud (OS patching, application security, data encryption, IAM configuration).</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-xl p-4"><div class="font-semibold text-blue-800 text-xs mb-2">AWS Responsibility</div><ul class="text-xs text-blue-700 space-y-1"><li>Physical data centre security</li><li>Hardware maintenance and replacement</li><li>Hypervisor and virtualisation layer</li><li>Managed service availability (RDS, Lambda)</li></ul></div>
+                            <div class="bg-accent/5 rounded-xl p-4"><div class="font-semibold text-accent text-xs mb-2">Customer Responsibility</div><ul class="text-xs text-gray-600 space-y-1"><li>OS patching on EC2 instances</li><li>Application security and access controls</li><li>Encryption of data at rest and in transit</li><li>IAM policies and least-privilege access</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DevOps and CI/CD -->
+            <div id="ps-devops" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-teal/10 text-teal text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-code-branch text-[10px]"></i> DevOps</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">DevOps and CI/CD</h3>
+                    <p class="text-gray-500 text-sm">Understanding deployment pipelines, environment promotion, and release strategies that support enterprise software delivery.</p>
+                    <a href="devops-learning.html" class="mt-3 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg text-white bg-teal hover:bg-teal/90 transition-all">
+                        <i class="fas fa-graduation-cap text-[10px]"></i> Full DevOps Learning Module — 8 modules · 14 topics
+                    </a>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">CI/CD Pipeline Overview</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">Continuous Integration (CI) automates code integration and testing. Continuous Delivery (CD) automates deployment to environments. Together they compress the time between a developer writing code and that code running in production.</p>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-surface rounded-xl p-4"><div class="w-7 h-7 bg-accent rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">1</div><div><div class="font-semibold text-navy text-xs mb-1">Code Commit and Build</div><p class="text-xs text-gray-500">Developer pushes to version control (Git). CI server triggers automated build — compiles code, resolves dependencies, creates a deployable artifact (Docker image, JAR, ZIP).</p></div></div>
+                            <div class="flex items-start gap-3 bg-surface rounded-xl p-4"><div class="w-7 h-7 bg-accent rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">2</div><div><div class="font-semibold text-navy text-xs mb-1">Automated Testing</div><p class="text-xs text-gray-500">Unit tests, integration tests, and security scans run automatically. If any test fails, the pipeline stops — preventing broken code from progressing to deployment.</p></div></div>
+                            <div class="flex items-start gap-3 bg-surface rounded-xl p-4"><div class="w-7 h-7 bg-accent rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">3</div><div><div class="font-semibold text-navy text-xs mb-1">Environment Promotion</div><p class="text-xs text-gray-500">Artifact is deployed to Dev → QA → Staging → Production. Each stage has approval gates and environment-specific configuration (different DB endpoints, feature flags, logging levels).</p></div></div>
+                            <div class="flex items-start gap-3 bg-surface rounded-xl p-4"><div class="w-7 h-7 bg-teal rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">4</div><div><div class="font-semibold text-navy text-xs mb-1">Production Release</div><p class="text-xs text-gray-500">Deployment to production using a controlled strategy. Monitoring is triggered post-deploy to catch regressions. Rollback plan is pre-defined before any release goes live.</p></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">Deployment Strategies</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Blue/Green</div><p class="text-xs text-gray-500">Two identical environments. Traffic is switched from Blue (old) to Green (new) instantly. Easy rollback — just switch traffic back. Higher infrastructure cost.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Canary Release</div><p class="text-xs text-gray-500">New version rolled out to a small % of users first (e.g. 5%). Monitor metrics. If healthy, gradually increase to 100%. Limits blast radius of bad releases.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Rolling Update</div><p class="text-xs text-gray-500">Instances updated one-by-one or in batches. Old and new versions run simultaneously during rollout. No extra infrastructure needed but rollback is slower.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring -->
+            <div id="ps-monitor" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-eye text-[10px]"></i> Monitoring</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">Monitoring and Observability</h3>
+                    <p class="text-gray-500 text-sm">Logs, metrics, and alerts — the three pillars of observability that enable proactive support and fast incident response.</p>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-4">The Three Pillars of Observability</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Logs</div><p class="text-xs text-gray-500 leading-relaxed">Timestamped records of events. Used for debugging specific errors. Structured logs (JSON) are searchable. Centralised using CloudWatch Logs, ELK Stack, or Datadog Log Management.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Metrics</div><p class="text-xs text-gray-500 leading-relaxed">Numeric time-series data — CPU %, memory usage, API response time, error rate, request count. Aggregated and visualised on dashboards. Trigger alarms when thresholds are crossed.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Traces</div><p class="text-xs text-gray-500 leading-relaxed">End-to-end visibility across distributed services. A trace shows the full path of a request through multiple microservices — helps identify which service is the bottleneck causing latency.</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">CloudWatch and Alerting Strategy</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-3">AWS CloudWatch collects metrics from all AWS services automatically. Custom application metrics can be published via the PutMetricData API. Alarms trigger SNS notifications (email, Slack, PagerDuty) or Auto Scaling actions.</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Alert Thresholds</div><p class="text-xs text-gray-500">Set thresholds based on baselines, not guesses. Use anomaly detection for variable patterns. Avoid alert fatigue by only alerting on conditions that require human action.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Log Retention Policy</div><p class="text-xs text-gray-500">Define log retention periods per environment. Production logs: 90 days minimum for audit compliance. Dev/QA logs: 7-14 days. Archive to S3 for cost-efficient long-term storage.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Incident Management -->
+            <div id="ps-incident" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-red-100 text-red-600 text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-fire-alt text-[10px]"></i> Incidents</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">Incident Management</h3>
+                    <p class="text-gray-500 text-sm">Structured response to system failures — from detection and triage through resolution and post-incident review.</p>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-4">Incident Response Lifecycle</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">1. Detect</div><p class="text-xs text-gray-500 mt-0.5">Alert fires from monitoring (CloudWatch alarm, Datadog monitor, user-reported ticket). Incident declared and severity level assigned (P1 = critical, P2 = major, P3 = minor).</p></div></div>
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">2. Triage and Assemble</div><p class="text-xs text-gray-500 mt-0.5">Incident commander assigned. Relevant engineers, support leads, and stakeholders join the incident bridge (Zoom/Teams). Communication channel opened in Slack.</p></div></div>
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">3. Investigate</div><p class="text-xs text-gray-500 mt-0.5">Check recent deployments (last change = first suspect). Review CloudWatch metrics and error logs. Isolate whether it is infrastructure, application code, data, or a third-party integration.</p></div></div>
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">4. Mitigate</div><p class="text-xs text-gray-500 mt-0.5">Apply fix or workaround to restore service — even before root cause is fully known. Examples: rollback deployment, increase instance capacity, disable a broken feature flag, re-route traffic.</p></div></div>
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">5. Resolve and Communicate</div><p class="text-xs text-gray-500 mt-0.5">Service restored and confirmed stable. Update all stakeholders and status page. Close the incident. Schedule post-incident review within 48 hours.</p></div></div>
+                            <div class="flex items-start gap-3"><div class="w-2 h-2 bg-accent rounded-full mt-2 flex-shrink-0"></div><div><div class="font-semibold text-navy text-sm">6. Post-Incident Review (PIR)</div><p class="text-xs text-gray-500 mt-0.5">Blameless review of what happened, why it happened, and what will prevent recurrence. Outputs: timeline of events, root cause, action items with owners and due dates.</p></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">Root Cause Analysis (5 Whys)</h4>
+                        <p class="text-gray-600 text-sm mb-3">The 5 Whys technique traces a problem back to its root cause by asking "why" repeatedly until you reach a systemic issue, not just a symptom.</p>
+                        <div class="bg-navy rounded-xl p-4 text-sm space-y-2">
+                            <div class="text-gray-300"><span class="text-accent font-semibold">Problem:</span> Users cannot log in</div>
+                            <div class="text-gray-400 pl-3">Why? → Auth service returning 500 errors</div>
+                            <div class="text-gray-400 pl-6">Why? → Database connection pool exhausted</div>
+                            <div class="text-gray-400 pl-9">Why? → Query running full table scan</div>
+                            <div class="text-gray-400 pl-12">Why? → Index was dropped during last migration</div>
+                            <div class="text-green-400 pl-15 font-semibold">Root Cause: Migration script had no index validation step</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SQL for Support -->
+            <div id="ps-sql" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-database text-[10px]"></i> SQL</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">SQL for Support Engineers</h3>
+                    <p class="text-gray-500 text-sm">Using SQL to quickly diagnose data issues, investigate customer problems, and validate system state without waiting for an analyst.</p>
+                    <a href="sql-learning.html" class="mt-3 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg text-white transition-all" style="background:#0F766E">
+                        <i class="fas fa-graduation-cap text-[10px]"></i> Full SQL &amp; Data Fundamentals Module — 5 modules · 12 topics
+                    </a>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-4">Common Support Queries</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="font-semibold text-navy text-sm mb-2">Check a customer's recent activity</div>
+                                <pre class="bg-navy text-gray-200 rounded-xl p-4 text-xs overflow-x-auto"><code>SELECT a.action_type, a.created_at, a.status
+FROM user_activity a
+WHERE a.user_id = '12345'
+ORDER BY a.created_at DESC
+LIMIT 20;</code></pre>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-navy text-sm mb-2">Find all failed transactions in the last 24 hours</div>
+                                <pre class="bg-navy text-gray-200 rounded-xl p-4 text-xs overflow-x-auto"><code>SELECT t.transaction_id, t.user_id, t.amount, t.error_code, t.created_at
+FROM transactions t
+WHERE t.status = 'FAILED'
+  AND t.created_at >= NOW() - INTERVAL '24 hours'
+ORDER BY t.created_at DESC;</code></pre>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-navy text-sm mb-2">Count errors by type to spot patterns</div>
+                                <pre class="bg-navy text-gray-200 rounded-xl p-4 text-xs overflow-x-auto"><code>SELECT error_code, COUNT(*) AS occurrences
+FROM transactions
+WHERE status = 'FAILED'
+  AND created_at >= NOW() - INTERVAL '7 days'
+GROUP BY error_code
+ORDER BY occurrences DESC;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div id="ps-trouble" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-teal/10 text-teal text-xs font-semibold px-3 py-1 rounded-full mb-3"><i class="fas fa-tools text-[10px]"></i> Troubleshooting</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">Troubleshooting Frameworks</h3>
+                    <p class="text-gray-500 text-sm">Structured approaches to diagnosing and resolving complex technical issues under time pressure.</p>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-4">The DETECT Framework</h4>
+                        <div class="space-y-3">
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-accent text-lg w-6 flex-shrink-0">D</div><div><div class="font-semibold text-navy text-sm">Define the Problem</div><p class="text-xs text-gray-500 mt-0.5">Gather facts: what is broken, who is affected, when did it start, what changed recently? Separate symptoms from the actual failure.</p></div></div>
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-accent text-lg w-6 flex-shrink-0">E</div><div><div class="font-semibold text-navy text-sm">Examine the Scope</div><p class="text-xs text-gray-500 mt-0.5">Is it one user or all users? One region or global? One feature or the entire platform? Scope narrows the search space dramatically.</p></div></div>
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-accent text-lg w-6 flex-shrink-0">T</div><div><div class="font-semibold text-navy text-sm">Trace the Flow</div><p class="text-xs text-gray-500 mt-0.5">Follow the request path end-to-end: browser → CDN → load balancer → application server → database. Check logs and metrics at each layer.</p></div></div>
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-accent text-lg w-6 flex-shrink-0">E</div><div><div class="font-semibold text-navy text-sm">Evaluate Hypotheses</div><p class="text-xs text-gray-500 mt-0.5">List the most likely causes. Prioritise by probability and ease of testing. Test the most likely cause first — check recent deployments, configuration changes, and data anomalies.</p></div></div>
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-accent text-lg w-6 flex-shrink-0">C</div><div><div class="font-semibold text-navy text-sm">Contain and Fix</div><p class="text-xs text-gray-500 mt-0.5">Apply a fix or workaround. Test in a non-production environment first if time allows. Validate that the fix resolves the issue and does not create a new one.</p></div></div>
+                            <div class="flex gap-4 bg-surface rounded-xl p-4"><div class="font-extrabold text-teal text-lg w-6 flex-shrink-0">T</div><div><div class="font-semibold text-navy text-sm">Track and Document</div><p class="text-xs text-gray-500 mt-0.5">Record the timeline, root cause, and resolution in the ticket or incident record. Add to the runbook. Share learnings with the team so the same issue is resolved faster next time.</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Fundamentals -->
+            <div id="ps-api" class="play-section">
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full mb-3" style="background:rgba(217,119,6,.1);color:#D97706"><i class="fas fa-plug text-[10px]"></i> APIs</span>
+                    <h3 class="text-2xl font-extrabold text-navy mb-2">API Fundamentals</h3>
+                    <p class="text-gray-500 text-sm">How APIs work, REST principles, HTTP methods, OAuth 2.0, JWT authentication, API design best practices, and GraphQL vs gRPC comparisons.</p>
+                    <a href="api-learning.html" class="mt-3 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg text-white transition-all" style="background:#D97706">
+                        <i class="fas fa-graduation-cap text-[10px]"></i> Full API Fundamentals Module — 7 modules · 15 topics
+                    </a>
+                </div>
+                <div class="space-y-5">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <h4 class="font-bold text-navy mb-3">API Quick Reference</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">HTTP Methods</div><p class="text-xs text-gray-500">GET (read, safe, idempotent) · POST (create, non-idempotent) · PUT (full replace, idempotent) · PATCH (partial update) · DELETE (remove, idempotent). Method choice determines caching, safety, and retry behaviour.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Status Code Groups</div><p class="text-xs text-gray-500">2xx Success · 3xx Redirect · 4xx Client Error (401 unauthenticated, 403 forbidden, 404 not found, 422 validation, 429 rate limited) · 5xx Server Error. Always return meaningful status codes — never 200 for errors.</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">Authentication</div><p class="text-xs text-gray-500">API Key (server-to-server) · OAuth 2.0 (delegated user auth — Auth Code + PKCE for browsers/mobile, Client Credentials for M2M) · JWT (self-contained token, verified by signature, not lookup).</p></div>
+                            <div class="bg-surface rounded-xl p-4"><div class="font-semibold text-navy text-xs mb-2">REST vs GraphQL vs gRPC</div><p class="text-xs text-gray-500">REST: public APIs, universal browser support. GraphQL: complex data graphs, precise field selection. gRPC: internal microservices, binary Protocol Buffers, HTTP/2, streaming — 5–10x faster than JSON.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end panel-tech -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — RESOURCE LIBRARY
+══════════════════════════════════════════════ -->
+<div id="panel-resources" class="tab-panel">
+    <div class="mb-8">
+        <h2 class="text-3xl font-extrabold text-navy mb-3">Resource Library</h2>
+        <p class="text-gray-500 max-w-2xl">Learning modules built from real course notes, plus professional Excel templates you can download and use directly.</p>
+    </div>
+
+    <!-- Learning Modules -->
+    <div class="mb-12">
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Learning Modules</div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+            <a href="pm-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-accent/40 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center"><i class="fas fa-lightbulb text-accent text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-accent transition-colors">Product Management</div>
+                <p class="text-gray-500 text-xs flex-1">8 modules · 61 topics — PM foundations, user research, ideation, growth, metrics, roadmapping.</p>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="ba-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-accent/40 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center"><i class="fas fa-briefcase text-accent text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-accent transition-colors">Business Analysis</div>
+                <p class="text-gray-500 text-xs flex-1">Requirements elicitation, stakeholder mapping, use cases, and BA documentation standards.</p>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="agile-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-accent/40 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center"><i class="fas fa-sync-alt text-accent text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-accent transition-colors">Agile &amp; Scrum</div>
+                <p class="text-gray-500 text-xs flex-1">Sprint ceremonies, backlog management, story pointing, velocity tracking, and retrospectives.</p>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="aws-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-orange-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(234,88,12,0.1)"><i class="fas fa-cloud text-xs" style="color:#EA580C"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-orange-600 transition-colors">AWS Cloud Computing</div>
+                <p class="text-gray-500 text-xs flex-1">9 modules · 20 topics — EC2, Lambda, S3, RDS, VPC, CloudWatch, Secrets Manager, SSM, and more.</p>
+                <span class="text-[10px] font-bold uppercase tracking-wide" style="color:#EA580C">Open module →</span>
+            </a>
+
+            <a href="devops-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-blue-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(3,105,161,0.1)"><i class="fas fa-infinity text-xs" style="color:#0369A1"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-blue-700 transition-colors">DevOps &amp; CI/CD</div>
+                <p class="text-gray-500 text-xs flex-1">8 modules · 14 topics — pipelines, containers, IaC, monitoring, and DevOps culture.</p>
+                <span class="text-[10px] font-bold uppercase tracking-wide" style="color:#0369A1">Open module →</span>
+            </a>
+
+            <a href="sql-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-teal-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-teal/10 rounded-lg flex items-center justify-center"><i class="fas fa-database text-teal text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-teal transition-colors">SQL</div>
+                <p class="text-gray-500 text-xs flex-1">5 modules · 12 topics — SELECT to JOINs, aggregations, subqueries, and BI query patterns.</p>
+                <span class="text-[10px] font-bold text-teal uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="api-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-amber-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(217,119,6,0.1)"><i class="fas fa-plug text-xs" style="color:#D97706"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-amber-700 transition-colors">API Fundamentals</div>
+                <p class="text-gray-500 text-xs flex-1">7 modules · 15 topics — REST, HTTP, OAuth, JWT, GraphQL, gRPC, and Postman.</p>
+                <span class="text-[10px] font-bold uppercase tracking-wide" style="color:#D97706">Open module →</span>
+            </a>
+
+            <a href="ux-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-violet-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(124,58,237,0.1)"><i class="fas fa-paint-brush text-xs" style="color:#7C3AED"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-violet-700 transition-colors">UX &amp; Product Design</div>
+                <p class="text-gray-500 text-xs flex-1">6 modules · 13 topics — design thinking, user research, wireframing, and design systems.</p>
+                <span class="text-[10px] font-bold uppercase tracking-wide" style="color:#7C3AED">Open module →</span>
+            </a>
+
+            <a href="change-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-sky-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center"><i class="fas fa-arrows-rotate text-sky-600 text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-sky-700 transition-colors">Change Management</div>
+                <p class="text-gray-500 text-xs flex-1">6 modules · 12 topics — ADKAR, change readiness, stakeholder engagement, and resistance.</p>
+                <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="lean-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center"><i class="fas fa-leaf text-green-600 text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Lean &amp; Process Improvement</div>
+                <p class="text-gray-500 text-xs flex-1">8 modules · 15 topics — Lean, Six Sigma, value stream mapping, and process optimisation.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="test-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-red-300 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center"><i class="fas fa-vial text-red-600 text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-red-700 transition-colors">Software Testing</div>
+                <p class="text-gray-500 text-xs flex-1">8 modules · 15 topics — testing types, test plans, automation, and QA best practices.</p>
+                <span class="text-[10px] font-bold text-red-600 uppercase tracking-wide">Open module →</span>
+            </a>
+
+            <a href="okr-learning.html" class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-accent/40 hover:shadow-md transition-all">
+                <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center"><i class="fas fa-bullseye text-accent text-xs"></i></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-accent transition-colors">OKRs</div>
+                <p class="text-gray-500 text-xs flex-1">Setting and tracking Objectives and Key Results — strategy, alignment, and scoring.</p>
+                <span class="text-[10px] font-bold text-accent uppercase tracking-wide">Open module →</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <div>
+        <div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Downloadable Templates <span class="normal-case font-normal text-gray-400">— Excel (.xlsx)</span></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+            <a href="assets/templates/Backlog Prioritization Calculator.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Backlog Prioritisation Calculator</div>
+                <p class="text-gray-500 text-xs flex-1">Prioritise features using RICE scores, story points, sprint assignment, and status.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/OKR Tracker.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">OKR Tracker</div>
+                <p class="text-gray-500 text-xs flex-1">Quarterly objectives with key results, current scores, owner, and confidence ratings.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Project Risk Register.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Project Risk Register</div>
+                <p class="text-gray-500 text-xs flex-1">Risk log with probability, impact, severity score, mitigation plan, and owner.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Project Status Report (RAG).xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Project Status Report (RAG)</div>
+                <p class="text-gray-500 text-xs flex-1">Weekly health report — Red/Amber/Green status, issues, decisions needed, and next actions.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Sprint Retrospective Tracker.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Sprint Retrospective Tracker</div>
+                <p class="text-gray-500 text-xs flex-1">What went well, what didn't, what to try next sprint — with action items and owners.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Sprint Velocity Tracker.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Sprint Velocity Tracker</div>
+                <p class="text-gray-500 text-xs flex-1">Track team velocity sprint-over-sprint — planned vs completed points with trend charts.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Stakeholder Register.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Stakeholder Register</div>
+                <p class="text-gray-500 text-xs flex-1">Influence-interest grid, stakeholder profiles, engagement level, and communication preferences.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Resource & Capacity Planner.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Resource &amp; Capacity Planner</div>
+                <p class="text-gray-500 text-xs flex-1">Team capacity planning across sprints — allocation, availability, and workload balancing.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+            <a href="assets/templates/Change Request Log.xlsx" download class="res-card group bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2 no-underline hover:border-green-300 hover:shadow-md transition-all">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center"><i class="fas fa-file-excel text-white text-[10px]"></i></div><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Excel</span></div>
+                <div class="font-semibold text-navy text-sm group-hover:text-green-700 transition-colors">Change Request Log</div>
+                <p class="text-gray-500 text-xs flex-1">Track change requests — impact, priority, approval status, and implementation dates.</p>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wide"><i class="fas fa-download mr-1"></i>Download</span>
+            </a>
+
+        </div>
+    </div>
+</div>
+<!-- end panel-resources -->
+
+</div><!-- end max-w container -->
+
+<!-- ── FOOTER ── -->
+<footer class="bg-navy mt-16 py-8 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">Mohammad Rashad Nadeer Kutty — Learning Hub</div>
+        <a href="index.html" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Back to Portfolio</a>
+    </div>
+</footer>
+
+<script>
+    // ── MAIN TABS ──
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('panel-' + tab).classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // ── PM WEEK TABS ──
+    function switchPMWeek(week) {
+        document.querySelectorAll('.pm-week-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.pm-week-tab').forEach(b => {
+            b.classList.remove('active-week', 'bg-accent', 'text-white', 'border-accent');
+            b.classList.add('border-gray-200', 'text-gray-600');
+        });
+        const panel = document.getElementById('pmweek-' + week);
+        const btn   = document.getElementById('pmtab-' + week);
+        if (panel) panel.classList.remove('hidden');
+        if (btn) {
+            btn.classList.add('active-week', 'bg-accent', 'text-white', 'border-accent');
+            btn.classList.remove('border-gray-200', 'text-gray-600');
+        }
+    }
+    // Init first week tab active style
+    document.addEventListener('DOMContentLoaded', () => {
+        const first = document.getElementById('pmtab-w0');
+        if (first) {
+            first.classList.add('bg-accent', 'text-white', 'border-accent');
+            first.classList.remove('border-gray-200', 'text-gray-600');
+        }
+    });
+
+    // ── TECHNICAL PLAYBOOK SIDEBAR ──
+    function switchPlay(id) {
+        document.querySelectorAll('.play-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.play-link').forEach(l => l.classList.remove('active'));
+        const el = document.getElementById('ps-' + id);
+        const lk = document.getElementById('play-' + id);
+        if (el) el.classList.add('active');
+        if (lk) lk.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

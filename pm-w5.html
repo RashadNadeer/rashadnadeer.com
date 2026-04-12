@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metrics & Analytics | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C1220', accent: '#4F62F5', teal: '#0D9488',
+                        surface: '#EDF2F7', dark: '#111827', warm: '#FAFAF8'
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+        .topic-panel { display: none; }
+        .topic-panel.active { display: block; }
+        .side-link {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            padding: 0.45rem 0.75rem; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 500; color: #64748b;
+            cursor: pointer; transition: all 0.18s ease;
+            border-left: 2px solid transparent; line-height: 1.4;
+        }
+        .side-link:hover { color: #4F62F5; background: rgba(79,98,245,0.05); border-left-color: #4F62F5; }
+        .side-link.active { color: #4F62F5; background: rgba(79,98,245,0.07); border-left-color: #4F62F5; font-weight: 600; }
+        .topic-pill {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: #fff;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap;
+        }
+        .topic-pill:hover { border-color: #4F62F5; color: #4F62F5; }
+        .topic-pill.active { background: #4F62F5; border-color: #4F62F5; color: #fff; }
+        .notes h2 {
+            font-size: 1.15rem; font-weight: 800; color: #0C1220;
+            margin-top: 1.75rem; margin-bottom: 0.5rem;
+            padding-bottom: 0.35rem; border-bottom: 2px solid #EDF2F7;
+        }
+        .notes h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+        .notes p { font-size: 0.9rem; line-height: 1.85; color: #374151; margin-bottom: 0.85rem; }
+        .notes ul { list-style: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes ol { list-style: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes li { font-size: 0.9rem; line-height: 1.8; color: #374151; margin-bottom: 0.3rem; }
+        .notes strong { color: #0C1220; font-weight: 700; }
+        .notes img { max-width: 100%; border-radius: 10px; margin: 14px 0; border: 1px solid #e2e8f0; }
+        .callout-blue { background: #f8faff; border-left: 3px solid #4F62F5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-amber { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-teal  { background: #f0fdfa; border-left: 3px solid #0D9488; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+    <meta name="description" content="PM Week 5 — Metrics and Analytics: A/B testing, cohort analysis, funnels, hypothesis testing, product metrics, and root cause analysis." />
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w5.html" />
+</head>
+<body class="bg-warm text-dark">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-arrow-left text-xs"></i> Learning Hub
+        </a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="bg-navy pt-20 pb-8 border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10">
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <span class="text-accent font-semibold">Week 5</span>
+        </div>
+        <div class="flex flex-wrap items-start justify-between gap-5 mb-7">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 5 of 7</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">8 Topics</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">Self-paced</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Metrics & Analytics</h1>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="pm-w4.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-sm rounded-lg transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Week 4</a>
+                <a href="pm-w6.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 6 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showTopic('t0')" id="pill-t0" class="topic-pill active">A/B Testing</button>
+            <button onclick="showTopic('t1')" id="pill-t1" class="topic-pill ">Cohort Analysis</button>
+            <button onclick="showTopic('t2')" id="pill-t2" class="topic-pill ">Events Design</button>
+            <button onclick="showTopic('t3')" id="pill-t3" class="topic-pill ">Funnel Analysis</button>
+            <button onclick="showTopic('t4')" id="pill-t4" class="topic-pill ">Hypothesis Testing</button>
+            <button onclick="showTopic('t5')" id="pill-t5" class="topic-pill ">Metrics You Should Know</button>
+            <button onclick="showTopic('t6')" id="pill-t6" class="topic-pill ">Product Metrics 101</button>
+            <button onclick="showTopic('t7')" id="pill-t7" class="topic-pill ">Root Cause Analysis</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="flex gap-10">
+        <aside class="hidden lg:block w-60 flex-shrink-0">
+            <div class="sticky top-24 space-y-4">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Module</div>
+                    <div class="font-bold text-navy text-sm">Metrics & Analytics</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Week 5 of 7 · 8 topics</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Topics</div>
+                    <div class="space-y-0.5">
+                        <div onclick="showTopic('t0')" id="side-t0" class="side-link active">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            A/B Testing
+                        </div>
+                        <div onclick="showTopic('t1')" id="side-t1" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Cohort Analysis
+                        </div>
+                        <div onclick="showTopic('t2')" id="side-t2" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Events Design
+                        </div>
+                        <div onclick="showTopic('t3')" id="side-t3" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Funnel Analysis
+                        </div>
+                        <div onclick="showTopic('t4')" id="side-t4" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Hypothesis Testing
+                        </div>
+                        <div onclick="showTopic('t5')" id="side-t5" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Metrics You Should Know
+                        </div>
+                        <div onclick="showTopic('t6')" id="side-t6" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Product Metrics 101
+                        </div>
+                        <div onclick="showTopic('t7')" id="side-t7" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Root Cause Analysis
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <main class="flex-1 min-w-0">
+
+            <!-- TOPIC: A/B Testing -->
+            <div id="panel-t0" class="topic-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 1 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">A/B Testing</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>A/B Testing</strong></h2>
+<p>A/B testing, or 'split-testing', is a method of testing variations of components on web pages, app interfaces, ads, or emails. You start with a goal (say, earning more sign-ups) and test two versions with similar audiences. If there's a clear winner, you adopt that version.</p>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/5a71935b-b7c1-4bc9-94e5-8aae12521535_2056x1651.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>Benefits of A/B testing:</strong>
+<ul>
+<li>Optimise performance</li>
+</ul>
+<ul>
+<li>Reveal hidden trends and user behaviours</li>
+</ul>
+<ul>
+<li>Incorporate user feedback without disrupting user experience</li>
+</ul>
+<strong>Common A/B testing goals:</strong>
+<ul>
+<li><strong>E-commerce site</strong> — increase purchases</li>
+</ul>
+<ul>
+<li><strong>Consumer app</strong> — increase time spent in-app</li>
+</ul>
+<ul>
+<li><strong>Online publication</strong> — increase sign-up conversion rates</li>
+</ul>
+<ul>
+<li><strong>Business app</strong> — increase revenue-per-user</li>
+</ul>
+<strong>How to perform an A/B Test:</strong>
+<ul>
+<li>Step 1: Define your goal</li>
+</ul>
+<ul>
+<li>Step 2: Look at your current data</li>
+</ul>
+<ul>
+<li>Step 3: Come up with a hypothesis</li>
+</ul>
+<ul>
+<li>Step 4: Perform A/B test and analyse the results</li>
+</ul>
+<ul>
+<li>Step 5: Repeat with something else</li>
+</ul>
+<strong>Example:</strong> You want to increase clicks on the buy button on product pages. You come up with a hypothesis: "Making the CTA button more prominent will drive 20% more clicks." You expose 20% of users to the larger button and observe for one week. If the change is statistically significant, implement it. If not, iterate.
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t1')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Cohort Analysis <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Cohort Analysis -->
+            <div id="panel-t1" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 2 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Cohort Analysis</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Cohort Analysis</strong></h2>
+<p>Cohort analysis is a type of behavioural analytics where you take a group of users and analyse their usage patterns based on shared traits to better track and understand their actions. A cohort is simply a group of people with shared characteristics.</p>
+<p>The two most common types of cohorts:</p>
+<ul>
+<li><strong>Acquisition cohorts</strong> — groups divided based on when they signed up. Useful for measuring retention and churn rates within a specific timeframe.</li>
+</ul>
+<img src="assets/pm-images/Cohort Analysis/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<ul>
+<li><strong>Behavioural cohorts</strong> — groups divided based on their behaviours and actions in your product. Lets you view active users across different demographics and behavioural patterns.</li>
+</ul>
+<strong>Real-world example — Calm meditation app:</strong>
+<p>Calm wanted to test their reminder feature. They noticed a small set of highly engaged users actively used it, but the feature was buried in settings. They ran a test where select users got a prompt to set a reminder after their first meditation session.</p>
+<p>Using behavioural cohort analysis comparing those who set a reminder with all active users, Calm found that using the reminder feature increased engagement across the board — not just for the already-engaged users.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t2')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Events Design <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Events Design -->
+            <div id="panel-t2" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 3 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Events Design</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Events Design</strong></h2>
+<p>Imagine you're a user of an app and you go through this flow: open the app → home page → click Pay Now → complete payment. Event analytics means that for each of these actions, a data point is stored in your analytics software. These actions are stored as "events".</p>
+<p>Storing this data helps product managers look at how users are using the product in the form of data.</p>
+<strong>What type of products use event analytics?</strong>
+<ul>
+<li><strong>Consumer Products</strong> — social media, fintech, e-commerce, food delivery. Common use cases: signup funnel efficacy, order funnel efficacy, user engagement and retention trends, cohort insights.</li>
+</ul>
+<ul>
+<li><strong>Partner Products</strong> — marketplace delivery, lead sourcing platforms. Use cases: key action funnel efficacy, order and user cohort insights.</li>
+</ul>
+<ul>
+<li><strong>Internal Products</strong> — operations-focused products with on-ground teams. Product analytics isn't usually required since user flow is already decided and user base is low.</li>
+</ul>
+<ul>
+<li><strong>Core Products</strong> — inventory management, order management, pricing management systems. Analytics usually not required due to low volume and strict workflows.</li>
+</ul>
+<strong>Summary:</strong>
+<img src="assets/pm-images/Events Design/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t3')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Funnel Analysis <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Funnel Analysis -->
+            <div id="panel-t3" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 4 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Funnel Analysis</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Funnel Analysis</strong></h2>
+<p>Funnel analysis is a method used to analyse the sequence of events leading up to a point of conversion. It lets product and marketing managers understand user behaviours and obstacles throughout the customer journey.</p>
+<strong>Example funnel — converting free trial to paid subscribers:</strong>
+<ul>
+<li>Step 1: Prospects open an email and discover an offer for a free trial.</li>
+</ul>
+<ul>
+<li>Step 2: They click on a CTA button to redeem the free trial.</li>
+</ul>
+<ul>
+<li>Step 3: Prospects create an account and use the product for free.</li>
+</ul>
+<ul>
+<li>Step 4: Prospects convert to paid customers after the free trial expires.</li>
+</ul>
+<strong>Reading funnel data:</strong>
+<ul>
+<li>Emails sent: 1,000</li>
+</ul>
+<ul>
+<li>Emails opened: 300 (30%)</li>
+</ul>
+<ul>
+<li>CTA clicked: 150 (50% of opened)</li>
+</ul>
+<ul>
+<li>Free account created: 100 (67% of clicked)</li>
+</ul>
+<ul>
+<li>Paid conversion: 20 (20% of accounts)</li>
+</ul>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/3cc39df1-a5cd-4be9-bdaf-f9053bc0a165_1685x907.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<p>Seeing conversion as a funnel tells you which step has the biggest drop-offs so you can investigate root causes. Funnel analysis is a big part of any RCA process.</p>
+<strong>Case study — Patreon:</strong> Patreon discovered an opportunity to improve their pledge flow funnel through funnel analysis. They tested "blurred posts" to encourage more users to click through the pledge flow. Result: Patreon doubled pledge conversions on creator pages.
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t4')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Hypothesis Testing <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Hypothesis Testing -->
+            <div id="panel-t4" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 5 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Hypothesis Testing</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Hypothesis Testing</strong></h2>
+<p>A product hypothesis is an assumption made within a limited understanding of a specific product-related situation. It needs validation to determine if it will actually deliver the predicted results.</p>
+<strong>The three crucial factors of a hypothesis:</strong>
+<ul>
+<li><strong>Assumption</strong> — based on observations, either to fix a problem or update a feature.</li>
+</ul>
+<ul>
+<li><strong>Condition</strong> — the reason the assumption was made (e.g. lack of user interaction, dip in traffic).</li>
+</ul>
+<ul>
+<li><strong>Prediction (Impact)</strong> — the success or failure rate of the hypothesis.</li>
+</ul>
+<p>Example: "Increasing the size of images will give us 10% more clicks on the images after 1 week."</p>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/9178ff82-eb4c-48e7-a11f-eaa1f3c47643_1378x867.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>How to do Hypothesis Testing:</strong>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https://substack-post-media.s3.amazonaws.com/public/images/1220b6c6-7c4a-453a-93f2-0b4537b607e4_1375x868.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<ul>
+<li><strong>Step 1</strong> — write down the uncertainties and challenges. Brainstorm questions.</li>
+</ul>
+<ul>
+<li><strong>Step 2</strong> — build hypothesis statements. A problem can have multiple solutions.</li>
+</ul>
+<ul>
+<li><strong>Step 3</strong> — test your hypothesis. Determines whether to accept and ship or reject and iterate.</li>
+</ul>
+<strong>If your hypothesis passes:</strong> implement the solution and release to a wider audience.
+<strong>If it fails:</strong> Ask — are there other ways of implementing the same solution? Is this even the right feature? Are we solving the right problem?
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t5')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Metrics You Should Know <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Metrics You Should Know -->
+            <div id="panel-t5" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 6 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Metrics You Should Know</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Metrics You Should Know</strong></h2>
+<p>There are 3 types of metrics:</p>
+<ul>
+<li><strong>The North Star Metric</strong> — the key measure of success for the product team. It defines the relationship between customer problems and the revenue the business aims to generate. It gives clarity and alignment on what to optimise for, communicates the product organisation's impact to the rest of the company, and holds product accountable to an outcome. To qualify, a metric must lead to revenue, reflect customer value, and measure progress. Example: Instagram → Monthly Active Users; Spotify → Total time spent listening.</li>
+</ul>
+<ul>
+<li><strong>Primary Metrics / L1 Metrics</strong> — depict the desired outcome of a particular product, team, or initiative (unlike the NSM which represents the company as a whole). They should either directly contribute to the NSM or act as a check to ensure healthy growth.</li>
+</ul>
+<ul>
+<li><strong>Supporting Metrics / L2 Metrics</strong> — leading indicators that tell you how your NSM will change before it actually changes. Also tell you where efforts to move your NSM may be falling short.</li>
+</ul>
+<img src="assets/pm-images/Metrics you should know/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<h2>Key Metric Categories</h2>
+<ul>
+<li><strong>Awareness</strong> — website visits, social media metrics, time on site, email open rate.</li>
+</ul>
+<ul>
+<li><strong>Acquisition</strong> — number of leads, qualified leads, sign-ups, downloads, installs.</li>
+</ul>
+<ul>
+<li><strong>Activation</strong> — number of connections made, times an action is performed, steps completed.</li>
+</ul>
+<ul>
+<li><strong>Engagement</strong> — DAU/WAU/MAU, time per session, session frequency, in-product actions.</li>
+</ul>
+<ul>
+<li><strong>Revenue</strong> — % paid customers, average revenue per customer, conversion rate (trial to paid), transactions, shopping cart abandonment, ad CTR.</li>
+</ul>
+<ul>
+<li><strong>Retention</strong> — % users returning daily/monthly/yearly, churn rate, customer lifetime value.</li>
+</ul>
+<ul>
+<li><strong>Referral</strong> — Net Promoter Score, viral coefficient.</li>
+</ul>
+<strong>Product Metrics Cheat Sheet:</strong>
+<img src="assets/pm-images/Metrics you should know/Untitled 1.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t6')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Product Metrics 101 <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Product Metrics 101 -->
+            <div id="panel-t6" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 7 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Product Metrics 101</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Product Metrics 101</strong></h2>
+<p>A metric is anything that can be quantified and measured in a specific number, and hence be compared over time.</p>
+<p>When we have a product, we want it to deliver value to users. Understanding user behaviour and how they use the product tells us if they are getting that value. We study this by mapping product value to specific metrics called Product Metrics.</p>
+<p>Product metrics reveal details about how users are interacting and responding to your product. Tracking them can answer: which features are used most, how long they're used, what makes users stop using them.</p>
+<strong>Why use metrics?</strong>
+<p>Without tracking metrics, your product team would miss meaningful insights into customers. Surveys and interviews provide a glimpse into customer perception, but behavioural data reveals trends and missed opportunities. Hard data removes emotional bias and ensures you're building features that appeal to users.</p>
+<strong>Can product value always be measured?</strong>
+<p>Yes. No matter how intangible the value appears, you can apply quantitative measurements to any product. For example:</p>
+<ul>
+<li>A video streaming service → measure how many videos watched weekly, time spent on each.</li>
+</ul>
+<ul>
+<li>A meditation app → measure session completion rates, % of users returning weekly.</li>
+</ul>
+<p>A helpful tool is defining <strong>value moments</strong> — user events or actions that indicate a person is getting value from your product.</p>
+<ul>
+<li>Dating app value moment → liking a photo or sending a message.</li>
+</ul>
+<ul>
+<li>Food delivery app value moment → placing an order.</li>
+</ul>
+<ul>
+<li>Therapy app value moment → taking a therapy session.</li>
+</ul>
+<p>These value moments, once quantified, become your key performance indicators (KPIs).</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t7')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Root Cause Analysis <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Root Cause Analysis -->
+            <div id="panel-t7" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 8 of 8</div>
+                        <h2 class="text-xl font-extrabold text-navy">Root Cause Analysis</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Root Cause Analysis</strong></h2>
+<p>Root cause analysis (RCA) is a problem-solving method used to identify the underlying causes of issues or faults in a product or product management process. The objective is to discover what caused a problem, why it happened, and how to prevent it from recurring.</p>
+<strong>Example:</strong> You're a PM at a fintech startup and you see that yesterday, the signup conversion for new users decreased. What do you do?
+<strong>Step-by-step RCA process:</strong>
+<ul>
+<li><strong>Step 1</strong> — Clearly define the problem statement.</li>
+</ul>
+<ul>
+<li><strong>Step 2</strong> — Collect and analyse data to understand the problem's nature and extent.</li>
+</ul>
+<ul>
+<li><strong>Step 3</strong> — Develop hypotheses of the underlying causes.</li>
+</ul>
+<ul>
+<li><strong>Step 4</strong> — Investigate and validate the root cause hypotheses.</li>
+</ul>
+<ul>
+<li><strong>Step 5</strong> — Brainstorm and prioritise solutions with the greatest impact.</li>
+</ul>
+<p>First, verify data is being collected properly by matching numbers on the analytics tool with the database. Check there were no external factors. If data is flowing correctly and no external factors exist, move to hypothesis development.</p>
+<p>Use the MECE framework: consider all possible scenarios and levers that can move the metric.</p>
+<strong>Example hypotheses for a signup conversion drop:</strong>
+<ul>
+<li>The conversion for one acquisition channel has gone down.</li>
+</ul>
+<ul>
+<li>A new app update caused it not to open properly.</li>
+</ul>
+<ul>
+<li>The backend server was down for some time.</li>
+</ul>
+<ul>
+<li>The drop is isolated to one screen in the signup flow.</li>
+</ul>
+<ul>
+<li>Users didn't receive OTP when trying to sign up.</li>
+</ul>
+<p>Once hypotheses are established, go through the data to validate each one and find the root cause.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-8 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">Mohammad Rashad Nadeer Kutty — PM Learning</div>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub</a>
+    </div>
+</footer>
+
+<script>
+    function showTopic(id) {
+        document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.side-link').forEach(s => s.classList.remove('active'));
+        document.getElementById('panel-' + id).classList.add('active');
+        document.getElementById('pill-' + id).classList.add('active');
+        document.getElementById('side-' + id).classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>

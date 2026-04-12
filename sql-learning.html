@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL & Data Fundamentals | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(15,118,110,.08); border-left-color:rgba(15,118,110,.4); }
+        .week-item.active { background:rgba(15,118,110,.12); border-left-color:#0F766E; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#0F766E; border-color:#0F766E; background:rgba(15,118,110,.1); }
+        .week-item.active .view-btn { color:#0F766E; border-color:rgba(15,118,110,.5); background:rgba(15,118,110,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#0F766E; background:rgba(15,118,110,.02); box-shadow:0 2px 8px rgba(15,118,110,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#0F766E; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#0F766E; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#0F766E; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#0F766E; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete SQL & Data Fundamentals learning module — SELECT queries, JOINs, aggregation, window functions, indexing, and data analysis patterns." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/sql-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(15,118,110,.15); color:#0F766E">
+            <i class="fas fa-database text-[9px]"></i> SQL & Data Fundamentals
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" style="--tw-text-opacity:1" onmouseover="this.style.color='#0F766E'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">SQL & Data Fundamentals</div>
+                <div class="sidebar-week-count">5 modules &middot; 12 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Data Fundamentals</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">SQL Queries</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Advanced SQL</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Data Modelling</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">SQL for Business Analysis</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(15,118,110,.1)">
+                        <i class="fas fa-database text-2xl" style="color:#0F766E"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">SQL & Data Fundamentals</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from relational database concepts through SQL queries, JOINs, aggregations, window functions, data modelling, and business analysis techniques.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">5 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">12 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Data Fundamentals`,
+    topics: [
+    { title: `Why Data Literacy Matters`, content: `__H__ Why Data Literacy Matters
+
+Data literacy — the ability to read, work with, analyse, and argue with data — is now a foundational professional skill across every business function. Product Managers use data to validate hypotheses and make prioritisation decisions. Business Analysts use data to identify root causes, measure process performance, and quantify requirements. Project Managers use data to track progress, forecast delivery, and report status. The era when 'working with data' was the exclusive domain of data scientists or BI analysts is over. If you cannot form a SQL query to answer a basic business question, you are dependent on others to answer questions you could answer yourself — and that dependency slows you down and limits your influence.
+
+__SUB__ Structured vs Unstructured Data
+Data exists in two fundamental forms. Structured data is organised into rows and columns with a defined schema — relational databases (PostgreSQL, MySQL, SQL Server, Oracle), spreadsheets, and CSV files. Every cell has a defined data type and belongs to a named column. Structured data is the domain of SQL. Unstructured data has no predefined schema — emails, documents, images, videos, social media posts, audio recordings. Unstructured data is the majority of data the world creates, but it requires specialised tools (NLP, computer vision, NoSQL databases) to analyse. For PMs, BAs, and Project Managers, structured data in relational databases is the primary domain of interest.
+
+__LI__ Structured: rows and columns, fixed schema, queryable with SQL — databases, spreadsheets
+__LI__ Semi-structured: key-value or document format (JSON, XML, YAML) — APIs, NoSQL databases
+__LI__ Unstructured: no schema (text, images, video) — requires ML/NLP to analyse at scale
+__LI__ Most business intelligence work operates on structured data in relational databases
+
+__SUB__ OLTP vs OLAP — Two Types of Databases
+Relational databases come in two fundamental architectures. OLTP (Online Transaction Processing) databases are optimised for real-time transactional operations — inserting, updating, and deleting individual records quickly and safely. Your application database is OLTP: every time a user places an order, a row is inserted into the orders table. OLAP (Online Analytical Processing) databases are optimised for querying large volumes of data for analytical purposes — aggregating, summarising, and comparing across millions of rows. Data warehouses (Snowflake, BigQuery, Redshift) are OLAP. The key distinction: OLTP databases are normalised (data split across many related tables to minimise redundancy), while OLAP databases are often denormalised or use a star schema (data consolidated for fast query performance).
+
+__LI__ OLTP: operational database — optimised for writes, normalised, row-oriented storage
+__LI__ OLAP: analytical database / data warehouse — optimised for reads, often star schema
+__LI__ ETL (Extract Transform Load): the process that moves data from OLTP to OLAP systems
+__LI__ Most SQL analytics queries run against a data warehouse, not the live application database` },
+    { title: `Relational Database Concepts`, content: `__H__ Relational Database Concepts
+
+A relational database stores data in tables — structured grids of rows and columns. The 'relational' in relational database refers to the relationships between tables, defined through keys. Understanding tables, keys, and relationships is the prerequisite for writing SQL.
+
+__SUB__ Tables, Rows, Columns, and Data Types
+A table represents a single entity type — customers, orders, products. Each column defines an attribute of that entity and has a specific data type: INT or BIGINT for whole numbers, DECIMAL or NUMERIC for precise decimals (financial values), VARCHAR(n) for variable-length text, DATE and TIMESTAMP for dates and times, BOOLEAN for true/false values. Each row is an instance of the entity — one specific customer, one specific order. Choosing the right data type is not a trivial decision: storing a phone number as INT loses leading zeros and limits international formats; storing a financial amount as FLOAT introduces floating-point rounding errors that compound in financial calculations.
+
+__LI__ INT: whole numbers — IDs, counts, quantities
+__LI__ DECIMAL(precision, scale): exact decimals — financial amounts, prices (never use FLOAT for money)
+__LI__ VARCHAR(n): variable-length text up to n characters — names, emails, descriptions
+__LI__ DATE / TIMESTAMP: date and datetime — always store in UTC, convert for display
+__LI__ BOOLEAN: true/false flags — is_active, is_deleted, has_verified_email
+
+__SUB__ Primary Keys, Foreign Keys, and Relationships
+A primary key is a column (or combination of columns) that uniquely identifies each row in a table. Every table should have a primary key — it is the fundamental mechanism for referencing a specific record. Auto-incrementing integers (id SERIAL in PostgreSQL, AUTO_INCREMENT in MySQL) are the most common primary key type. A foreign key is a column in one table that references the primary key in another table — it defines the relationship between the two tables. A customers table has a primary key customer_id; an orders table has a foreign key customer_id that references customers.customer_id. This foreign key relationship means every order belongs to exactly one customer. Database constraints enforce referential integrity: a foreign key constraint prevents inserting an order with a customer_id that does not exist in the customers table.
+
+__LI__ Primary key: uniquely identifies each row — typically an auto-incrementing integer or UUID
+__LI__ Foreign key: a reference to the primary key of another table — defines the relationship
+__LI__ One-to-many: one customer has many orders (most common relationship type)
+__LI__ Many-to-many: requires a junction table (e.g., order_items links orders to products)
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#f0fdf4;border-radius:12px;border:1px solid #99f6e4"><div style="font-size:11px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Entity Relationship — Customers, Orders, Products</div><div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center;font-size:11px"><div style="background:#0F766E;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:6px">customers</div><div style="opacity:.85">PK customer_id</div><div style="opacity:.7">name, email</div></div><div style="color:#0F766E;font-weight:700;font-size:14px;text-align:center">1→N</div><div style="background:#0F766E;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:6px">orders</div><div style="opacity:.85">PK order_id</div><div style="opacity:.7">FK customer_id</div><div style="opacity:.7">order_date, total</div></div><div style="color:#0F766E;font-weight:700;font-size:14px;text-align:center">N→N</div><div style="background:#0F766E;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:6px">products</div><div style="opacity:.85">PK product_id</div><div style="opacity:.7">name, price</div></div></div><div style="font-size:11px;color:#64748b;margin-top:10px">orders_items junction table (FK order_id, FK product_id, quantity) connects orders to products in a many-to-many relationship</div></div>` }
+    ]
+  },
+  {
+    id: 1,
+    name: `SQL Queries`,
+    topics: [
+    { title: `SELECT — Reading Data`, content: `__H__ SELECT — Reading Data
+
+SELECT is the foundation of SQL — it retrieves data from one or more tables. Every SQL query you write as an analyst or PM starts with SELECT. Understanding SELECT fully — filtering, sorting, limiting, and aliasing — covers most day-to-day data questions.
+
+__SUB__ Basic SELECT Syntax
+The anatomy of a SELECT statement: SELECT [columns] FROM [table] WHERE [conditions] ORDER BY [column] LIMIT [n]. SELECT * retrieves all columns — convenient for exploration but expensive in production. SELECT column1, column2 retrieves specific columns — always prefer this in production queries. The WHERE clause filters rows: WHERE status = 'active' returns only active records. Multiple conditions combine with AND and OR. ORDER BY sorts results: ORDER BY created_at DESC returns newest records first. LIMIT caps the result set — always add LIMIT when exploring unknown tables to avoid accidentally retrieving millions of rows.
+
+__LI__ SELECT *: retrieves all columns — use for exploration only, never in production code
+__LI__ WHERE: filters rows — uses =, !=, >, <, >=, <=, IN, NOT IN, LIKE, IS NULL, IS NOT NULL
+__LI__ ORDER BY: sorts results — ASC (default, smallest first), DESC (largest/newest first)
+__LI__ LIMIT / FETCH FIRST n ROWS ONLY: caps results — always use when exploring unfamiliar data
+
+__SUB__ Filtering with WHERE
+The WHERE clause is where most analytical power lives. The IN operator tests against a list: WHERE country IN ('UAE', 'KSA', 'Kuwait'). The LIKE operator matches text patterns: WHERE email LIKE '%@gmail.com' returns all Gmail addresses. NULL handling requires special syntax: WHERE deleted_at IS NULL (not WHERE deleted_at = NULL, which never matches). The BETWEEN operator is inclusive: WHERE created_at BETWEEN '2024-01-01' AND '2024-12-31' includes both endpoints. Combining conditions: AND requires both conditions true; OR requires either condition true. When mixing AND and OR, use parentheses to control precedence: WHERE (status = 'active' OR status = 'trial') AND created_at > '2024-01-01'.
+
+__LI__ IN (...): matches any value in a list — cleaner than multiple OR conditions
+__LI__ LIKE '%pattern%': text search — % matches any string, _ matches any single character
+__LI__ IS NULL / IS NOT NULL: the only correct way to test for null values
+__LI__ BETWEEN x AND y: inclusive range — equivalent to x >= value AND value <= y
+__LI__ Parentheses: always use to make AND/OR precedence explicit when mixing both` },
+    { title: `JOINs — Combining Tables`, content: `__H__ JOINs — Combining Tables
+
+JOINs are the mechanism for combining data from multiple tables based on a matching condition — typically a foreign key relationship. Mastering JOINs is the single highest-leverage SQL skill for business analysis because most interesting business questions require data from multiple tables.
+
+__SUB__ The Four Essential JOIN Types
+INNER JOIN returns only rows where the match condition is met in both tables — if a customer has no orders, they do not appear in the result. LEFT JOIN (also LEFT OUTER JOIN) returns all rows from the left (first) table, and matching rows from the right table — if no match exists, the right table columns are NULL. This is the most useful JOIN type for analysis: LEFT JOIN customers to orders to see all customers including those with zero orders. RIGHT JOIN is the mirror image of LEFT JOIN — rarely used because you can always rewrite it as a LEFT JOIN by swapping the tables. FULL OUTER JOIN returns all rows from both tables, with NULLs where no match exists — useful for identifying records that exist in one table but not the other.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#f0fdf4;border-radius:12px;border:1px solid #99f6e4"><div style="font-size:11px;font-weight:700;color:#0F766E;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">JOIN Types — Visual Reference</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px"><div style="background:#0F766E;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:4px">INNER JOIN</div><div style="opacity:.85">Matching rows only — both sides must match</div></div><div style="background:#0d6960;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:4px">LEFT JOIN</div><div style="opacity:.85">All from left + matches from right (NULL if no match)</div></div><div style="background:#0d6960;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:4px">RIGHT JOIN</div><div style="opacity:.85">All from right + matches from left (rarely used)</div></div><div style="background:#0F766E;color:white;padding:10px 12px;border-radius:8px"><div style="font-weight:700;margin-bottom:4px">FULL OUTER JOIN</div><div style="opacity:.85">All rows from both — NULLs where no match</div></div></div></div>
+
+__SUB__ Writing JOINs
+The JOIN syntax: SELECT columns FROM table_a JOIN table_b ON table_a.key = table_b.key. Best practice is to always alias table names (FROM customers c JOIN orders o ON c.customer_id = o.customer_id) and always qualify column names with their table alias (SELECT c.name, o.order_date). This prevents ambiguity errors and makes queries readable. Multiple JOINs chain together: FROM customers c JOIN orders o ON c.customer_id = o.customer_id JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id. Every additional JOIN is evaluated left to right; the result of the previous JOIN becomes the left side of the next one.
+
+__LI__ Always alias tables: FROM customers c — makes multi-table queries readable
+__LI__ Always qualify columns: c.name not just name — avoids ambiguity errors
+__LI__ Chain JOINs left to right: each JOIN operates on the result of the previous one
+__LI__ Use LEFT JOIN when you want to keep rows with no match (e.g., customers with zero orders)` },
+    { title: `Aggregations and GROUP BY`, content: `__H__ Aggregations and GROUP BY
+
+Aggregation functions operate on sets of rows and return a single summary value. They are the engine of analytical SQL — most business questions ('how many?', 'what is the total?', 'what is the average?') are answered with aggregation functions and GROUP BY.
+
+__SUB__ Core Aggregation Functions
+COUNT(*) counts all rows including NULLs; COUNT(column) counts non-NULL values in a column. SUM(column) totals a numeric column. AVG(column) calculates the mean. MIN and MAX return the smallest and largest values. These functions are always used with GROUP BY when you want to see the aggregation broken down by a category — for example, the total revenue per customer, or the number of orders per month. Without GROUP BY, they return a single value across the entire table.
+
+__LI__ COUNT(*): counts all rows — use for row counts and record existence checks
+__LI__ COUNT(DISTINCT column): counts unique values — users who placed at least one order
+__LI__ SUM(column): sum of all non-NULL values — revenue, quantities, durations
+__LI__ AVG(column): arithmetic mean — ignores NULLs, which can distort results
+__LI__ MIN / MAX: smallest and largest value — dates for first/last event, prices for range
+
+__SUB__ GROUP BY and HAVING
+GROUP BY collapses multiple rows that share the same value in the specified column(s) into a single row, on which the aggregation function operates. SELECT customer_id, COUNT(*) AS order_count, SUM(total) AS total_revenue FROM orders GROUP BY customer_id returns one row per customer with their order count and total revenue. Every column in the SELECT that is not an aggregate function must appear in the GROUP BY clause. HAVING filters groups after aggregation — it is WHERE for aggregated results. WHERE filters individual rows before grouping; HAVING filters groups after aggregation. To find customers with more than 5 orders: GROUP BY customer_id HAVING COUNT(*) > 5.
+
+__LI__ GROUP BY: one result row per unique combination of grouped columns
+__LI__ Every SELECT column must be either in GROUP BY or inside an aggregate function
+__LI__ WHERE filters rows before grouping; HAVING filters groups after aggregation
+__LI__ ORDER BY: use after GROUP BY to sort aggregated results — e.g., ORDER BY SUM(total) DESC` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Advanced SQL`,
+    topics: [
+    { title: `Subqueries and CTEs`, content: `__H__ Subqueries and CTEs
+
+As SQL queries grow in complexity, they become difficult to read and maintain when written as a single flat query. Subqueries and Common Table Expressions (CTEs) are the tools for structuring complex queries into readable, logical steps.
+
+__SUB__ Subqueries
+A subquery is a SELECT statement nested inside another query. It can appear in the SELECT list (correlated subquery), the FROM clause (derived table), or the WHERE clause (for filtering based on aggregated conditions). The most common use of subqueries is in the WHERE clause to filter against an aggregated result: SELECT * FROM orders WHERE total > (SELECT AVG(total) FROM orders) — this returns orders with above-average totals. The limitation of subqueries is that they are evaluated inside-out, making complex nested queries very hard to read. CTEs solve this problem.
+
+__LI__ Subquery in WHERE: filter by aggregated values — WHERE total > (SELECT AVG(total) FROM orders)
+__LI__ Subquery in FROM: treat a query result as a table — useful for multi-step calculations
+__LI__ Correlated subquery: references the outer query — evaluated once per outer row, can be slow
+__LI__ Prefer CTEs over deeply nested subqueries for readability and maintainability
+
+__SUB__ Common Table Expressions (CTEs)
+A CTE defines a named temporary result set that can be referenced in the main query. The syntax is: WITH cte_name AS (SELECT ...) SELECT ... FROM cte_name. CTEs make complex queries dramatically more readable by breaking them into named, logical steps. Multiple CTEs can chain together: WITH step1 AS (...), step2 AS (SELECT ... FROM step1), step3 AS (...) SELECT ... FROM step2 JOIN step3. This reads like pseudocode — each CTE is a clearly named step in the analytical process. In PostgreSQL, CTEs are also materialised (computed once and stored), which can improve performance for CTEs referenced multiple times.
+
+__LI__ WITH cte_name AS (...): define a named temporary result — reference by name in main query
+__LI__ Chain multiple CTEs: WITH cte1 AS (...), cte2 AS (... FROM cte1) SELECT ... FROM cte2
+__LI__ Name CTEs meaningfully: active_customers, monthly_revenue — they document your logic
+__LI__ CTEs replace complex nested subqueries — always prefer CTEs for multi-step analysis` },
+    { title: `Window Functions`, content: `__H__ Window Functions
+
+Window functions perform calculations across a set of rows related to the current row, without collapsing them into a single output row. They combine the row-level access of a regular SELECT with the set-based power of aggregation functions — making them the most powerful SQL feature for analytical work.
+
+__SUB__ ROW_NUMBER, RANK, and DENSE_RANK
+ROW_NUMBER() assigns a unique sequential integer to each row within a partition. It is the standard tool for 'get the most recent record per user' queries: ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC) assigns row number 1 to the most recent order per customer. Wrapping this in a CTE and filtering WHERE rn = 1 gives the most recent order for each customer without a complex self-join. RANK() assigns the same number to ties but skips subsequent numbers (1, 2, 2, 4). DENSE_RANK() assigns the same number to ties but does not skip numbers (1, 2, 2, 3). The right choice depends on whether you want positional rank or competitive rank.
+
+__LI__ ROW_NUMBER(): unique sequential number per row — use for deduplication and latest-record queries
+__LI__ RANK(): ties get same rank, subsequent ranks skip — use for competition-style ranking
+__LI__ DENSE_RANK(): ties get same rank, no gaps — use for distribution analysis
+__LI__ PARTITION BY: resets the window for each group — like GROUP BY but keeps all rows
+
+__SUB__ LAG, LEAD, and Running Totals
+LAG(column, n) accesses the value from n rows before the current row within the window partition. LEAD(column, n) accesses the value from n rows ahead. These are the standard tools for period-over-period comparisons: LAG(revenue, 1) OVER (PARTITION BY customer_id ORDER BY month) gives the previous month's revenue for the same customer, enabling month-over-month growth calculations. SUM() OVER (ORDER BY date ROWS UNBOUNDED PRECEDING) calculates a running total — the cumulative sum up to and including the current row. AVG() OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) calculates a 7-day rolling average.
+
+__LI__ LAG(col, 1): value from the previous row in the window — use for period-over-period
+__LI__ LEAD(col, 1): value from the next row — use for lookahead comparisons
+__LI__ SUM() OVER (ORDER BY date): running total — cumulative sum up to current row
+__LI__ AVG() OVER (ROWS BETWEEN n PRECEDING AND CURRENT ROW): rolling average over n periods` },
+    { title: `Date Functions and Data Types`, content: `__H__ Date Functions and Data Types
+
+Date and time handling is one of the most practically important — and most frequently mishandled — aspects of analytical SQL. Most business metrics are time-based, and errors in date logic produce silent wrong answers.
+
+__SUB__ Essential Date Functions
+The core date functions that cover 90% of analytical needs: DATE_TRUNC('month', timestamp) truncates a timestamp to the first day of the month — the standard tool for monthly aggregations. EXTRACT(YEAR FROM date) or DATE_PART('year', date) extracts a component (year, month, day, hour). CURRENT_DATE returns today's date; NOW() returns the current timestamp. Date arithmetic: date + INTERVAL '30 days' adds 30 days; date1 - date2 returns the interval between dates. AGE(timestamp) calculates the age from a timestamp to now. DATEDIFF is available in some databases (MySQL, SQL Server, BigQuery) as DATEDIFF(unit, start, end).
+
+__LI__ DATE_TRUNC('month', ts): truncates to month boundary — essential for monthly grouping
+__LI__ EXTRACT(MONTH FROM date) / DATE_PART: extracts a single component — year, month, dow
+__LI__ INTERVAL arithmetic: date + INTERVAL '7 days' — use for relative date ranges
+__LI__ CURRENT_DATE / NOW(): today's date / current timestamp — use for rolling time windows
+__LI__ Always store timestamps in UTC — convert to local timezone at display time only
+
+__SUB__ NULL Handling in SQL
+NULL in SQL is not the same as zero, empty string, or false. NULL means unknown or absent. This creates unintuitive behaviour: NULL = NULL returns NULL (not TRUE), so equality comparisons never match NULLs — you must use IS NULL. NULL propagates through arithmetic: 5 + NULL = NULL. Aggregation functions (SUM, AVG, COUNT(column)) ignore NULLs — which can produce misleading averages when NULLs are actually zero. COALESCE(column, default_value) returns the first non-NULL value in its argument list — the standard tool for replacing NULLs with a default. NULLIF(expression, value) returns NULL if the expression equals the value — useful for preventing division by zero: revenue / NULLIF(users, 0).
+
+__LI__ IS NULL / IS NOT NULL: the only correct syntax to test for NULL
+__LI__ COALESCE(col, 0): replace NULL with a default — prevents NULL propagation in calculations
+__LI__ NULLIF(col, 0): returns NULL if col = 0 — prevents division by zero errors
+__LI__ COUNT(*) counts NULLs; COUNT(col) ignores NULLs — know the difference
+__LI__ AVG ignores NULLs — if NULL means zero in your context, COALESCE first` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Data Modelling`,
+    topics: [
+    { title: `Normalisation and Schema Design`, content: `__H__ Normalisation and Schema Design
+
+Normalisation is the process of organising a database schema to reduce data redundancy and improve data integrity. It is the foundational design principle behind every well-structured relational database. Understanding normalisation helps BAs and PMs write better requirements, spot problems in data models, and ask the right questions when reviewing technical designs.
+
+__SUB__ First, Second, and Third Normal Form
+First Normal Form (1NF) requires that each column contains atomic (indivisible) values and each row is unique. A column that stores comma-separated tags ('urgent,high-value,VIP') violates 1NF — it should be a separate tags table. Second Normal Form (2NF) requires that every non-key column is fully dependent on the entire primary key — relevant when a table has a composite primary key. A table with (order_id, product_id) as a composite key, where product_name is a column, violates 2NF because product_name depends only on product_id, not on the full composite key. Third Normal Form (3NF) requires that no non-key column depends on another non-key column. If customers table contains city and city_timezone, and city_timezone depends on city rather than customer_id, that violates 3NF — city timezone should be in a cities table.
+
+__LI__ 1NF: atomic values in each cell, no repeating groups — no comma-separated lists in columns
+__LI__ 2NF: fully functionally dependent on the entire primary key — no partial dependencies
+__LI__ 3NF: no transitive dependencies — no non-key column depends on another non-key column
+__LI__ Practical rule: if you find yourself duplicating data across rows, there is a normalisation violation
+
+__SUB__ Denormalisation for Analytics
+Normalised schemas are optimal for transactional databases but are inefficient for analytical queries — joining many tables for every query adds overhead. Data warehouses deliberately denormalise data into star schemas or wide flat tables to optimise for read performance. A star schema has a central fact table (orders, events, transactions) surrounded by dimension tables (customers, products, dates, locations). Analytics platforms like dbt (data build tool) automate the transformation from normalised source tables into denormalised analytical models. Understanding this distinction explains why the data in your analytics tool (Metabase, Tableau, Looker) often looks different from the data in the application database.
+
+__LI__ Star schema: fact table (measurements) + dimension tables (context) — the analytics standard
+__LI__ Fact table: one row per event/transaction — contains foreign keys and metrics
+__LI__ Dimension table: descriptive attributes — who, what, where, when (slowly changing)
+__LI__ Denormalisation trade-off: redundancy and storage cost in exchange for query speed` },
+    { title: `Data Warehousing and BI Tools`, content: `__H__ Data Warehousing and BI Tools
+
+A data warehouse is a centralised repository of integrated data from multiple source systems, structured for analytical queries. It is the foundation of business intelligence — the place where operational data from your application database, CRM, marketing platform, and financial system is unified and made queryable.
+
+__SUB__ Modern Data Stack
+The modern data stack has standardised around four layers. Ingestion (Fivetran, Airbyte, Stitch) extracts data from source systems and loads it raw into the warehouse. Transformation (dbt — data build tool) transforms raw data into clean, modelled, tested analytical tables using SQL and software engineering best practices. Storage and compute (Snowflake, BigQuery, Redshift, Databricks) provides the warehouse engine — massively parallel query execution across petabytes of data. Visualisation (Tableau, Looker, Power BI, Metabase, Superset) provides the interface for business users to build dashboards and explore data without writing SQL. The shift from legacy ETL (monolithic pipelines that transform before loading) to ELT (extract and load raw, then transform) has made the modern data stack faster to build and easier to maintain.
+
+__LI__ Ingestion: Fivetran / Airbyte — replicates source systems into warehouse automatically
+__LI__ Transformation: dbt — SQL-based modelling with version control, testing, and documentation
+__LI__ Warehouse: Snowflake / BigQuery / Redshift — separated storage and compute, pay per query
+__LI__ Visualisation: Looker / Tableau / Power BI — self-serve analytics for business stakeholders
+
+__SUB__ Metrics, Dimensions, and KPI Design
+A metric is a numerical measurement of business performance. A dimension is a categorical attribute used to slice a metric. Revenue is a metric; region, product category, and customer segment are dimensions. Good KPI design requires defining metrics precisely: 'revenue' could mean gross revenue, net revenue after refunds, or recognised revenue after deferral — these are different numbers that answer different questions. Metrics should have owners (who is accountable?), defined data sources (which table and which column?), defined grain (one row per what?), refresh cadence (realtime, daily, weekly), and documented edge cases (how are refunds handled? are internal users excluded?). Ambiguous metric definitions are one of the most common causes of 'the dashboard says X but the spreadsheet says Y' disputes.
+
+__LI__ Define metric grain: one row per what? — transaction, daily user, weekly cohort
+__LI__ Document edge cases: how are refunds, cancellations, internal users, test accounts handled?
+__LI__ Assign metric owners: someone is accountable for accuracy and data quality
+__LI__ Agree on the definition before building the dashboard — retroactive definition changes break trust` }
+    ]
+  },
+  {
+    id: 4,
+    name: `SQL for Business Analysis`,
+    topics: [
+    { title: `Funnel Analysis and Cohort Analysis`, content: `__H__ Funnel Analysis and Cohort Analysis
+
+Funnel analysis and cohort analysis are two of the most powerful analytical frameworks for understanding user behaviour, product performance, and business health. Both require multi-step SQL and are excellent examples of where CTEs shine.
+
+__SUB__ Funnel Analysis
+A funnel tracks the progression of users through a defined sequence of steps — registration → email verification → first purchase → repeat purchase. The goal is to identify where the drop-off occurs and quantify it. Funnel analysis in SQL uses conditional aggregation: for each event type, count the distinct users who completed it. A funnel query typically joins or pivots a single events table: COUNT(DISTINCT CASE WHEN event = 'signed_up' THEN user_id END) AS signed_up, COUNT(DISTINCT CASE WHEN event = 'email_verified' THEN user_id END) AS verified. The conversion rate between steps is then calculated: verified / signed_up. The critical detail is that funnel analysis is always order-dependent — a user who makes a purchase before verifying their email should still count in the purchase step only if they verified at some point.
+
+__LI__ Define the funnel steps explicitly — each step is a named event with clear entry criteria
+__LI__ Use CASE WHEN inside COUNT(DISTINCT ...) to count users who completed each step
+__LI__ Conversion rate = step_n / step_1 — measure both step-to-step and overall conversion
+__LI__ Add time constraints: conversion within 7 days of sign-up vs ever — they tell different stories
+
+__SUB__ Cohort Analysis
+A cohort is a group of users who share a common characteristic at a defined point in time — most commonly, the month they signed up (acquisition cohort). Cohort analysis tracks how metrics (retention, revenue, engagement) evolve for the same group of users over time, controlling for the mix of new vs. mature users. A retention cohort table has users grouped by their sign-up month on the rows, and months-since-signup (0, 1, 2, 3...) on the columns. Cell (January 2024, month 3) shows the percentage of January 2024 sign-ups who were still active in April 2024. Declining retention curves that level off indicate a healthy retained user base; curves that keep declining to zero indicate a leaky bucket where new user acquisition only masks churn.
+
+__LI__ Acquisition cohort: users grouped by sign-up month — the standard retention analysis unit
+__LI__ DATE_TRUNC + months-since-signup: calculate cohort age for each user-month combination
+__LI__ Retention rate = active users in cohort month N / total users in cohort (month 0)
+__LI__ Read cohort diagonals to compare same calendar month across different cohort ages` },
+    { title: `SQL Best Practices for Analysts`, content: `__H__ SQL Best Practices for Analysts
+
+Writing SQL that works is only the first standard. Writing SQL that is readable, maintainable, and performant is the professional standard. The difference matters when queries are used by teams, scheduled to run nightly, or queried against tables with billions of rows.
+
+__SUB__ Readability and Style
+SQL style conventions that significantly improve readability: uppercase SQL keywords (SELECT, FROM, WHERE, JOIN, GROUP BY, ORDER BY), lowercase identifiers (table and column names), one clause per line, and consistent indentation. Use meaningful column aliases: SELECT COUNT(*) AS order_count not SELECT COUNT(*). Comment complex WHERE conditions and non-obvious business logic — a future reader (often yourself in six months) will thank you. Name CTEs for what they represent semantically, not for their technical role: active_customers not cte1. Avoid SELECT * in any query that is not exploratory — explicitly list columns.
+
+__LI__ Uppercase keywords, lowercase identifiers — the universally accepted SQL style
+__LI__ Meaningful aliases: AS order_count, AS revenue_usd — never AS c1, AS x
+__LI__ One clause per line with consistent indentation — aids readability and diff reviews
+__LI__ Comment business logic: -- exclude internal test accounts (user_type != 'internal')
+
+__SUB__ Performance Considerations
+For most analyst-level queries, readability matters more than performance optimisation. But a few principles prevent writing queries that accidentally scan billions of rows and time out. Filter early: push WHERE conditions as early as possible, and filter on indexed columns (typically primary keys and foreign keys). Avoid functions on indexed columns in WHERE clauses: WHERE LOWER(email) = 'test@example.com' cannot use an index on email; WHERE email = 'test@example.com' can. LIMIT during exploration: always add LIMIT when exploring new tables. Avoid DISTINCT as a performance crutch — if your query produces unexpected duplicates, fix the JOIN logic rather than hiding it with DISTINCT. In columnar warehouses (BigQuery, Snowflake), selecting only the columns you need dramatically reduces scan cost.
+
+__LI__ Filter on indexed columns in WHERE — avoid wrapping indexed columns in functions
+__LI__ LIMIT when exploring — never run unbounded queries against large tables in production warehouses
+__LI__ Fix duplicates at the JOIN level, not with DISTINCT — DISTINCT is a symptom, not a fix
+__LI__ In columnar warehouses: SELECT only the columns you need — reduces bytes scanned and cost` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#0F766E">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

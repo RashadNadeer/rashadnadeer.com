@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Discovery & User Research | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:#f1f5f9; } ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; }
+        .sidebar-list::-webkit-scrollbar { width:3px; } .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(8,145,178,.08); border-left-color:rgba(8,145,178,.4); }
+        .week-item.active { background:rgba(8,145,178,.12); border-left-color:#0891B2; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#0891B2; border-color:#0891B2; background:rgba(8,145,178,.1); }
+        .week-item.active .view-btn { color:#0891B2; border-color:rgba(8,145,178,.5); background:rgba(8,145,178,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#0891B2; background:rgba(8,145,178,.02); box-shadow:0 2px 8px rgba(8,145,178,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#0891B2; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#0891B2; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#0891B2; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#0891B2; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete Product Discovery learning module — user research, Jobs-to-be-Done, opportunity assessment, prototyping, and product-market fit." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/pd-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(8,145,178,.15); color:#0891B2">
+            <i class="fas fa-magnifying-glass text-[9px]"></i> Product Discovery & User Research
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" onmouseover="this.style.color='#0891B2'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">Product Discovery & User Research</div>
+                <div class="sidebar-week-count">4 modules &middot; 10 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Discovery Foundations</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">Understanding Users</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Validation & Prioritisation</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">From Discovery to Roadmap</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(8,145,178,.1)">
+                        <i class="fas fa-magnifying-glass text-2xl" style="color:#0891B2"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">Product Discovery & User Research</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module to explore — covering discovery vs delivery, user research methods, usability testing, validation techniques, and turning insights into a product roadmap.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">4 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">10 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Discovery Foundations`,
+    topics: [
+    { title: `Discovery vs Delivery`, content: `__H__ Discovery vs Delivery
+
+Product discovery and product delivery are two distinct tracks that answer two different questions. Delivery asks: 'Are we building the thing right?' Discovery asks: 'Are we building the right thing?' Both questions must be answered continuously — not just at the start of a project. Teams that skip discovery build technically excellent products that solve the wrong problems.
+
+__SUB__ Dual-Track Agile
+In Dual-Track Agile, discovery and delivery run in parallel, continuously. The discovery track generates validated problems and hypotheses that feed into the delivery backlog. The delivery track builds and ships solutions that generate real-world evidence that feeds back into the discovery track. This creates a continuous learning loop rather than a one-time research-and-build process.
+
+__LI__ Discovery track: understand user problems, generate hypotheses, run experiments, validate solutions before building
+__LI__ Delivery track: build, test, and ship validated solutions in iterative Sprints
+__LI__ Discovery feeds delivery: validated problems and story hypotheses move into the delivery backlog
+__LI__ Delivery feeds discovery: real usage data and user feedback generate new discovery questions
+__LI__ The two tracks are coupled — delivery without discovery wastes engineering; discovery without delivery produces no value
+
+__SUB__ Why Discovery Fails
+Most discovery failures share a common root cause: the team skips from problem to solution without enough evidence. They assume they understand user needs because they've worked in the domain for years. They run research as a one-time kickoff activity rather than a continuous practice. They confuse user opinions (what people say they want) with user behaviour (what people actually do).
+
+__LI__ Assuming we know the user — internal perspectives replace user evidence; assumptions drive the backlog
+__LI__ Skipping problem definition — jumping to solutions before the problem is clearly understood
+__LI__ Treating discovery as a phase — research happens once at the start and then stops
+__LI__ Confusing stakeholder opinions with user needs — stakeholders often speak for users incorrectly
+__LI__ Vanity research — conducting interviews and surveys without using the findings to make decisions
+__LI__ Building to spec — treating a requirements document as a substitute for ongoing user understanding` },
+    { title: `User Research Foundations`, content: `__H__ User Research Foundations
+
+User research is the discipline of systematically studying users to understand their goals, behaviours, and pain points. Research gives teams evidence instead of opinion, and enables decisions that are grounded in how people actually work rather than how stakeholders imagine they work. Two dimensions shape every research decision: the data type (qualitative or quantitative) and the source (primary or secondary).
+
+__SUB__ Qualitative vs Quantitative Research
+Qualitative research reveals the why behind behaviour — it explores attitudes, mental models, frustrations, and motivations through interviews, observation, and open-ended surveys. It produces rich insight but from small samples. Quantitative research measures the scale and shape of behaviour — it tells you how many users experience a problem, how often, and in what pattern. Neither is superior; they answer different questions and are most powerful in combination.
+
+__LI__ Qualitative: interviews, ethnographic observation, usability testing, diary studies — reveals WHY
+__LI__ Quantitative: analytics, A/B tests, structured surveys, click tracking — reveals WHAT and HOW MANY
+__LI__ A qualitative insight tells you that users find checkout confusing; analytics tells you that 40% abandon at payment
+__LI__ Use qualitative to understand; use quantitative to validate and scale
+__LI__ Never use quantitative data to answer qualitative questions ('the data shows they don't like it' is not an insight)
+
+__SUB__ Primary vs Secondary Research
+Primary research generates new data through direct contact with users — interviews, surveys, usability tests, field studies. Secondary research uses existing data — market reports, competitor analysis, analytics dashboards, customer support tickets, app store reviews. Secondary research is fast and cheap; primary research is slower but directly relevant to your specific questions.
+
+__LI__ Primary: new data collected directly from users — high relevance, higher effort
+__LI__ Secondary: existing data from reports, analytics, support tickets, reviews — fast but may not match your context
+__LI__ Always start with secondary research — what is already known before you invest in primary research?
+__LI__ Customer support tickets and app store reviews are underused goldmines of genuine user pain
+__LI__ Be sceptical of secondary market research — it describes segments, not the specific users you're serving` }
+    ]
+  },
+  {
+    id: 1,
+    name: `Understanding Users`,
+    topics: [
+    { title: `User Personas`, content: `__H__ User Personas
+
+A persona is a fictional but evidence-based representation of a key user segment. Good personas are built from research — from patterns observed across multiple interviews and studies. Bad personas are built from assumptions — from internal stakeholders describing who they imagine their users to be. The difference between them determines whether the persona improves team decisions or simply decorates the office wall.
+
+__SUB__ Building an Evidence-Based Persona
+A well-constructed persona includes demographic and contextual information (role, environment, tools), goals and motivations (what they're trying to achieve), behaviours and workflows (how they currently work), pain points (what frustrates them), and key insights (what surprised you that changes how you think about their needs).
+
+__LI__ Demographics and context: role title, industry, company size, tools used daily, work environment
+__LI__ Goals: what they are ultimately trying to achieve — not what they want from your product
+__LI__ Current behaviour: how they accomplish their goals today — including workarounds and hacks
+__LI__ Pain points: specific frustrations in their current workflow that are costing them time or quality
+__LI__ Key insight: the one thing that most surprises the team and should change product decisions
+__LI__ Quote: a real verbatim quote from a research participant that captures the persona's mindset
+
+__SUB__ Common Persona Mistakes
+The most common mistake is creating personas from internal assumptions rather than research. The second most common is creating too many personas and losing focus — most teams need 2-3 primary personas, not 10. Personas should be updated as research evolves; stale personas based on 3-year-old research can mislead as badly as no persona at all.
+
+__LI__ Assumption personas: built in a workshop without user research — worse than no personas because they create false confidence
+__LI__ Too many personas: having 8 personas means designing for nobody in particular
+__LI__ Demographic focus: personas heavy on age and job title but thin on motivations and behaviour are decorative
+__LI__ Static personas: never updated — user needs and contexts change; your personas must too
+__LI__ The test: would every product decision look different if this persona didn't exist? If not, it's not doing its job` },
+    { title: `Jobs To Be Done (JTBD)`, content: `__H__ Jobs To Be Done (JTBD)
+
+Jobs To Be Done is a framework for understanding user motivation at a deeper level than personas or demographics. The core insight is that people don't buy or use products because of who they are — they hire products to help them accomplish a job. The same product might be hired for very different jobs by different people, and understanding those jobs changes what you build and how you position it.
+
+__SUB__ The JTBD Formula
+The functional job format captures the context, motivation, and desired outcome: 'When I [situation], I want to [motivation], so I can [outcome].' This structure forces you to articulate not just what the user wants but why they want it — the outcome they're ultimately trying to achieve. It's this outcome-level insight that drives the most valuable product decisions.
+
+__LI__ Formula: 'When I [situation], I want to [motivation], so I can [outcome]'
+__LI__ Example: 'When I'm preparing for a stakeholder meeting, I want to quickly pull the latest project metrics, so I can answer questions confidently without scrambling'
+__LI__ The outcome defines the job — features are just potential solutions for that job
+__LI__ Different users may hire the same product for different jobs — JTBD reveals this
+__LI__ When a better solution for the same job emerges, users switch — JTBD predicts disruption
+
+__SUB__ Emotional and Social Jobs
+Beyond the functional job (getting something done), users have emotional jobs (how they want to feel) and social jobs (how they want to be perceived). A project management tool's functional job is to track tasks. Its emotional job might be to give the PM confidence that nothing is slipping. Its social job might be to demonstrate professionalism to the team. Ignoring emotional and social jobs leads to functional but unloved products.
+
+__LI__ Functional job: the practical task to be accomplished — the explicit goal
+__LI__ Emotional job: how the user wants to feel during and after using the product
+__LI__ Social job: how the user wants to be perceived by others through their use of the product
+__LI__ Example: a financial planning app's functional job is budgeting; its emotional job is reducing anxiety about money
+__LI__ Products that nail emotional and social jobs alongside functional jobs create strong loyalty` },
+    { title: `User Interviews`, content: `__H__ User Interviews
+
+User interviews are the richest source of qualitative insight available to a product team. A well-conducted interview gives you direct access to a user's mental model, vocabulary, priorities, and frustrations. Done poorly, interviews confirm the interviewer's existing beliefs and produce no genuine insight. The difference lies almost entirely in question design and facilitation technique.
+
+__SUB__ Designing the Interview
+Start by defining the research questions — what specific things do you need to learn? Then design the interview guide to explore those questions indirectly. Interview guides should contain open-ended questions and topic prompts, not a rigid script. Leave room to follow interesting threads that emerge. Recruit 5-8 participants per user segment — after which you'll find themes repeating (saturation).
+
+__LI__ Define research questions first — what decisions will this research inform?
+__LI__ Write the interview guide as prompts, not a script — be ready to follow unexpected but valuable threads
+__LI__ Open questions only: 'Tell me about the last time you...', 'Walk me through how you currently...'
+__LI__ Never use leading questions: 'Do you find it frustrating when...?' puts words in the interviewee's mouth
+__LI__ 5-8 participants per segment for qualitative saturation — more than 10 rarely adds new themes
+
+__SUB__ Conducting & Analysing Interviews
+During the interview, listen more than you speak. Follow the story — if something interesting comes up, explore it with 'What happened next?' or 'Why did you do that?'. Use silence productively — a pause after an answer often prompts the most honest and revealing follow-up. After all interviews are done, analyse through affinity mapping: group observations into themes, then look for patterns across participants.
+
+__LI__ Ask 'why' at least three times for any significant statement — the surface reason is rarely the real one
+__LI__ Avoid yes/no questions — they close down conversation
+__LI__ Use the 'five whys' to get from behaviour to motivation: why did you do that? why was that important?
+__LI__ Record sessions with permission — you'll catch things you missed in the moment
+__LI__ Affinity mapping: write each observation on a card, group related observations, identify themes across cards
+__LI__ Look for surprises — the most valuable insight is the one you didn't expect` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Validation & Prioritisation`,
+    topics: [
+    { title: `Usability Testing`, content: `__H__ Usability Testing
+
+Usability testing watches real users attempt real tasks with your product — and reveals the gap between how you designed it and how people actually use it. It is the single most effective way to find usability problems before they become expensive to fix. The goal is not to validate your design — it is to discover its problems. Teams that go into usability testing wanting to prove their design works will miss the problems staring them in the face.
+
+__SUB__ Moderated vs Unmoderated Testing
+Moderated testing has a researcher present during the session — either in person or via video call. The researcher can ask follow-up questions, observe body language, and probe when something unexpected happens. Unmoderated testing sends participants a task with recording software and no human present. Moderated testing produces richer insight; unmoderated testing is faster and cheaper and works well for larger sample sizes.
+
+__LI__ Moderated: researcher present — can probe, ask follow-ups, observe emotion and body language
+__LI__ Unmoderated: participant completes tasks alone — faster, cheaper, larger samples, less depth
+__LI__ Think-aloud protocol: ask participants to narrate their thinking while they work through tasks
+__LI__ Task design: give participants a realistic scenario and goal, not a step-by-step instruction
+__LI__ 5 participants is enough for moderated testing to find ~85% of major usability problems
+__LI__ Remote testing tools: Lookback, UserTesting, Maze — effective for unmoderated testing at scale
+
+__SUB__ What to Observe and Measure
+During a usability test, observe task success (did they complete the task?), time-on-task (how long did it take?), errors (what mistakes did they make?), and qualitative reactions (what did they say and feel?). After all sessions, prioritise findings by severity: critical issues prevent task completion, major issues cause significant difficulty, minor issues cause minor friction.
+
+__LI__ Task success rate: did the participant complete the task without help?
+__LI__ Time on task: how long did it take? Longer than expected suggests friction
+__LI__ Error rate: how many times did they go down the wrong path?
+__LI__ Qualitative observation: what did they say, where did they hesitate, what confused them?
+__LI__ Severity rating: Critical (blocks task) → Major (slows task significantly) → Minor (small friction)` },
+    { title: `Problem Framing & Validation`, content: `__H__ Problem Framing & Validation
+
+Before building anything, the team must clearly define the problem they're solving and validate that the problem is real, frequent, and worth solving. Problem framing structures ambiguous situations into actionable problem statements. Validation tests whether your proposed solution addresses the right problem with the right approach — before committing to full development.
+
+__SUB__ How Might We (HMW) Questions
+HMW questions are a facilitation technique that turns problem statements into creative opportunity prompts. They are deliberately open-ended — not 'how do we fix the checkout flow' but 'how might we make users feel confident at checkout?'. This shift from problem to question opens up the solution space and invites creative approaches that direct problem statements foreclose.
+
+__LI__ Formula: 'How might we [verb] [outcome] for [user]?'
+__LI__ Good HMW: 'How might we make users feel confident entering payment details?' — solution-agnostic
+__LI__ Too broad: 'How might we improve e-commerce?' — not actionable
+__LI__ Too narrow: 'How might we add a padlock icon to the payment page?' — already assumes the solution
+__LI__ Generate 10-20 HMW questions from a problem statement, then vote on the most promising ones to explore
+__LI__ HMW questions are springboards — they launch ideation, not conclusions
+
+__SUB__ Validation Techniques
+Validation tests your riskiest assumptions before writing production code. The earlier you test, the cheaper it is to be wrong. A smoke test (landing page describing a feature as if it exists) measures whether users would actually want it. A clickable prototype tests whether they can use it. A Wizard of Oz test delivers a human-powered simulation of the feature while users believe it's automated.
+
+__LI__ Smoke test: build a landing page or email describing the feature — measure clicks and sign-ups before building
+__LI__ Clickable prototype: Figma or InVision mockup — tests flow and interaction without engineering effort
+__LI__ Concierge test: manually deliver the service before automating it — validate demand before building the machine
+__LI__ Wizard of Oz: simulate the product with a human behind the curtain — users think it's the real product
+__LI__ A/B test: run two versions simultaneously — valid only when you have enough traffic to achieve statistical significance
+__LI__ The goal: invalidate assumptions as cheaply as possible — failing early and cheaply is winning` },
+    { title: `RICE & Kano Prioritisation`, content: `__H__ RICE & Kano Prioritisation
+
+Prioritisation frameworks exist to remove opinion from feature decisions. When every team member has a different view of what should be built next and every stakeholder thinks their request is the highest priority, a structured scoring model creates a shared language for the conversation. No framework eliminates judgement, but they do make the basis for decisions explicit and consistent.
+
+__SUB__ RICE Scoring
+RICE scores features on four dimensions: Reach (how many users affected per quarter), Impact (how much does it move the needle per user), Confidence (how sure are you about Reach and Impact?), and Effort (how many person-weeks to build and ship?). The RICE score = (Reach x Impact x Confidence) / Effort. Higher RICE scores get priority.
+
+__LI__ Reach: estimated number of users affected per quarter — pull from analytics or research
+__LI__ Impact: 3 = massive, 2 = significant, 1 = moderate, 0.5 = low, 0.25 = minimal
+__LI__ Confidence: 100% = high evidence, 80% = moderate evidence, 50% = gut feeling — penalises assumptions
+__LI__ Effort: total person-weeks across all functions (design + engineering + QA)
+__LI__ The Confidence multiplier is the most important — it forces teams to be honest about what they actually know
+__LI__ RICE works best when the team uses it consistently — it's a relative ranking tool, not an absolute score
+
+__SUB__ Kano Model
+The Kano Model categorises features by how they relate to user satisfaction. Basic features are expected and cause dissatisfaction when absent — users won't mention them as desired features because they assume they're there. Performance features deliver satisfaction proportional to their quality — more is better, up to a point. Excitement features delight users when present but don't cause dissatisfaction when absent. Today's excitement features become tomorrow's basic features.
+
+__LI__ Basic (must-have): users don't ask for it but are dissatisfied if it's missing — e.g., app doesn't crash
+__LI__ Performance (linear): more of this = more satisfaction — e.g., page load speed, report accuracy
+__LI__ Excitement (delighter): unexpected, creates delight, often drives word of mouth
+__LI__ Indifferent: users neither like nor dislike this feature — deprioritise
+__LI__ Reverse: some users dislike this feature — may be a segmentation signal
+__LI__ Kano surveys ask two questions per feature: how do you feel if this is present? How if it's absent?` }
+    ]
+  },
+  {
+    id: 3,
+    name: `From Discovery to Roadmap`,
+    topics: [
+    { title: `Discovery Outputs & Delivery Handoff`, content: `__H__ Discovery Outputs & Delivery Handoff
+
+Discovery does not produce features — it produces validated problems, evidence-backed insights, and clear hypotheses that the delivery team can test through building. The handoff from discovery to delivery is one of the most critical transitions in product development. Done well, it ensures delivery teams understand the 'why' behind every story. Done poorly, it results in technically correct solutions that solve the wrong problem.
+
+__SUB__ What Discovery Produces
+The outputs of discovery are: validated problem statements (evidence-backed descriptions of real user pain), user insights and research summaries (what was learned and from whom), opportunity maps (how the problems connect and what the potential impact of solving each is), hypotheses for solutions (what we believe will solve the problem and why), and acceptance criteria for how we'll know the solution worked.
+
+__LI__ Validated problem statement format: 'Users in [context] struggle to [task] because [root cause], causing [consequence]'
+__LI__ User insights: patterns observed across multiple research participants — not individual data points
+__LI__ Opportunity map: visual representation of the problem space — connects user needs to business goals
+__LI__ Solution hypothesis: 'We believe that [solution] will achieve [outcome] for [user] — we'll know if this is true when [metric]'
+__LI__ Discovery output is not a requirements spec — it is an evidence package that enables the delivery team to make good decisions
+
+__SUB__ The Discovery-to-Delivery Handoff
+Delivery teams need three things from discovery: a clear problem statement (not a feature request), evidence that the problem is real and significant (research clips, analytics, quotes), and success metrics that define what a good solution looks like. When these three things are present, delivery teams can make design and engineering decisions confidently without waiting for handoffs at every step.
+
+__LI__ Clear problem statement — the team must understand what problem they're solving before they design the solution
+__LI__ Evidence package — research recordings, quotes, analytics data that demonstrates the problem's scale and impact
+__LI__ Success metrics — how will we measure whether the delivered solution actually solves the problem?
+__LI__ Avoid: handing over a wireframe and calling it discovery output — the design is a hypothesis, not a requirement
+__LI__ Best practice: delivery team members should observe at least some discovery sessions directly` },
+    { title: `From Insights to Product Roadmap`, content: `__H__ From Insights to Product Roadmap
+
+The product roadmap is a strategic communication tool — it shows the direction the product is heading and why. A good roadmap is built on discovery outputs: validated problems prioritised by business impact and user value. A bad roadmap is a feature list with dates attached, driven by stakeholder requests and engineering estimates rather than user evidence.
+
+__SUB__ Outcome-Based Roadmapping
+An outcome-based roadmap organises work around the problems to be solved and the outcomes to be achieved — not the features to be shipped. Instead of 'Q1: Launch new dashboard', an outcome roadmap says 'Q1: Reduce time-to-insight for operations managers by 40%'. This keeps the team focused on the goal and creates flexibility in how it's achieved. Features are hypotheses; outcomes are commitments.
+
+__LI__ Problem-first roadmapping: start with validated user problems, then explore solution options
+__LI__ Outcome columns: the business or user outcome each roadmap item must achieve
+__LI__ Avoid feature factories: teams that ship features without measuring outcomes lose touch with whether they're creating value
+__LI__ Now/Next/Later format: avoids false precision about dates while communicating direction clearly
+__LI__ Share the evidence behind each roadmap item — stakeholders who understand the 'why' push back less on 'how'
+
+__SUB__ Continuous Discovery — The Practice
+Discovery is not a project phase — it is a team practice. Teresa Torres's Continuous Discovery framework recommends at minimum one weekly touchpoint with real users, focused on the opportunity space the team is currently exploring. This doesn't have to be a full interview — even a 15-minute conversation generates evidence. Teams that talk to users every week make better decisions than teams that run quarterly research sprints.
+
+__LI__ At minimum: one user touchpoint per week — interview, observation, or usability session
+__LI__ Opportunity mapping: visualise the full problem space before committing to specific solutions
+__LI__ Assumption mapping: make all team assumptions visible, then test the riskiest ones first
+__LI__ Continuous discovery is a team capability, not a researcher's job — everyone on the team should be doing it
+__LI__ The goal is not research reports — the goal is better product decisions made more quickly with more confidence` }
+    ]
+  }
+];
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#0891B2">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

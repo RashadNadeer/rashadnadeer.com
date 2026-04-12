@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Week 1 — Problem Solving Mindset | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C1220', accent: '#4F62F5', teal: '#0D9488',
+                        surface: '#EDF2F7', dark: '#111827', warm: '#FAFAF8'
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+
+        /* Panel switching */
+        .day-panel { display: none; }
+        .day-panel.active { display: block; }
+
+        /* Sidebar nav links */
+        .side-link {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.45rem 0.75rem; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 500; color: #64748b;
+            cursor: pointer; transition: all 0.18s ease;
+            border-left: 2px solid transparent;
+        }
+        .side-link:hover { color: #4F62F5; background: rgba(79,98,245,0.05); border-left-color: #4F62F5; }
+        .side-link.active { color: #4F62F5; background: rgba(79,98,245,0.07); border-left-color: #4F62F5; font-weight: 600; }
+        .side-link.assignment-link { color: #0D9488; }
+        .side-link.assignment-link:hover { background: rgba(13,148,136,0.06); border-left-color: #0D9488; }
+        .side-link.assignment-link.active { color: #0D9488; background: rgba(13,148,136,0.08); border-left-color: #0D9488; }
+
+        /* Day pill buttons */
+        .day-pill {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: #fff;
+            cursor: pointer; transition: all 0.18s;
+        }
+        .day-pill:hover { border-color: #4F62F5; color: #4F62F5; }
+        .day-pill.active { background: #4F62F5; border-color: #4F62F5; color: #fff; }
+        .day-pill.assign-pill { border-color: #99f6e4; color: #0D9488; }
+        .day-pill.assign-pill.active { background: #0D9488; border-color: #0D9488; color: #fff; }
+
+        /* Content typography */
+        .notes h2 {
+            font-size: 1.25rem; font-weight: 800; color: #0C1220;
+            margin-top: 2rem; margin-bottom: 0.6rem;
+            padding-bottom: 0.4rem; border-bottom: 2px solid #EDF2F7;
+        }
+        .notes h3 { font-size: 1rem; font-weight: 700; color: #1e293b; margin-top: 1.4rem; margin-bottom: 0.4rem; }
+        .notes p { font-size: 0.9rem; line-height: 1.85; color: #374151; margin-bottom: 0.9rem; }
+        .notes ul { list-style: disc; padding-left: 1.4rem; margin-bottom: 0.9rem; }
+        .notes ol { list-style: decimal; padding-left: 1.4rem; margin-bottom: 0.9rem; }
+        .notes li { font-size: 0.9rem; line-height: 1.8; color: #374151; margin-bottom: 0.3rem; }
+        .notes strong { color: #0C1220; font-weight: 700; }
+
+        /* Callout blocks */
+        .callout-blue { background: #f8faff; border-left: 3px solid #4F62F5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-amber { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-teal  { background: #f0fdfa; border-left: 3px solid #0D9488; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-navy  { background: #0C1220; padding: 1.25rem 1.5rem; border-radius: 10px; margin: 1rem 0; }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <meta name="description" content="PM Learning Week 1 — problem solving mindset and product thinking fundamentals." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w1.html" />
+</head>
+<body class="bg-warm text-dark">
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <div class="flex items-center gap-6">
+            <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+                <i class="fas fa-arrow-left text-xs"></i> Learning Hub
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- BREADCRUMB + HEADER -->
+<div class="bg-navy pt-20 pb-8 border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <span class="text-accent font-semibold">Week 1</span>
+        </div>
+
+        <!-- Title row -->
+        <div class="flex flex-wrap items-start justify-between gap-5 mb-7">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 1 of 7</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">Self Study Complete</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Problem Solving Mindset</h1>
+                <p class="text-gray-400 text-sm">3 resources · 1 interview prep session · 1 assignment exercise</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <span class="px-4 py-2 bg-white/10 text-gray-500 text-sm rounded-lg cursor-not-allowed">← Week 0</span>
+                <a href="pm-w2.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 2 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+
+        <!-- Day pills -->
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showDay('d1')"     id="pill-d1"     class="day-pill active">Day 1 — MECE Framework</button>
+            <button onclick="showDay('d2')"     id="pill-d2"     class="day-pill">Day 2 — Business Outcomes</button>
+            <button onclick="showDay('d3')"     id="pill-d3"     class="day-pill">Day 3 — Problem Space</button>
+            <button onclick="showDay('d4')"     id="pill-d4"     class="day-pill">Day 4 — Interview Prep</button>
+            <button onclick="showDay('assign')" id="pill-assign" class="day-pill assign-pill">Assignment</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="flex gap-10">
+
+        <!-- SIDEBAR -->
+        <aside class="hidden lg:block w-56 flex-shrink-0">
+            <div class="sticky top-24 space-y-5">
+
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Self-Study Topic</div>
+                    <div class="font-bold text-navy text-sm">Problem Solving Mindset</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Week 1 · Status: Complete</div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Resources</div>
+                    <div class="space-y-0.5">
+                        <div onclick="showDay('d1')" id="side-d1" class="side-link active">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0"></i>
+                            MECE Framework and Issue Trees
+                        </div>
+                        <div onclick="showDay('d2')" id="side-d2" class="side-link">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0"></i>
+                            Business Outcomes and Product Outcomes
+                        </div>
+                        <div onclick="showDay('d3')" id="side-d3" class="side-link">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0"></i>
+                            Problem Space vs Solution Space
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Interview Prep</div>
+                    <div onclick="showDay('d4')" id="side-d4" class="side-link">
+                        <i class="fas fa-microphone-alt text-[10px] flex-shrink-0"></i>
+                        Session 1 — Clarifying Questions
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Assignment</div>
+                    <div onclick="showDay('assign')" id="side-assign" class="side-link assignment-link">
+                        <i class="fas fa-pen text-[10px] flex-shrink-0"></i>
+                        Urban Company — Retention
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="flex-1 min-w-0">
+
+            <!-- ═══════════════════════════════
+                 DAY 1 — MECE FRAMEWORK
+            ═══════════════════════════════ -->
+            <div id="panel-d1" class="day-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100 bg-accent/4">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 1 · Resource 1</div>
+                        <h2 class="text-xl font-extrabold text-navy">MECE Framework and Issue Trees</h2>
+                    </div>
+                    <div class="p-8 notes">
+
+                        <h2>What is MECE?</h2>
+                        <p><strong>MECE</strong> stands for <strong>Mutually Exclusive, Collectively Exhaustive</strong>. It is the foundation of structured problem thinking used by consulting firms and PMs alike.</p>
+                        <ul>
+                            <li><strong>Mutually Exclusive</strong> — each category covers a different part of the problem. No overlap between branches.</li>
+                            <li><strong>Collectively Exhaustive</strong> — all categories together cover the entire problem. Nothing is left out.</li>
+                        </ul>
+                        <p>If two branches overlap, you are double-counting the same cause. If something is missing, you might build the wrong solution entirely.</p>
+
+                        <div class="callout-blue">
+                            <p class="text-sm text-indigo-900 font-semibold m-0">Why PMs use MECE</p>
+                            <p class="text-sm text-indigo-800 mt-1 m-0">When a product metric drops, there are many possible explanations. Without MECE thinking, you chase symptoms or overlook entire categories of causes. MECE ensures you look at the full picture before deciding where to focus.</p>
+                        </div>
+
+                        <h2>What is an Issue Tree?</h2>
+                        <p>An Issue Tree is a visual breakdown of a problem using the MECE principle. You start with the main problem at the top and break it into causes — then break each cause further until you reach something you can measure or act on. Also called Logic Trees or Problem Trees.</p>
+
+                        <h3>How to build an Issue Tree — Step by Step</h3>
+                        <ol>
+                            <li>Write the problem statement clearly at the top</li>
+                            <li>Ask: what are all the possible reasons this could be happening?</li>
+                            <li>Group reasons into MECE buckets — no overlaps, nothing missing</li>
+                            <li>For each bucket, go one level deeper — what are the specific sub-causes?</li>
+                            <li>Stop when you reach something you can measure or investigate</li>
+                        </ol>
+
+                        <h3>Issue Tree — Applied to Urban Company Plus</h3>
+                        <div class="callout-navy">
+                            <div class="text-white font-bold text-sm mb-4">Problem: Decline in Plus member retention rate</div>
+                            <div class="space-y-4 text-sm">
+                                <div>
+                                    <div class="text-accent font-semibold mb-1">A — Acquisition Quality</div>
+                                    <div class="pl-4 text-gray-400 space-y-1 text-xs">
+                                        <div>A1 — Wrong customer segment acquired through promotions</div>
+                                        <div>A2 — Misleading offers attracting deal-seekers who never intended to stay</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-accent font-semibold mb-1">B — Product Value Gap</div>
+                                    <div class="pl-4 text-gray-400 space-y-1 text-xs">
+                                        <div>B1 — Service quality below what was expected at sign-up</div>
+                                        <div>B2 — Plus benefits not clearly visible or communicated in the app</div>
+                                        <div>B3 — Low usage of features that are exclusive to Plus members</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-accent font-semibold mb-1">C — Pricing and Perceived Value</div>
+                                    <div class="pl-4 text-gray-400 space-y-1 text-xs">
+                                        <div>C1 — Subscription feels too expensive relative to how often the user books</div>
+                                        <div>C2 — Renewal experience is friction-heavy or lacks a timely reminder</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-accent font-semibold mb-1">D — Service and Support Experience</div>
+                                    <div class="pl-4 text-gray-400 space-y-1 text-xs">
+                                        <div>D1 — Service professional no-shows or late arrivals</div>
+                                        <div>D2 — Complaints not resolved quickly enough for Plus members</div>
+                                        <div>D3 — No differentiated support experience for Plus vs standard users</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-accent font-semibold mb-1">E — External Factors</div>
+                                    <div class="pl-4 text-gray-400 space-y-1 text-xs">
+                                        <div>E1 — Competitors offering better pricing or perks</div>
+                                        <div>E2 — Seasonal drop in service demand</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Check your Issue Tree for MECE</h3>
+                        <ul>
+                            <li>Ask: do any two branches describe the same root cause? If yes, merge them.</li>
+                            <li>Ask: is there any obvious cause I have not covered? If yes, add a branch.</li>
+                            <li>Ask: can every leaf on the tree be investigated with data or user research? If not, go deeper.</li>
+                        </ul>
+
+                        <div class="callout-amber">
+                            <p class="text-sm text-amber-800 font-semibold m-0">Key Takeaway</p>
+                            <p class="text-sm text-amber-700 mt-1 m-0">The Issue Tree does not give you the answer. It gives you a structured map of where to look. You still need data, user research, or experimentation to confirm which branch is the real cause.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showDay('d2')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Day 2 — Business Outcomes <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════
+                 DAY 2 — BUSINESS OUTCOMES
+            ═══════════════════════════════ -->
+            <div id="panel-d2" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100 bg-accent/4">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 2 · Resource 2</div>
+                        <h2 class="text-xl font-extrabold text-navy">Business Outcomes and Product Outcomes</h2>
+                    </div>
+                    <div class="p-8 notes">
+
+                        <h2>The Core Distinction</h2>
+                        <p>This is one of the most important distinctions in Product Management. <strong>Business outcomes</strong> are what the company cares about measuring. <strong>Product outcomes</strong> are what you can directly influence through the product you build.</p>
+                        <p>You cannot build a feature that "increases retention" directly. You can build features that improve engagement, speed up onboarding, or make value visible faster — and those product outcomes, in turn, improve retention.</p>
+
+                        <div class="grid md:grid-cols-2 gap-4 my-4">
+                            <div class="bg-surface rounded-xl p-5">
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Business Outcome</div>
+                                <div class="font-bold text-navy text-sm mb-2">What the business measures</div>
+                                <ul class="text-xs text-gray-600 space-y-1 m-0" style="list-style:disc;padding-left:1rem">
+                                    <li>Retention rate</li>
+                                    <li>Revenue / MRR</li>
+                                    <li>Churn rate</li>
+                                    <li>Customer Lifetime Value (LTV)</li>
+                                    <li>Monthly Active Users</li>
+                                    <li>Net Promoter Score (NPS)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-surface rounded-xl p-5">
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Product Outcome</div>
+                                <div class="font-bold text-navy text-sm mb-2">What the product changes in users</div>
+                                <ul class="text-xs text-gray-600 space-y-1 m-0" style="list-style:disc;padding-left:1rem">
+                                    <li>Feature adoption rate</li>
+                                    <li>Onboarding completion rate</li>
+                                    <li>Session frequency</li>
+                                    <li>Time to first value</li>
+                                    <li>Engagement with key actions</li>
+                                    <li>Support ticket rate</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h2>What is a KPI Tree?</h2>
+                        <p>A KPI Tree maps the top-level business metric downward through the chain of product outcomes that influence it. It makes the causal chain visible — so you can see exactly which product behaviours you need to improve to move the business metric.</p>
+                        <p>Read the KPI Tree top-down to understand what to build. Read it bottom-up to understand how your work connects to business value.</p>
+
+                        <h3>KPI Tree — Urban Company Plus Retention</h3>
+                        <div class="callout-navy">
+                            <div class="space-y-3">
+                                <div class="text-center">
+                                    <div class="inline-block bg-accent text-white text-sm font-bold px-5 py-2 rounded-lg">Business Outcome: Plus Member Retention Rate</div>
+                                </div>
+                                <div class="text-center text-gray-500 text-xs">↓ directly influenced by</div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-xs font-bold text-gray-400 mb-1">Product Outcome A</div>
+                                        <div class="text-white text-sm">Engagement rate with Plus-exclusive features</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-xs font-bold text-gray-400 mb-1">Product Outcome B</div>
+                                        <div class="text-white text-sm">Successful service bookings per month</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-xs font-bold text-gray-400 mb-1">Product Outcome C</div>
+                                        <div class="text-white text-sm">Onboarding completion rate for new Plus members</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-xs font-bold text-gray-400 mb-1">Product Outcome D</div>
+                                        <div class="text-white text-sm">Post-service satisfaction score (NPS)</div>
+                                    </div>
+                                </div>
+                                <div class="text-center text-gray-500 text-xs mt-2">↓ each outcome driven by input metrics (session frequency, feature clicks, booking success rate...)</div>
+                            </div>
+                        </div>
+
+                        <h2>How to Use This in the Assignment</h2>
+                        <p>The assignment asks: <em>"Create a KPI Tree for the business outcome here and answer this question — what product outcomes can directly affect the business outcome?"</em></p>
+                        <ol>
+                            <li>Identify the business outcome — retention rate of Plus members</li>
+                            <li>List 3-5 product outcomes that directly drive that business outcome</li>
+                            <li>For each product outcome, note what specific user behaviour or product metric represents it</li>
+                            <li>Draw the tree: business outcome at top, product outcomes as branches below</li>
+                            <li>Answer the question explicitly: state which product outcomes are most directly linked and why</li>
+                        </ol>
+
+                        <div class="callout-amber">
+                            <p class="text-sm text-amber-800 font-semibold m-0">Key Takeaway</p>
+                            <p class="text-sm text-amber-700 mt-1 m-0">A PM's job is to build products that change user behaviour (product outcomes) in ways that move the business metric. If you cannot draw a direct line from your feature to a product outcome to a business outcome — reconsider building it.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-5">
+                    <button onclick="showDay('d1')" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-500 px-5 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        <i class="fas fa-arrow-left text-xs"></i> Day 1
+                    </button>
+                    <button onclick="showDay('d3')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Day 3 — Problem Space <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════
+                 DAY 3 — PROBLEM SPACE
+            ═══════════════════════════════ -->
+            <div id="panel-d3" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100 bg-accent/4">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 3 · Resource 3</div>
+                        <h2 class="text-xl font-extrabold text-navy">Problem Space vs Solution Space</h2>
+                    </div>
+                    <div class="p-8 notes">
+
+                        <h2>The Biggest Mistake New PMs Make</h2>
+                        <p>The most common PM mistake is jumping into solutions before fully understanding the problem. A stakeholder says "build a notification feature" and the team builds it — without ever asking whether notifications actually solve the real problem users have.</p>
+                        <p>Separating the <strong>Problem Space</strong> from the <strong>Solution Space</strong> prevents this.</p>
+
+                        <div class="grid md:grid-cols-2 gap-4 my-4">
+                            <div class="rounded-xl border-l-4 border-red-300 bg-red-50 p-5">
+                                <div class="font-bold text-red-800 text-sm mb-2">Problem Space</div>
+                                <p class="text-xs text-red-700 leading-relaxed m-0">The space where you understand the situation deeply before deciding anything.</p>
+                                <ul class="text-xs text-red-700 mt-2 space-y-1 m-0" style="list-style:disc;padding-left:1rem">
+                                    <li>What is happening?</li>
+                                    <li>Who is affected and how many?</li>
+                                    <li>Why is it happening?</li>
+                                    <li>What is the impact if not solved?</li>
+                                    <li>What does success look like?</li>
+                                </ul>
+                            </div>
+                            <div class="rounded-xl border-l-4 border-green-300 bg-green-50 p-5">
+                                <div class="font-bold text-green-800 text-sm mb-2">Solution Space</div>
+                                <p class="text-xs text-green-700 leading-relaxed m-0">The space where you decide what to build — only entered after the problem is validated.</p>
+                                <ul class="text-xs text-green-700 mt-2 space-y-1 m-0" style="list-style:disc;padding-left:1rem">
+                                    <li>How might we solve this?</li>
+                                    <li>What features address the root cause?</li>
+                                    <li>What is the minimum viable solution?</li>
+                                    <li>What are the trade-offs?</li>
+                                    <li>How will we measure success?</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h2>Why This Matters</h2>
+                        <p>If you jump to solutions too early, you risk building something that:</p>
+                        <ul>
+                            <li>Solves a symptom, not the root cause</li>
+                            <li>Is technically built correctly but solves the wrong problem</li>
+                            <li>Wastes engineering effort and user trust</li>
+                        </ul>
+
+                        <h3>Applied to Urban Company</h3>
+                        <p>The assignment for Week 1 keeps you entirely in the <strong>Problem Space</strong>. Both deliverables — the Issue Tree and the KPI Tree — are tools to understand and map the problem, not to propose solutions.</p>
+
+                        <div class="callout-navy">
+                            <div class="text-sm space-y-3">
+                                <div class="flex gap-3">
+                                    <div class="text-accent font-bold w-28 flex-shrink-0">Issue Tree</div>
+                                    <div class="text-gray-300">Fully in Problem Space — maps every possible reason why retention is dropping</div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <div class="text-accent font-bold w-28 flex-shrink-0">KPI Tree</div>
+                                    <div class="text-gray-300">Also Problem Space — maps which product outcomes drive the business outcome, so you know where to look</div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <div class="text-gray-500 font-bold w-28 flex-shrink-0">Not asked yet</div>
+                                    <div class="text-gray-500">Feature ideas, solutions, what to build — that comes in later weeks</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2>When to Move from Problem Space to Solution Space</h2>
+                        <ol>
+                            <li>You have identified the root cause (not just the symptom)</li>
+                            <li>You have validated it with data or user research</li>
+                            <li>You have defined what success looks like in measurable terms</li>
+                            <li>Stakeholders and the team are aligned on the problem</li>
+                        </ol>
+                        <p>Only when all four conditions are met should you move to Solution Space.</p>
+
+                        <div class="callout-amber">
+                            <p class="text-sm text-amber-800 font-semibold m-0">Key Takeaway</p>
+                            <p class="text-sm text-amber-700 mt-1 m-0">Fall in love with the problem, not the solution. The more time you spend in the Problem Space, the better your solution will be when you eventually move there.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-5">
+                    <button onclick="showDay('d2')" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-500 px-5 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        <i class="fas fa-arrow-left text-xs"></i> Day 2
+                    </button>
+                    <button onclick="showDay('d4')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Day 4 — Interview Prep <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════
+                 DAY 4 — INTERVIEW PREP
+            ═══════════════════════════════ -->
+            <div id="panel-d4" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100 bg-indigo-50">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-indigo-400 mb-1">Day 4 · Interview Prep · Session 1 · 4 August · Speaker: Ishant</div>
+                        <h2 class="text-xl font-extrabold text-navy">Asking Clarifying Questions</h2>
+                    </div>
+                    <div class="p-8 notes">
+
+                        <div class="callout-blue">
+                            <p class="text-sm text-indigo-800 m-0">Interview preparation runs as a parallel weekly session alongside each week's self-study. This session is 1 hour and runs in Week 1.</p>
+                        </div>
+
+                        <h2>Session Topics — From the Notes</h2>
+                        <div class="space-y-4 mt-4">
+                            <div class="flex items-start gap-4 p-4 bg-surface rounded-xl">
+                                <div class="w-7 h-7 bg-accent rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">1</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm">What do the interviewer wants to know?</div>
+                                    <p class="text-gray-500 text-xs mt-1 m-0">Every PM interview question is testing something specific — structured thinking, user empathy, prioritisation, communication clarity. Understanding what is being tested helps you answer what is actually being asked, not just the surface question.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-surface rounded-xl">
+                                <div class="w-7 h-7 bg-accent rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">2</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm">APM and PM interview differences and structure</div>
+                                    <p class="text-gray-500 text-xs mt-1 m-0">APM (Associate PM) interviews tend to focus more on thinking process and potential. Senior PM interviews test depth of experience and outcome ownership. Understanding the difference shapes how you frame your answers and what you emphasise.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-surface rounded-xl">
+                                <div class="w-7 h-7 bg-accent rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">3</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm">The right way to start answering the questions</div>
+                                    <p class="text-gray-500 text-xs mt-1 m-0">Never jump straight into an answer. Pause briefly, clarify the question, state your approach, and then answer. This signals structured thinking — which is exactly what interviewers look for in a PM candidate.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-surface rounded-xl">
+                                <div class="w-7 h-7 bg-accent rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">4</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm">Always ask "Why"</div>
+                                    <p class="text-gray-500 text-xs mt-1 m-0">When given a prompt — "design a product for elderly users" or "a metric has dropped by 20%" — ask why before answering. Why is this problem being prioritised? Why is this metric the focus? Understanding the intent behind the question helps you give a more relevant answer.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 bg-surface rounded-xl">
+                                <div class="w-7 h-7 bg-accent rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">5</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm">What are good questions to ask?</div>
+                                    <p class="text-gray-500 text-xs mt-1 m-0">Good clarifying questions narrow scope, confirm assumptions, and show user-centric thinking. Examples: "Who is the primary user?" / "Are we optimising for growth or engagement?" / "Is there a specific geography or platform in focus?" Avoid questions with obvious answers.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2>Practical Application</h2>
+                        <p>Clarifying questions are not just for interviews — they are how PMs work every day. Before writing a PRD, before starting discovery, before accepting a feature request — the first move is always to ask why and to clarify scope.</p>
+
+                        <h3>Example — How to open a PM interview answer</h3>
+                        <div class="callout-navy">
+                            <div class="text-gray-400 text-xs mb-2">Interviewer: "How would you improve Urban Company?"</div>
+                            <div class="text-white text-sm space-y-2">
+                                <div><span class="text-accent font-semibold">Clarify goal:</span> "Before I answer, can I clarify — are we looking to improve retention, acquisition, or revenue? And is the focus on the Plus subscription or the broader platform?"</div>
+                                <div><span class="text-accent font-semibold">Confirm user:</span> "Should I focus on existing Plus members, new users, or service professionals?"</div>
+                                <div><span class="text-accent font-semibold">State approach:</span> "Given that context, I would structure this by first understanding why users are dropping off, then identifying the highest-impact product outcome to improve..."</div>
+                            </div>
+                        </div>
+
+                        <div class="callout-amber">
+                            <p class="text-sm text-amber-800 font-semibold m-0">Key Takeaway</p>
+                            <p class="text-sm text-amber-700 mt-1 m-0">The best PM candidates ask better questions, not give longer answers. Clarifying the question is not a delay — it is the first signal of structured thinking that every interviewer is watching for.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-5">
+                    <button onclick="showDay('d3')" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-500 px-5 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        <i class="fas fa-arrow-left text-xs"></i> Day 3
+                    </button>
+                    <button onclick="showDay('assign')" class="flex items-center gap-2 bg-teal hover:bg-teal/80 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Assignment <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════
+                 ASSIGNMENT
+            ═══════════════════════════════ -->
+            <div id="panel-assign" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-teal/20 bg-teal/5">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-teal mb-1">Week 1 · Assignment</div>
+                        <h2 class="text-xl font-extrabold text-navy">Why Is the Retention Low?</h2>
+                        <p class="text-gray-500 text-sm mt-1">In this assignment, you will analyse a real-world problem, show your ability to break down the problem into smaller parts.</p>
+                    </div>
+                    <div class="p-8 notes">
+
+                        <h2>Company Background</h2>
+                        <div class="callout-blue">
+                            <p class="text-gray-800 m-0">Urban Company is a technology-enabled platform that connects consumers with a wide range of home services professionals. They have a premium members called Plus which works on a subscription model and gives user multiple benefits.</p>
+                        </div>
+
+                        <h2>Scenario</h2>
+                        <div class="callout-blue">
+                            <p class="text-gray-800 m-0">Recently, Urban Company have seen a <strong>decline in the retention rate of Plus members</strong>.</p>
+                            <p class="text-gray-800 mt-3 m-0">You are a Product Manager at UC and you have been given the responsibility to assess the situation and find out why this is happening. Not only this, you also have to come up with ways to increase the number of Plus members.</p>
+                        </div>
+
+                        <h2>Your Tasks</h2>
+                        <div class="space-y-4 mt-4">
+                            <div class="flex items-start gap-4 p-5 border border-gray-100 rounded-xl bg-surface">
+                                <div class="w-8 h-8 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-accent text-sm">1</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm mb-1">Create an Issue Tree for the problem.</div>
+                                    <p class="text-gray-500 text-xs m-0">Use the MECE Framework to break down all possible reasons for the Plus member retention decline into mutually exclusive, collectively exhaustive branches.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-5 border border-gray-100 rounded-xl bg-surface">
+                                <div class="w-8 h-8 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-accent text-sm">2</div>
+                                <div>
+                                    <div class="font-bold text-navy text-sm mb-1">Create a KPI Tree for the business outcome here and answer this question — what product outcomes can directly affect the business outcome?</div>
+                                    <p class="text-gray-500 text-xs m-0">Map the business outcome (retention rate) to the product outcomes that directly influence it. State clearly which product outcomes matter most and why.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2>Resources to Help</h2>
+                        <div class="callout-blue">
+                            <p class="text-gray-700 font-medium text-sm m-0">If you want any help, checkout the resources —</p>
+                            <ol class="mt-2 text-gray-700 text-sm space-y-1">
+                                <li><strong>MECE Framework and Issue Trees</strong></li>
+                                <li><strong>Business Outcomes and Product Outcomes</strong></li>
+                                <li><strong>Problem Space vs Solution Space</strong></li>
+                            </ol>
+                        </div>
+
+                        <h2>Format and Approach</h2>
+                        <div class="callout-blue">
+                            <p class="text-gray-800 m-0">You can submit the assignment as a link to a 1-2 page deck or document.</p>
+                            <p class="text-gray-800 mt-3 m-0">Feel free to choose any platform like Notion, Google Doc, Canva, Figma or Google Slides to make the document/ deck. You need to share the public link to the doc as your submission.</p>
+                            <p class="text-gray-800 mt-3 m-0">If you choose any data from any source, please mention the source in the assignment only.</p>
+                            <p class="text-gray-800 mt-3 m-0">Please remember that its more important to attempt than to strive for perfection, specially in your first week. So, submitting the assignment and getting feedback is more important.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-5">
+                    <button onclick="showDay('d4')" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-500 px-5 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        <i class="fas fa-arrow-left text-xs"></i> Day 4
+                    </button>
+                    <a href="pm-w2.html" class="flex items-center gap-2 bg-navy hover:bg-dark text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Next: Week 2 <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-navy mt-16 py-6 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4 text-sm">
+        <div class="text-gray-500">Week 1 — Problem Solving Mindset</div>
+        <div class="flex items-center gap-5">
+            <a href="learn.html" class="text-gray-400 hover:text-white transition-colors">Learning Hub</a>
+            <a href="pm-w2.html" class="text-accent hover:text-white transition-colors flex items-center gap-1.5">Week 2 <i class="fas fa-arrow-right text-xs"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const allPanels = ['d1', 'd2', 'd3', 'd4', 'assign'];
+
+    function showDay(id) {
+        // Hide all panels
+        allPanels.forEach(p => {
+            const panel = document.getElementById('panel-' + p);
+            const pill  = document.getElementById('pill-' + p);
+            const side  = document.getElementById('side-' + p);
+            if (panel) panel.classList.remove('active');
+            if (pill)  pill.classList.remove('active');
+            if (side)  side.classList.remove('active');
+        });
+
+        // Show selected
+        const panel = document.getElementById('panel-' + id);
+        const pill  = document.getElementById('pill-' + id);
+        const side  = document.getElementById('side-' + id);
+        if (panel) panel.classList.add('active');
+        if (pill)  pill.classList.add('active');
+        if (side)  side.classList.add('active');
+
+        window.scrollTo({ top: 260, behavior: 'smooth' });
+        window.location.hash = id;
+    }
+
+    // Load from URL hash
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash && allPanels.includes(hash)) showDay(hash);
+    });
+</script>
+
+</body>
+</html>

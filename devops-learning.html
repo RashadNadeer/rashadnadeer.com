@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevOps | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(3,105,161,.08); border-left-color:rgba(3,105,161,.4); }
+        .week-item.active { background:rgba(3,105,161,.12); border-left-color:#0369A1; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#0369A1; border-color:#0369A1; background:rgba(3,105,161,.1); }
+        .week-item.active .view-btn { color:#0369A1; border-color:rgba(3,105,161,.5); background:rgba(3,105,161,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#0369A1; background:rgba(3,105,161,.02); box-shadow:0 2px 8px rgba(3,105,161,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#0369A1; }
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #bae6fd; border-radius:10px; margin-bottom:8px; background:rgba(3,105,161,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#0369A1; background:rgba(3,105,161,.07); box-shadow:0 2px 8px rgba(3,105,161,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(3,105,161,.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#0369A1; font-weight:500; margin-top:2px; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#0369A1; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#0369A1; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#0369A1; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete DevOps learning module — Three Ways, CALMS, CI/CD pipelines, infrastructure as code, Docker, Kubernetes, DORA metrics, and DevSecOps." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/devops-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(3,105,161,.15); color:#0369A1">
+            <i class="fas fa-infinity text-[9px]"></i> DevOps
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" style="--tw-text-opacity:1" onmouseover="this.style.color='#0369A1'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">DevOps</div>
+                <div class="sidebar-week-count">8 modules &middot; 14 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">DevOps Foundations</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">CALMS Framework</span>
+            <span class="week-meta">1 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">CI/CD Pipeline</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Infrastructure as Code</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">Containers & Orchestration</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Monitoring & Observability</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+        <div class="week-item" data-week="6" onclick="selectWeek(6)">
+          <div class="week-info">
+            <span class="week-name">DORA Metrics & DevSecOps</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(6)">View</button>
+        </div>
+        <div class="week-item" data-week="7" onclick="selectWeek(7)">
+          <div class="week-info">
+            <span class="week-name">DevOps Toolchain</span>
+            <span class="week-meta">1 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(7)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(3,105,161,.1)">
+                        <i class="fas fa-infinity text-2xl" style="color:#0369A1"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">DevOps</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from DevOps culture and the Three Ways through CI/CD pipelines, infrastructure as code, containers, Kubernetes, and DORA metrics.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">8 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">14 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `DevOps Foundations`,
+    topics: [
+    { title: `What is DevOps?`, content: `__H__ What is DevOps?
+
+DevOps is not a team, not a job title, and not a tool. It is a cultural and technical movement that unifies software development (Dev) and IT operations (Ops) with the goal of shortening the delivery lifecycle while maintaining high quality and reliability. Before DevOps, software organisations typically operated with a clear wall between the team that wrote code and the team that deployed and ran it. Developers optimised for shipping features quickly; operations teams optimised for stability and avoiding change. These incentives were in direct conflict, and the result was a toxic blame culture: when production incidents occurred, developers blamed operations for mishandling deployments, and operations blamed developers for writing fragile code. DevOps tears down that wall.
+
+__SUB__ The History — Before and After
+In the pre-DevOps era, software releases were infrequent, high-risk events. A release might happen monthly or quarterly, requiring freezes, change advisory board approvals, and all-hands deployment nights. Failures were common, rollbacks were painful, and the time between a developer committing code and that code reaching users was measured in weeks or months. The DevOps movement emerged from the Agile and lean communities around 2008-2009, catalysed by Patrick Debois and others who recognised that Agile had improved development practices but had left the deployment bottleneck untouched. DevOps completed the Agile transformation by applying lean and automation principles to the full delivery pipeline from code commit to production.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#f0f9ff;border-radius:12px;border:1px solid #bae6fd;overflow-x:auto"><div style="display:flex;align-items:center;gap:6px;min-width:600px;font-size:11px;font-weight:600"><div style="background:#0369A1;color:white;padding:8px 12px;border-radius:6px;text-align:center">Code<br>Commit</div><div style="color:#0369A1;font-size:16px">→</div><div style="background:#0369A1;color:white;padding:8px 12px;border-radius:6px;text-align:center">Build</div><div style="color:#0369A1;font-size:16px">→</div><div style="background:#0369A1;color:white;padding:8px 12px;border-radius:6px;text-align:center">Unit<br>Tests</div><div style="color:#0369A1;font-size:16px">→</div><div style="background:#0369A1;color:white;padding:8px 12px;border-radius:6px;text-align:center">Integration<br>Tests</div><div style="color:#0369A1;font-size:16px">→</div><div style="background:#16a34a;color:white;padding:8px 12px;border-radius:6px;text-align:center">Deploy to<br>Staging</div><div style="color:#16a34a;font-size:16px">→</div><div style="background:#16a34a;color:white;padding:8px 12px;border-radius:6px;text-align:center">Deploy to<br>Production</div></div><div style="font-size:11px;color:#64748b;margin-top:10px;padding-left:4px">CI/CD Pipeline — every commit triggers the full pipeline automatically</div></div>
+
+__SUB__ The Cultural Shift
+The technical practices of DevOps — automation, CI/CD, infrastructure as code — are meaningless without the underlying cultural shift. DevOps culture requires shared responsibility for outcomes: developers who care about production reliability, and operations engineers who understand application architecture. It requires blameless postmortems that treat production incidents as learning opportunities rather than opportunities to punish. It requires psychological safety — an environment where teams can experiment, fail fast, and improve without fear of career consequences. Without culture, DevOps becomes a re-labelling exercise: the same silos, the same blame culture, but with a new pipeline tool.` },
+    { title: `The Three Ways of DevOps`, content: `__H__ The Three Ways of DevOps
+
+Gene Kim, Jez Humble, and Patrick Debois codified the philosophical foundation of DevOps in The DevOps Handbook through the concept of the Three Ways. These are not tools or processes — they are principles that guide how a DevOps organisation thinks about work, feedback, and improvement.
+
+__SUB__ First Way — Flow
+The First Way is about optimising the flow of work from left to right: from development, through operations, to the customer. It focuses on making the delivery pipeline as fast and smooth as possible, eliminating handoffs, reducing batch sizes, and preventing defects from moving downstream. The First Way manifests in practices like continuous integration, automated testing gates, deployment automation, and feature flags. The goal is a system where every code change can flow to production quickly, safely, and with minimal human intervention. Fast flow is not about moving quickly at the expense of quality — it is about removing the waste and friction that makes slow releases feel necessary.
+
+__SUB__ Second Way — Feedback
+The Second Way amplifies feedback loops from right to left: from production back to development. Fast flow without feedback is reckless — you need to know immediately when something goes wrong in production, and you need that information to flow back to the team that can fix it. The Second Way manifests in practices like comprehensive production monitoring, alerting, logging, distributed tracing, and customer feedback loops. It also includes automated test feedback in the CI pipeline — the loop from commit to test result should be measured in minutes, not hours. Short feedback loops are what make it safe to deploy frequently: if something breaks, you know within minutes and can roll back or fix forward immediately.
+
+__SUB__ Third Way — Continuous Learning
+The Third Way fosters a culture of continual experimentation and learning. It recognises that complex systems cannot be fully understood upfront, and that improvement requires deliberate practice, experimentation, and the willingness to learn from both successes and failures. The Third Way manifests in blameless postmortems (learning from incidents without assigning blame), chaos engineering (deliberately introducing failures to understand system resilience), A/B testing (experimenting with product changes in production), and regular retrospectives. Organisations that embody the Third Way treat failure as information rather than evidence of incompetence.` }
+    ]
+  },
+  {
+    id: 1,
+    name: `CALMS Framework`,
+    topics: [
+    { title: `CALMS — Assessing DevOps Maturity`, content: `__H__ CALMS — Assessing DevOps Maturity
+
+The CALMS framework — Culture, Automation, Lean, Measurement, Sharing — provides a practical lens for assessing an organisation's DevOps maturity and identifying where investment is most needed. It was developed by Damon Edwards and John Willis and refined through the broader DevOps community. Unlike capability models that assign maturity levels, CALMS is descriptive rather than prescriptive — it helps teams understand where they are and have honest conversations about where they need to improve.
+
+__SUB__ Culture and Automation
+Culture is the foundation. Without psychological safety, shared responsibility, and a blameless mindset, every other CALMS element is built on sand. Cultural DevOps maturity is visible in how teams respond to incidents — do they look for people to blame or problems to fix? Do developers feel accountable for production reliability? Do operations engineers have input into system design? Automation follows from culture: once a team agrees that manual, repetitive work is waste, automation becomes the natural response. The principle is simple: if a human does the same task more than twice, it should be automated. This covers build automation, test automation, deployment automation, infrastructure provisioning, and security scanning.
+
+__LI__ Blameless postmortems: focus on systemic causes, not individual failures
+__LI__ Automate the build: no manual compilation, packaging, or artefact creation
+__LI__ Automate the deployment: push-button (or commit-triggered) deployments with no manual steps
+__LI__ Automate testing: every commit triggers automated quality gates
+
+__SUB__ Lean, Measurement, and Sharing
+Lean in DevOps means applying lean manufacturing principles to software delivery: work in small batches, limit work in progress, eliminate waste (unnecessary approvals, manual handoffs, documentation nobody reads), and continuously improve. The smaller the batch size, the faster the feedback and the smaller the blast radius of any failure. Measurement is the principle that you cannot improve what you cannot measure — and DevOps organisations measure everything: deployment frequency, lead time, change failure rate, mean time to recover, and application performance metrics. Sharing closes the loop: learnings, tools, practices, and architectural patterns should be shared across teams to prevent each team from solving the same problems in isolation. Internal platforms, engineering blogs, communities of practice, and shared toolchains are all expressions of Sharing.
+
+__LI__ Lean: reduce WIP, work in small batches, eliminate manual handoffs
+__LI__ Measurement: DORA metrics as the standard — deployment frequency, lead time, CFR, MTTR
+__LI__ Sharing: internal developer platforms, documented runbooks, shared component libraries` }
+    ]
+  },
+  {
+    id: 2,
+    name: `CI/CD Pipeline`,
+    topics: [
+    { title: `Continuous Integration`, content: `__H__ Continuous Integration
+
+Continuous Integration is the practice of frequently integrating code changes from multiple developers into a shared repository, with each integration triggering an automated build and test sequence. The 'continuous' in CI is not hyperbole — the expectation is that developers commit to the main branch (or a short-lived feature branch that merges daily) multiple times per day. The automated pipeline then verifies that the integrated code still builds correctly and passes the automated test suite.
+
+__SUB__ The Developer Contract
+CI establishes an implicit contract: commit small changes often, never break the build, and fix build failures immediately if you do. Small commits mean that when a build fails, the cause is easy to identify — it was introduced in the last commit, not buried somewhere in two weeks of accumulated changes. The 'never break the build' rule is non-negotiable: a broken build blocks the entire team, because nobody can integrate their work on top of a broken baseline. When a build fails, all other work stops until it is fixed. This social contract transforms integration from a periodic painful event into a continuous background process that mostly succeeds.
+
+__LI__ Commit small: each commit should represent one logical change, not a week of work
+__LI__ Commit often: integrate at least daily to keep branches short-lived and conflicts small
+__LI__ Fix the build immediately: a broken build is the team's highest-priority work
+__LI__ Never commit to a broken build: pull and verify the build is green before committing
+
+__SUB__ Branch Strategy and Trunk-Based Development
+The choice of branching strategy has profound implications for CI effectiveness. Long-lived feature branches defeat the purpose of CI: if a developer works on a branch for two weeks, they are not continuously integrating — they are deferring integration. Trunk-based development is the branching strategy most compatible with true CI: all developers work on or very close to the main branch, merging small changes multiple times per day. Feature flags allow incomplete features to be committed to trunk without exposing them to users. The result is a single shared reality — one build, one test result, one truth — rather than the parallel universes of long-lived branches.` },
+    { title: `Continuous Delivery vs Continuous Deployment`, content: `__H__ Continuous Delivery vs Continuous Deployment
+
+Continuous Delivery and Continuous Deployment are often used interchangeably, but they describe different points on the automation spectrum, and the distinction has significant business implications.
+
+__SUB__ The Critical Distinction
+Continuous Delivery means that the software is always in a deployable state — every commit that passes the automated pipeline could be deployed to production, but the decision to deploy is made by a human. The pipeline produces a release-ready artefact and stops; a person decides when to push the button. Continuous Deployment removes that human decision point entirely: every commit that passes the automated pipeline is automatically deployed to production without human intervention. Netflix, Amazon, and Google practise Continuous Deployment — code ships to production hundreds of times per day automatically. Both approaches require the same quality of automated testing and deployment infrastructure; the difference is in the final gate.
+
+__LI__ Continuous Delivery: automated pipeline + human release decision — suitable for regulated environments
+__LI__ Continuous Deployment: fully automated release — requires high confidence in automated tests
+__LI__ Both require: automated testing, deployment automation, monitoring, and fast rollback capability
+
+__SUB__ Deployment Strategies for Safe Releases
+Whether deploying continuously or on a cadence, modern deployment strategies reduce risk by controlling how new versions are exposed to users. Blue-green deployment maintains two identical production environments — blue (live) and green (new version). The new version is deployed to green, tested, and then traffic is switched from blue to green instantaneously. If something goes wrong, traffic switches back to blue in seconds. Canary releases route a small percentage of production traffic (1%, 5%, 10%) to the new version, gradually increasing as confidence builds. Both strategies transform deployment from a high-stakes binary event into a controllable, observable, and reversible process.` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Infrastructure as Code`,
+    topics: [
+    { title: `IaC — Principles and Benefits`, content: `__H__ IaC — Principles and Benefits
+
+Infrastructure as Code is the practice of managing and provisioning infrastructure — servers, networks, databases, load balancers, DNS records — through machine-readable configuration files rather than through manual processes or interactive tools. The shift is conceptual: infrastructure is software, and it should be managed with the same engineering rigour as application code.
+
+__SUB__ Treating Infrastructure Like Software
+When infrastructure is defined as code, it gains all the benefits of software engineering practice. It can be version-controlled in Git, giving a complete history of every infrastructure change, when it was made, and who made it. It can be peer-reviewed through pull requests before being applied. It can be tested — both unit tests on the configuration logic and integration tests that provision real infrastructure and verify it behaves correctly. It can be replicated exactly: the same code that provisions the production environment can provision an identical staging environment, eliminating environment drift. The value of version control alone is transformative — infrastructure changes that previously happened invisibly through a console are now auditable, reviewable, and reversible.
+
+__LI__ Version control: every infrastructure change tracked in Git with author, timestamp, and purpose
+__LI__ Code review: infrastructure changes reviewed before being applied — no cowboy ops
+__LI__ Idempotency: applying the same IaC code multiple times produces the same result
+__LI__ Immutable infrastructure: never patch in place — replace the server with a new one built from code
+
+__SUB__ Why Manual Infrastructure is a Liability
+Manual infrastructure — servers built by hand through a web console, configurations applied by SSH — creates snowflakes: unique servers whose configuration exists only in someone's memory or an out-of-date runbook. Snowflakes cannot be reproduced exactly, cannot be tested before being deployed, and cannot be reviewed before being changed. They accumulate configuration drift over time as different operators make different changes. And they create a bus factor problem: when the person who built the snowflake leaves, the knowledge of what's on it leaves too. IaC eliminates snowflakes by making infrastructure reproducible, auditable, and owned by the team rather than by individuals.` },
+    { title: `Terraform, Ansible & the IaC Ecosystem`, content: `__H__ Terraform, Ansible & the IaC Ecosystem
+
+The IaC ecosystem is rich and the tool choice depends on what you are trying to do. The most important distinction is between provisioning tools (which create infrastructure) and configuration management tools (which configure the software on that infrastructure).
+
+__SUB__ Terraform — Declarative Infrastructure Provisioning
+Terraform, from HashiCorp, is the dominant tool for cloud infrastructure provisioning. It uses a declarative language (HCL — HashiCorp Configuration Language) in which you describe the desired end state of your infrastructure, and Terraform figures out the steps required to achieve that state. This is the declarative model: you say what you want, not how to get there. Terraform maintains a state file that records the current state of managed infrastructure, enabling it to calculate the difference between the current state and the desired state (a 'plan') before applying any changes. This plan-then-apply workflow is a critical safety mechanism: you review what Terraform will do before it does it.
+
+__LI__ Declarative: define the desired state; Terraform determines the steps to reach it
+__LI__ State management: Terraform state file tracks what infrastructure it manages
+__LI__ Plan before apply: review changes before they are made — no surprises
+__LI__ Provider ecosystem: AWS, Azure, GCP, Kubernetes, GitHub — thousands of providers available
+
+__SUB__ Ansible — Configuration Management and the IaC Distinction
+Ansible, from Red Hat, is primarily a configuration management and automation tool. Where Terraform provisions infrastructure (creates the server), Ansible configures it (installs software, sets configuration files, manages users). Ansible uses an imperative model — you write playbooks that describe the steps to take, not just the desired end state. It is agentless: it connects to servers over SSH and applies configuration without requiring a daemon on the target. The practical division in many teams is: Terraform for cloud resource provisioning, Ansible for software configuration on those resources. This combination covers the full lifecycle from empty cloud account to running, configured application.` }
+    ]
+  },
+  {
+    id: 4,
+    name: `Containers & Orchestration`,
+    topics: [
+    { title: `Docker & Containerisation`, content: `__H__ Docker & Containerisation
+
+Containers are the most significant change in application deployment since virtualisation. They solve a problem that had plagued software teams for decades: the 'works on my machine' problem, where software that runs correctly in development fails in testing or production due to differences in operating system libraries, runtime versions, or configuration.
+
+__SUB__ The Problem Containers Solve
+Before containers, deploying an application meant managing its dependencies on the target server — installing the right version of Python, Node.js, or Java, ensuring the correct system libraries were present, configuring environment variables, and hoping that nothing on the server conflicted with the application's requirements. Different applications on the same server could have conflicting dependencies. Different environments (dev, test, staging, production) would inevitably drift apart. Containers solve this by packaging the application and all its dependencies — runtime, libraries, configuration — into a single, portable, self-contained unit. A container runs identically on a developer's laptop, in a CI environment, and in production, because it carries its environment with it.
+
+__LI__ Image: the blueprint — an immutable snapshot of the application and its dependencies
+__LI__ Container: a running instance of an image — isolated, reproducible, disposable
+__LI__ Dockerfile: the recipe for building an image — version-controlled alongside the application code
+
+__SUB__ Multi-Stage Builds, Layering, and Caching
+Docker images are built in layers, and each layer is cached. When you rebuild an image, Docker only rebuilds layers that have changed — which means that if your dependencies haven't changed, the dependency installation layer is served from cache in seconds rather than being re-downloaded and re-installed. Multi-stage builds allow you to use a large build image (with compilers, build tools) to compile the application, then copy only the built artefact into a small runtime image. The result is production images that are lean, secure (fewer packages means fewer vulnerabilities), and fast to pull and start. Understanding image layering and cache behaviour is essential for writing Dockerfiles that don't make CI pipelines unnecessarily slow.` },
+    { title: `Kubernetes — Container Orchestration`, content: `__H__ Kubernetes — Container Orchestration
+
+Running a single container on a single server is simple. Running hundreds of containers across dozens of servers, with automatic scaling, self-healing, rolling updates, and service discovery, is the problem that Kubernetes solves. Kubernetes (K8s) is the dominant container orchestration platform, originally developed by Google based on its internal Borg system.
+
+__SUB__ What Kubernetes Does
+Kubernetes is responsible for scheduling containers onto nodes (deciding which server should run which container), self-healing (automatically restarting containers that crash, replacing containers on failed nodes), horizontal scaling (adding or removing container instances based on CPU or custom metrics), service discovery (routing traffic to healthy container instances regardless of which node they're on), and rolling updates (replacing old container versions with new ones without downtime). It provides a declarative API: you describe the desired state (run 3 replicas of this container image, exposed on port 8080) and Kubernetes continuously reconciles the actual state with the desired state.
+
+__LI__ Pod: the smallest deployable unit — one or more containers sharing a network namespace
+__LI__ Deployment: manages a set of replicas — handles rolling updates and rollbacks
+__LI__ Service: stable network endpoint for a set of pods — abstracts individual pod IP addresses
+__LI__ Namespace: virtual cluster within a cluster — for environment or team isolation
+
+__SUB__ When K8s is Right — and When It's Overkill
+Kubernetes is powerful, but it comes with significant operational complexity. For a small application with modest traffic, deploying to Kubernetes means managing a complex distributed system to run what could be a single server process. The overhead of learning Kubernetes, maintaining the cluster, and debugging its abstractions may outweigh the benefits for small teams. The right question is not 'should we use Kubernetes?' but 'what problems are we actually trying to solve?' If the answer is auto-scaling, multi-region deployment, or running hundreds of microservices, Kubernetes is likely the right answer. For simpler needs, managed container services (AWS ECS, Google Cloud Run, Azure Container Apps) provide many of the same benefits with far less operational complexity.` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Monitoring & Observability`,
+    topics: [
+    { title: `The Three Pillars — Logs, Metrics, Traces`, content: `__H__ The Three Pillars — Logs, Metrics, Traces
+
+Observability is the ability to understand what is happening inside a complex system from the outside, by examining its outputs. The three pillars of observability — logs, metrics, and traces — each answer a different question about system behaviour, and all three are needed for comprehensive understanding.
+
+__SUB__ Logs — The Event Record
+Logs are time-stamped records of discrete events that occurred within the system. When a user logs in, when a payment fails, when an exception is thrown — these are events that should be logged. Structured logging (writing logs as JSON objects with consistent fields rather than free-text strings) makes logs machine-parseable and enables powerful querying: find all events where the user ID is X and the error code is 500 in the last hour. The ELK stack (Elasticsearch for storage and search, Logstash for collection and parsing, Kibana for visualisation) is the classic open-source logging infrastructure. Correlation IDs — unique identifiers passed through every service involved in a request — are essential for tracing a specific user's journey across multiple log streams.
+
+__LI__ Structured logging: log as JSON with consistent field names — machine-parseable and queryable
+__LI__ Log levels: DEBUG (development), INFO (normal operations), WARN (recoverable issue), ERROR (failure)
+__LI__ Correlation IDs: tag every log with a request ID to trace a user's journey across services
+
+__SUB__ Metrics and Traces
+Metrics are numeric measurements aggregated over time — they answer questions like 'how many requests per second?' and 'what percentage of requests are failing?' Prometheus is the dominant open-source metrics collection system; Grafana is the standard dashboarding layer. Together they enable real-time alerting (alert me when error rate exceeds 1%) and historical analysis (what did our error rate look like last Tuesday?). Distributed traces capture the journey of a single request across multiple services, recording how long each service took and where errors occurred. In a microservices architecture, a single user request might touch 10 services; a trace makes the entire journey visible. Jaeger and Zipkin are the leading open-source tracing tools; Datadog and New Relic provide commercial all-in-one observability platforms.` },
+    { title: `SLIs, SLOs and SLAs`, content: `__H__ SLIs, SLOs and SLAs
+
+The SLI/SLO/SLA hierarchy provides a rigorous framework for defining, measuring, and managing service reliability. It originated at Google's Site Reliability Engineering practice and has become the standard language for reliability conversations between engineering and business.
+
+__SUB__ The Hierarchy — SLI to SLA
+A Service Level Indicator (SLI) is the measured signal — a specific metric that reflects the quality of the service from the user's perspective. Typical SLIs are request success rate (percentage of requests that return a non-5xx response), request latency (percentage of requests completing under 200ms), and availability (percentage of time the service is serving traffic). A Service Level Objective (SLO) is the internal target for an SLI: 'our success rate SLI must be above 99.9% over any 30-day window'. The SLO is an engineering commitment, not a contractual promise. A Service Level Agreement (SLA) is the contractual promise to customers, typically more conservative than the SLO to allow a buffer. Breach of an SLA has financial or contractual consequences; breach of an SLO is an internal trigger to investigate and improve.
+
+__LI__ SLI: the measurement — success rate, latency percentile, availability percentage
+__LI__ SLO: the internal target — success rate must be >99.9% over a 30-day rolling window
+__LI__ SLA: the contractual commitment — typically 99.5%, more conservative than the SLO
+
+__SUB__ Error Budgets and Deployment Decisions
+The error budget is the complement of the SLO: if the SLO is 99.9% availability, the error budget is 0.1% — the amount of downtime the team is allowed to consume in a 30-day window. Error budgets transform reliability from an abstract goal into a concrete resource that teams must manage. If the error budget is healthy (most of it unspent), the team has room to take risks — deploy new features, experiment with architectural changes. If the error budget is nearly exhausted, the team should slow down deployments and focus on reliability work. This creates a natural self-regulating mechanism between the velocity of feature delivery and the stability of the service. Critically, an SLO of 100% is counterproductive: it eliminates the error budget entirely, making any deployment risky and any experimentation impossible.` }
+    ]
+  },
+  {
+    id: 6,
+    name: `DORA Metrics & DevSecOps`,
+    topics: [
+    { title: `DORA's Four Key Metrics`, content: `__H__ DORA's Four Key Metrics
+
+The DevOps Research and Assessment (DORA) programme, led by Dr Nicole Forsgren, conducted the largest longitudinal study of software delivery performance ever undertaken. Its findings, published in the book Accelerate, identified four metrics that are both reliable predictors of software delivery performance and of broader organisational outcomes including profitability and market share.
+
+__SUB__ The Four Metrics
+Deployment Frequency measures how often code is deployed to production — elite performers deploy on demand, multiple times per day. Lead Time for Changes measures the time from a code commit to that code running in production — elite performers achieve this in less than one hour. Change Failure Rate measures the percentage of deployments that cause a production incident requiring a hotfix or rollback — elite performers maintain below 5%. Time to Restore Service measures how long it takes to recover from a production incident — elite performers recover in less than one hour. The DORA research found that elite performers on all four metrics simultaneously had 46 times more frequent deployments, 440 times faster lead times, seven times lower change failure rates, and 24 times faster recovery times than low performers.
+
+__LI__ Deployment Frequency: elite = multiple per day; low = monthly or less
+__LI__ Lead Time for Changes: elite = less than 1 hour; low = 6 months or more
+__LI__ Change Failure Rate: elite = 0-5%; low = 46-60%
+__LI__ Time to Restore Service: elite = less than 1 hour; low = 1 week to 1 month
+
+__SUB__ Using DORA as a Diagnostic Tool
+The DORA metrics are most valuable as a diagnostic framework rather than a performance ranking system. Each metric points to a different class of problem. Low deployment frequency typically indicates batch-and-queue release processes, fear of deployment, or insufficient test automation. High lead time indicates large batch sizes, long-lived branches, or manual handoffs between teams. High change failure rate indicates insufficient testing, poor deployment practices, or inadequate monitoring. Long restore time indicates poor on-call practices, missing runbooks, or insufficient observability. The right way to use DORA is to ask: 'where are we weakest, what does that tell us about our process, and what specific improvement would move this metric?' Not: 'which team has the best score?'` },
+    { title: `DevSecOps — Shifting Security Left`, content: `__H__ DevSecOps — Shifting Security Left
+
+DevSecOps extends the DevOps philosophy to include security as a shared, continuous responsibility rather than a final gate managed by a separate security team. Just as DevOps integrated operations into the development lifecycle, DevSecOps integrates security — treating security as code, automating security testing in the pipeline, and making security feedback as fast and actionable as unit test feedback.
+
+__SUB__ Security Scanning in the Pipeline
+A mature DevSecOps pipeline includes multiple layers of automated security scanning. Static Application Security Testing (SAST) analyses source code for security vulnerabilities — SQL injection patterns, insecure cryptography, hardcoded credentials — without executing the application. Dynamic Application Security Testing (DAST) runs the application and probes it for vulnerabilities from the outside, simulating an attacker. Software Composition Analysis (SCA) scans the application's dependencies for known vulnerabilities (CVEs), flagging outdated libraries with published exploits. Container scanning checks Docker images for OS-level vulnerabilities. Each of these runs automatically in the CI pipeline, providing security feedback in minutes rather than in the annual penetration test.
+
+__LI__ SAST: source code analysis — finds vulnerabilities in your code before it runs
+__LI__ DAST: dynamic scanning — probes the running application for exploitable weaknesses
+__LI__ SCA: dependency scanning — flags libraries with known CVEs (e.g., Log4Shell)
+__LI__ Secrets scanning: prevents API keys and passwords from being committed to Git
+
+__SUB__ The Cost of Late Security and the OWASP Top 10
+The same cost curve that applies to functional defects applies to security vulnerabilities: finding a vulnerability in code review costs one unit of effort; finding it in a penetration test after deployment costs tens of times more; finding it after it has been exploited in production can cost the organisation millions in breach notification, regulatory fines, and reputational damage. The OWASP Top 10 provides a standard framework for the most critical web application security risks — including injection attacks, broken authentication, insecure direct object references, and security misconfiguration. Using the OWASP Top 10 as the checklist for both development standards and automated scanning ensures that the most consequential and most common vulnerabilities are systematically addressed.` }
+    ]
+  },
+  {
+    id: 7,
+    name: `DevOps Toolchain`,
+    topics: [
+    { title: `The DevOps Toolchain by Category`, content: `__H__ The DevOps Toolchain by Category
+
+A DevOps toolchain is the set of tools that support the complete software delivery lifecycle, from planning through coding, building, testing, deploying, operating, and monitoring. No single tool covers all stages; the toolchain is an assembly of best-of-breed tools connected by integrations and automation. The principle that should govern toolchain selection is: standardise the toolchain across the engineering organisation, and resist fragmentation — every additional tool that different teams use in different ways creates integration cost, training cost, and support cost.
+
+__SUB__ Planning, Code, and Build Tools
+Planning tools manage work: epics, stories, tasks, and their priority and status. Jira is the enterprise standard; Linear is increasingly popular for its speed and clean interface. Code tools are the version control system and its hosting platform — Git is universal, hosted on GitHub, GitLab, or Bitbucket. The choice of Git hosting platform has cascading implications because modern CI/CD pipelines are tightly integrated with the hosting platform's native pipeline product. Build tools compile source code and produce deployable artefacts: Maven and Gradle for JVM languages, npm and Yarn for JavaScript, pip and Poetry for Python.
+
+__LI__ Planning: Jira (enterprise), Linear (modern teams), Azure DevOps Boards
+__LI__ Code: Git — hosted on GitHub, GitLab, or Bitbucket
+__LI__ Build: Maven/Gradle (Java), npm/Yarn (JavaScript), pip/Poetry (Python), Make (universal)
+
+__SUB__ CI/CD, Containers, and Observability Tools
+CI/CD platforms execute the automated pipeline. Jenkins is the most mature and extensible but carries significant operational overhead. GitHub Actions and GitLab CI have become the dominant choice for teams already on those platforms — tightly integrated, zero infrastructure to manage, and powerful enough for most use cases. CircleCI and Buildkite serve teams with more complex pipeline needs. Container tools — Docker for building and running images, Podman as the rootless alternative — are now standard. Orchestration is Kubernetes, either self-managed or as a managed service (AWS EKS, Google GKE, Azure AKS). For IaC, Terraform is the standard for cloud provisioning; Pulumi offers the alternative of writing infrastructure in general-purpose programming languages. Observability is covered by Datadog (commercial all-in-one), the Prometheus + Grafana stack (open-source metrics and dashboards), and the ELK or OpenSearch stack for logging.
+
+__LI__ CI/CD: GitHub Actions, GitLab CI (platform-native); Jenkins (self-hosted enterprise)
+__LI__ Containers: Docker (build and run); Kubernetes (orchestration); EKS/GKE/AKS (managed K8s)
+__LI__ IaC: Terraform (declarative cloud provisioning); Ansible (configuration management)
+__LI__ Observability: Datadog (commercial); Prometheus + Grafana (open-source metrics); ELK (logging)` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#0369A1">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

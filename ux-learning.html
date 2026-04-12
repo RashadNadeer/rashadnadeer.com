@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UX/UI Design Fundamentals | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(124,58,237,.08); border-left-color:rgba(124,58,237,.4); }
+        .week-item.active { background:rgba(124,58,237,.12); border-left-color:#7C3AED; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#7C3AED; border-color:#7C3AED; background:rgba(124,58,237,.1); }
+        .week-item.active .view-btn { color:#7C3AED; border-color:rgba(124,58,237,.5); background:rgba(124,58,237,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#7C3AED; background:rgba(124,58,237,.02); box-shadow:0 2px 8px rgba(124,58,237,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#7C3AED; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#7C3AED; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#7C3AED; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#7C3AED; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete UX/UI Design learning module — Double Diamond, user research, personas, information architecture, wireframing, and design systems." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/ux-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(124,58,237,.15); color:#7C3AED">
+            <i class="fas fa-layer-group text-[9px]"></i> UX/UI Design Fundamentals
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" style="--tw-text-opacity:1" onmouseover="this.style.color='#7C3AED'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">UX/UI Design Fundamentals</div>
+                <div class="sidebar-week-count">6 modules &middot; 13 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">UX Foundations</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">Information Architecture</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Wireframing & Prototyping</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Visual Design Principles</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">Interaction Design</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Design Systems</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(124,58,237,.1)">
+                        <i class="fas fa-layer-group text-2xl" style="color:#7C3AED"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">UX/UI Design Fundamentals</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from UX foundations and user research through information architecture, wireframing, visual design principles, and design systems.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">6 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">13 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `UX Foundations`,
+    topics: [
+    { title: `What is UX Design?`, content: `__H__ What is UX Design?
+
+User Experience (UX) design is the practice of creating products that provide meaningful, relevant, and enjoyable experiences to users. It encompasses everything a user feels when interacting with a product — how easy it is to learn, how efficiently tasks can be completed, and how satisfying it is to use. UX is not the same as UI (User Interface) design. UI is about the visual presentation — colours, typography, icons, layout. UX is about the entire experience: understanding user needs, defining the problem to solve, structuring information, designing interactions, and validating that the solution actually works for real users.
+
+__SUB__ Why UX Matters for PMs and BAs
+Product Managers and Business Analysts who understand UX principles are dramatically more effective at their jobs. PMs who can read a wireframe critically, ask intelligent questions about user flows, and challenge design decisions based on user research make better product decisions. BAs who understand information architecture and task flows write better requirements — ones that specify not just what the system must do, but how it must work from the user's perspective. You do not need to be a designer to benefit from UX knowledge — you need to be an informed collaborator who can speak the language, challenge assumptions, and advocate for the user.
+
+__LI__ UX encompasses the full journey: awareness → onboarding → task completion → retention
+__LI__ UI is what it looks like; UX is how it works — both matter, but UX drives UI decisions
+__LI__ Good UX reduces support costs, increases conversion, and improves user retention
+__LI__ PMs and BAs who understand UX write better requirements and make better trade-off decisions
+
+__SUB__ The UX Design Process
+UX design follows a structured process that mirrors the scientific method: observe users, form hypotheses, design experiments (prototypes), test them, and iterate based on evidence. The most common framework is the Double Diamond, developed by the UK Design Council. It has four phases: Discover (research and understand the problem space), Define (synthesise insights into a clear problem statement), Develop (ideate and prototype solutions), and Deliver (test, refine, and ship). The two diamonds represent two phases of divergent and convergent thinking: first you expand your understanding of the problem, then you narrow it to a specific problem statement; then you expand to generate many solutions, then you narrow to the best one.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#f5f3ff;border-radius:12px;border:1px solid #ddd6fe"><div style="font-size:11px;font-weight:700;color:#7C3AED;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">The Double Diamond Process</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;font-size:11px"><div style="background:#7C3AED;color:white;padding:10px 8px;border-radius:8px;text-align:center"><div style="font-weight:700;margin-bottom:4px">Discover</div><div style="opacity:.85">Research · Observe · Empathise</div></div><div style="background:#7C3AED;color:white;padding:10px 8px;border-radius:8px;text-align:center"><div style="font-weight:700;margin-bottom:4px">Define</div><div style="opacity:.85">Synthesise · Problem Statement</div></div><div style="background:#5B21B6;color:white;padding:10px 8px;border-radius:8px;text-align:center"><div style="font-weight:700;margin-bottom:4px">Develop</div><div style="opacity:.85">Ideate · Prototype · Co-design</div></div><div style="background:#5B21B6;color:white;padding:10px 8px;border-radius:8px;text-align:center"><div style="font-weight:700;margin-bottom:4px">Deliver</div><div style="opacity:.85">Test · Refine · Ship</div></div></div><div style="font-size:11px;color:#64748b;margin-top:10px">Diverge → Converge → Diverge → Converge — two phases of expanding and narrowing thinking</div></div>` },
+    { title: `User Research Methods`, content: `__H__ User Research Methods
+
+User research is the practice of systematically studying users to understand their behaviours, needs, motivations, and pain points. It is the foundation of good UX — every design decision should be traceable back to something learned about users. Without research, you are designing for yourself, not for your users, and the result is almost always wrong in ways that are expensive to fix later.
+
+__SUB__ Generative vs Evaluative Research
+Research methods split into two categories by purpose. Generative research expands your understanding of users and their world — you use it at the beginning of a project when you are still figuring out what problem to solve. Evaluative research tests whether a specific design solution works — you use it when you have a prototype or live product and want to know if it is effective. Most teams over-invest in evaluative research (running usability tests on prototypes) and under-invest in generative research (truly understanding user needs before designing anything). The most expensive design mistakes happen because the wrong problem was solved, not because a solution was executed poorly.
+
+__LI__ Generative: user interviews, ethnographic observation, diary studies, contextual inquiry
+__LI__ Evaluative: usability testing, A/B testing, heuristic evaluation, analytics review
+__LI__ Qualitative methods (interviews, observation) reveal why — motivations, mental models, pain points
+__LI__ Quantitative methods (surveys, analytics) reveal what and how many — scale and prevalence
+
+__SUB__ User Interviews — The Most Valuable Research Tool
+A well-conducted user interview generates more insight per hour than almost any other research method. The goal is not to ask users what features they want — that leads to feature creep and Henry Ford's proverbial faster horse. The goal is to understand the jobs users are trying to do, the obstacles they encounter, and the workarounds they have developed. The interview should explore past behaviour, not hypothetical future behaviour: 'Tell me about the last time you…' is more revealing than 'Would you ever…'. The interviewer should listen 80% of the time and ask follow-up questions that probe for the real underlying need.
+
+__LI__ Ask about past behaviour, not hypothetical preferences — 'Tell me about the last time…'
+__LI__ Ask 'why' at least three times to get past the surface answer to the real motivation
+__LI__ Never suggest answers or features — let users describe their experience in their own words
+__LI__ Look for workarounds: where users build their own solutions reveals unmet needs` },
+    { title: `Personas and Jobs-to-be-Done`, content: `__H__ Personas and Jobs-to-be-Done
+
+Personas and Jobs-to-be-Done (JTBD) are two complementary frameworks for representing user needs in a form that design teams can work from. Both are tools for keeping the user present throughout the design process — when a team debates a design decision, they can ask 'what would Marcus do?' or 'what job is this feature serving?' rather than defaulting to what seems logical to them.
+
+__SUB__ User Personas
+A persona is a fictional character that represents a real segment of your user base, built from aggregated research data. A good persona captures the user's goals, behaviours, frustrations, technical environment, and context — not their demographic information, which is rarely design-relevant. Personas exist to create empathy and alignment: everyone on the team should be able to describe the primary persona and what they care about. Bad personas are invented without research, are too numerous (six personas means you have no clear primary user), or describe demographics rather than behaviour.
+
+__LI__ Base personas on research, not assumptions — they must represent real observed behaviour
+__LI__ Focus on goals, frustrations, and context — not age, gender, or job title
+__LI__ One primary persona per product: if you design for everyone, you design for no one
+__LI__ Include a quote that captures the persona's core frustration or motivation in their own words
+
+__SUB__ Jobs-to-be-Done Framework
+JTBD, developed by Clayton Christensen, reframes the question from 'who is our user?' to 'what job is the user hiring our product to do?' Users do not buy products — they hire them to make progress in their lives. When someone buys a drill, they are hiring it to make a hole. When someone uses Slack, they are hiring it to maintain a sense of presence with their team. JTBD thinking prevents feature-level thinking by keeping the team focused on the outcome the user is trying to achieve, not the specific solution. A JTBD statement follows the format: When [situation], I want to [motivation], so I can [expected outcome].
+
+__LI__ JTBD statement format: When [situation], I want to [motivation], so I can [outcome]
+__LI__ Functional job: the practical task (track my expenses)
+__LI__ Emotional job: how the user wants to feel (feel in control of my finances)
+__LI__ Social job: how the user wants to be perceived (look financially responsible to my partner)
+__LI__ JTBD stays stable even as products and features change — it captures the enduring need` }
+    ]
+  },
+  {
+    id: 1,
+    name: `Information Architecture`,
+    topics: [
+    { title: `Information Architecture Principles`, content: `__H__ Information Architecture Principles
+
+Information Architecture (IA) is the structural design of information environments. It answers the question: how is information organised, labelled, and navigated so that users can find what they need? Poor IA is one of the most common causes of usability failures — users cannot find features that exist, cannot understand the relationship between sections, and cannot predict where new information will be. Good IA is invisible; users simply find what they need without noticing the structure.
+
+__SUB__ The Three Pillars of IA
+Peter Morville and Louis Rosenfeld defined IA through three lenses: organisation systems (how content is categorised and structured), labelling systems (what words are used to describe categories and actions), and navigation systems (how users move through the structure). All three must work together. A perfect organisation with confusing labels fails. Intuitive navigation over a poorly organised structure just makes it faster to get lost. And the right organisation and navigation collapses if the labels don't match the words users use.
+
+__LI__ Organisation: hierarchical (tree), sequential (steps), matrix, network — choose based on content type
+__LI__ Labelling: use the user's language, not internal jargon — test labels with card sorting
+__LI__ Navigation: global (always visible), local (within a section), contextual (inline related links)
+
+__SUB__ Card Sorting and Tree Testing
+Card sorting is a research technique that reveals how users mentally categorise information. Participants are given a set of cards (each representing a piece of content) and asked to group them into categories that make sense to them. Open card sorting lets users create their own category names, revealing their mental model. Closed card sorting provides pre-defined categories and asks users to assign cards to them, testing an existing IA structure. Tree testing is the evaluative counterpart: users are given a text-only representation of the site's navigation hierarchy and asked to find specific items. Failures — where users look in the wrong branch — reveal structural problems before any visual design is created.
+
+__LI__ Open card sort: reveals the user's mental model — use when designing IA from scratch
+__LI__ Closed card sort: validates an existing structure — use to test redesigns
+__LI__ Tree testing: tests navigation hierarchy in isolation — eliminates visual design bias
+__LI__ Aim for 80%+ success rate in tree testing before moving to visual design` },
+    { title: `Navigation Patterns and Mental Models`, content: `__H__ Navigation Patterns and Mental Models
+
+Navigation is the set of mechanisms by which users move through a product. The navigation pattern chosen must match users' mental models — the internal representation they have built of how the product is organised. When navigation violates the mental model, users get lost and frustrated. When it aligns with it, navigation becomes effortless.
+
+__SUB__ Common Navigation Patterns
+The most fundamental navigation choice is between flat navigation (all sections accessible from a persistent global navigation) and hierarchical navigation (sections contain sub-sections, requiring users to drill down). Flat navigation works for products with fewer than seven top-level sections. Hierarchical navigation is necessary for complex products but must be designed carefully to avoid dead ends and excessive depth. Tab bars (mobile), navigation rails, side navigation, and top navigation bars all represent flat or shallow hierarchical patterns suitable for different screen sizes and interaction contexts.
+
+__LI__ Flat navigation: best for simple products — all destinations reachable in one tap/click
+__LI__ Hamburger menu: hides navigation — reduces discoverability, use only for secondary actions
+__LI__ Breadcrumbs: show location within hierarchy — critical for products deeper than 3 levels
+__LI__ Search: always complement navigation, never replace it — users browse before they search
+
+__SUB__ The 7±2 Rule and Cognitive Load
+George Miller's research established that human working memory can hold approximately 7 (±2) items at once. In navigation, this means keeping the number of top-level navigation items between 5 and 9. More than 9 items overwhelms users; fewer than 5 items often means over-grouping that forces users to guess which category their task belongs to. Cognitive load — the total mental effort required to use a product — is the enemy of usability. Every unnecessary choice, ambiguous label, or missing affordance adds cognitive load. Good UX reduces cognitive load by making the right action obvious, removing irrelevant options, and providing clear feedback.` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Wireframing & Prototyping`,
+    topics: [
+    { title: `Wireframes — The Language of UX`, content: `__H__ Wireframes — The Language of UX
+
+A wireframe is a low-fidelity visual representation of a screen or interface. It shows structure, layout, and content hierarchy without specifying visual design details like colour, typography, or photography. Wireframes are the primary communication tool between UX designers, PMs, BAs, and developers — they are how UX thinking becomes concrete enough to discuss, critique, and refine before any development work begins.
+
+__SUB__ Fidelity Levels and When to Use Each
+Wireframes exist on a spectrum of fidelity. Sketches (paper or whiteboard) are the lowest fidelity — fast to create, easy to discard, ideal for early ideation when the right solution is unknown. Digital low-fidelity wireframes (grey boxes, placeholder text) represent structure without detail — appropriate for exploring layout and flow before investing in visual design. Mid-fidelity wireframes add content and typography but remain greyscale — useful for usability testing where you want to test navigation without visual design bias. High-fidelity mockups add visual design — appropriate for stakeholder sign-off and developer handoff, but expensive to iterate on.
+
+__LI__ Sketch: 5-10 minutes each — use for ideation and early alignment, discard freely
+__LI__ Low-fi wireframe: 20-60 minutes — use for layout exploration and flow validation
+__LI__ Mid-fi wireframe: 2-4 hours — use for usability testing and stakeholder review
+__LI__ High-fi mockup: 4-16 hours — use for developer handoff and final stakeholder approval
+
+__SUB__ Wireframe Best Practices
+Effective wireframes communicate hierarchy clearly — the most important content should be most prominent. They show all states of the UI: empty states, loading states, error states, and success states. Annotations explain interactions that are not visually obvious. The principle of annotation is critical: a wireframe without annotations is ambiguous, and ambiguity becomes wrong assumptions during development. Wireframes should be version-controlled and linked to their corresponding user stories in Jira or Confluence so that context is not lost.
+
+__LI__ Show all states: empty, loading, error, success — not just the happy path
+__LI__ Annotate interactions: hover states, tooltips, conditional logic — remove ambiguity
+__LI__ Use real content where possible — lorem ipsum hides IA problems and sizing issues
+__LI__ Link wireframes to user stories so developers have context alongside the design` },
+    { title: `Prototyping and Usability Testing`, content: `__H__ Prototyping and Usability Testing
+
+A prototype is a simulation of the product — it looks and behaves like the real thing (to varying degrees of fidelity) but requires no production code. Prototypes exist to test hypotheses about user behaviour before committing engineering resources to building the real thing. The purpose of every prototype is to answer a specific question, and the fidelity of the prototype should be the minimum needed to answer that question.
+
+__SUB__ Types of Prototypes
+Paper prototypes use printed or hand-drawn screens — a facilitator 'plays computer' by swapping screens as the user interacts with them. They are fast to create and ideal for testing basic task flows. Click-through prototypes (built in Figma, InVision, or Axure) simulate navigation by linking screens together — the user taps on a button and sees the next screen appear. They test navigation and task completion without simulating input. Interactive prototypes simulate the actual product behaviour — form fields that accept input, data that updates in response to actions. They are expensive to build but necessary for testing complex interactions.
+
+__LI__ Paper prototype: test task flows and navigation in an afternoon — ideal for early-stage ideas
+__LI__ Click-through: test navigation and comprehension — standard for usability testing
+__LI__ Interactive prototype: test complex interactions and data entry — use sparingly, expensive to build
+
+__SUB__ Usability Testing
+Usability testing is the practice of observing representative users as they attempt to complete tasks with a prototype or live product. It is the most direct way to validate whether a design works. A moderated usability test involves a facilitator who observes the user, asks follow-up questions, and probes for the reasons behind behaviour. An unmoderated test uses a platform (UserTesting, Maze) to collect task completion rates and recordings without a live facilitator. Usability testing should answer specific questions, not general 'does it work?' The test script should define 3-5 specific tasks, written in terms of user goals, not system features.
+
+__LI__ Test with 5 users: Jakob Nielsen's research shows 5 users reveal 85% of major usability issues
+__LI__ Give task scenarios, not instructions: 'Find a hotel in Dubai for next weekend' not 'Click Hotels'
+__LI__ Think-aloud protocol: ask users to narrate their thinking — reveals mental models and confusion
+__LI__ Measure: task completion rate, time on task, error rate, satisfaction — not just opinions` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Visual Design Principles`,
+    topics: [
+    { title: `Gestalt Principles in UI Design`, content: `__H__ Gestalt Principles in UI Design
+
+Gestalt psychology, developed in the early 20th century, describes how human perception organises visual information into meaningful patterns. Its principles — proximity, similarity, continuation, closure, figure-ground, and common fate — directly govern how users perceive and interpret UI elements. Understanding these principles allows designers (and those who review designs) to predict how users will group and relate elements on a screen.
+
+__SUB__ Proximity, Similarity, and Continuation
+Proximity is perhaps the most powerful Gestalt principle in UI design: elements placed close together are perceived as related. This is why form field labels must be closer to their field than to the field above or below them, why related buttons must be grouped, and why white space (negative space) is a design tool, not waste. Similarity means elements that look alike (same colour, shape, size, typography) are perceived as belonging to the same group — this is why all primary actions should have the same button style. Continuation means the eye follows lines and curves — navigation bars exploit this by aligning items along a line, implying they are part of the same group.
+
+__LI__ Proximity: related elements close together, unrelated elements separated by white space
+__LI__ Similarity: consistent visual style for elements with the same function (all primary CTAs same colour)
+__LI__ Continuation: align related elements along a line or curve to signal their relationship
+__LI__ Closure: users complete incomplete shapes — used in logos, icons, and loading indicators
+
+__SUB__ Figure-Ground and Visual Hierarchy
+Figure-ground describes the perceptual relationship between a focal element (figure) and its background (ground). In UI design, modals and overlays exploit figure-ground by darkening the background to make the modal 'pop' as the figure. Visual hierarchy uses size, weight, colour, and position to signal the relative importance of elements — the most important element should be most visually prominent. A page with no visual hierarchy — where everything is the same size and weight — forces users to read everything to find what matters. A well-designed page guides the eye naturally from the most important element to the next.
+
+__LI__ Use size and weight to establish importance: larger and bolder = more important
+__LI__ Limit to three levels of visual hierarchy on any one screen to avoid visual noise
+__LI__ Colour draws attention — use accent colour sparingly to highlight only the primary action
+__LI__ White space creates focus — remove clutter rather than adding visual elements to guide attention` },
+    { title: `Colour, Typography, and Accessibility`, content: `__H__ Colour, Typography, and Accessibility
+
+Colour and typography are the two most impactful visual design decisions, and both have significant implications for accessibility. A design that works only for users with perfect colour vision and sharp eyesight is not a good design — it is an exclusive one. Accessibility is not a compliance exercise; it is a quality standard.
+
+__SUB__ Colour Theory and Accessible Contrast
+The WCAG (Web Content Accessibility Guidelines) defines minimum contrast ratios for text readability: 4.5:1 for normal text and 3:1 for large text (18px+ or 14px+ bold) against its background. These ratios exist because approximately 8% of men and 0.5% of women have some form of colour blindness, and many more users view screens in challenging conditions (sunlight, low brightness). Colour should never be the only means of conveying information — a red error state must also have an error icon or text, because red/green colour blindness (deuteranopia) is the most common form. Tools like the Colour Contrast Analyser or browser DevTools can audit contrast ratios instantly.
+
+__LI__ WCAG AA: minimum 4.5:1 ratio for body text, 3:1 for large text
+__LI__ WCAG AAA: 7:1 for body text — required for critical interfaces (healthcare, government)
+__LI__ Never rely solely on colour for meaning: add icons and text labels to colour cues
+__LI__ Test designs in greyscale — if it breaks, colour is doing too much of the work
+
+__SUB__ Typography for Readability
+Typography choices — typeface, size, weight, line height, and line length — have a direct impact on reading speed and comprehension. Body text should be 15-18px for screen, with a line height of 1.5-1.8× the font size. Line length (measure) should be 50-75 characters per line — too wide and the eye loses its place on the next line; too narrow and the frequent line breaks disrupt reading rhythm. Sans-serif typefaces (Inter, Roboto, SF Pro) are the standard for digital interfaces due to their legibility at small sizes. Limit the typeface palette to two families maximum: one for headings, one for body. More than two creates visual noise without adding meaning.
+
+__LI__ Body text: 15-18px minimum, line height 1.5-1.8× — never sacrifice readability for visual density
+__LI__ Line length: 50-75 characters optimal — wider causes reading errors, narrower fragments flow
+__LI__ Type scale: use a mathematical ratio (1.25 or 1.333) to create consistent size steps
+__LI__ Limit to two typefaces — one serif/display for headings, one sans-serif for body text` }
+    ]
+  },
+  {
+    id: 4,
+    name: `Interaction Design`,
+    topics: [
+    { title: `Affordances, Signifiers, and Feedback`, content: `__H__ Affordances, Signifiers, and Feedback
+
+Don Norman's foundational work in The Design of Everyday Things established the vocabulary that all interaction designers work with: affordances, signifiers, feedback, constraints, and mental models. Understanding these concepts is essential for anyone who designs, specifies, or reviews digital interfaces.
+
+__SUB__ Affordances and Signifiers
+An affordance is the relationship between an object and a person that determines how it could be used — a button affords pressing, a text field affords typing, a scroll bar affords dragging. A signifier is the perceptual signal that communicates the affordance to the user. The problem is that affordances exist regardless of whether users perceive them, but signifiers must be deliberately designed to make affordances discoverable. A button that looks like a flat text label has no visible signifier that it is interactive — users cannot tell it is clickable. The design principle is: every interactive element must have a signifier that communicates its affordance. For buttons, this is visual elevation, a border, or a background colour. For links, this is colour and underline. For draggable elements, this is a drag handle icon.
+
+__LI__ Affordance: what can be done with the element (button can be pressed)
+__LI__ Signifier: the visual cue that makes the affordance discoverable (border, colour, elevation)
+__LI__ Every interactive element needs a clear signifier — if users can't see it's interactive, they won't try
+__LI__ Gestural affordances on mobile (swipe, pinch) need onboarding — they have no visual signifiers
+
+__SUB__ Feedback and System Status
+Feedback is the information the system provides to tell the user what happened in response to their action. Jakob Nielsen's first usability heuristic is Visibility of System Status: the system should always keep users informed about what is going on, through appropriate feedback, within reasonable time. When a user submits a form, the system must respond — if the form is submitted successfully, show a success state. If it is processing, show a loading indicator. If it failed, show a specific error message explaining what went wrong and how to fix it. A system that goes silent after user input creates anxiety and forces users to repeat actions, causing duplicate submissions and frustration.
+
+__LI__ Respond to every user action within 100ms — even if only to show a loading indicator
+__LI__ Loading indicators: 0-1s = spinner, 1-10s = progress bar with %, >10s = explain what's happening
+__LI__ Error messages: say what went wrong AND how to fix it — 'invalid email' is insufficient
+__LI__ Success confirmation: visually distinct from the previous state so users know something changed` },
+    { title: `Microinteractions and Animation`, content: `__H__ Microinteractions and Animation
+
+Microinteractions are contained product moments that accomplish a single task — a toggle switching on, a button confirming a like, a notification appearing. They are not decoration; they are functional. A well-designed microinteraction communicates feedback, prevents errors, and guides users through task completion. They are the texture of a digital product — the detail that separates feeling 'polished' from feeling 'amateur'.
+
+__SUB__ The Four Parts of a Microinteraction
+Dan Saffer defined microinteractions through four components. The trigger is what initiates the microinteraction — a user action (clicking a button) or a system condition (receiving a message). The rules define what happens — the logic behind the interaction. The feedback communicates to the user what is happening and what happened. The loops and modes determine whether the microinteraction repeats and under what conditions. A like button illustrates all four: the trigger is clicking the heart icon, the rule is toggling the liked state, the feedback is the heart filling with colour and a small animation, and the loop is that it resets when unliked.
+
+__LI__ Trigger: user action or system event — must be discoverable
+__LI__ Rules: the logic (toggle, increment, validate) — must be predictable
+__LI__ Feedback: the visual/haptic/audio response — must be immediate and clear
+__LI__ Loop: repeat conditions — avoid infinite loops or unintended repetition
+
+__SUB__ Animation Principles for UI
+Animation in UI should serve a functional purpose — it communicates state transitions, establishes spatial relationships, and directs attention. Decorative animation that serves no functional purpose adds cognitive load and slows perceived performance. The Material Design motion principles provide a practical framework: enter animations signal that new elements have arrived (slide in, fade in); exit animations signal departure (fade out, scale down); shared element transitions maintain continuity across screens (an element morphs from its position in the list to its position in the detail view). Duration matters: transitions under 300ms feel fast and responsive; over 500ms feel slow and obstructive. Easing (acceleration curves) makes animations feel physical and natural — linear movement feels robotic.
+
+__LI__ Use animation to communicate, not decorate — every animation should serve a purpose
+__LI__ Duration: 150-300ms for micro, 300-500ms for screen transitions — never over 600ms
+__LI__ Easing: ease-out for entering elements (fast start, gentle stop); ease-in for exiting
+__LI__ Reduce motion: always respect prefers-reduced-motion media query for accessibility` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Design Systems`,
+    topics: [
+    { title: `What is a Design System?`, content: `__H__ What is a Design System?
+
+A design system is a collection of reusable components, governed by clear standards, that can be assembled to build any number of applications. It is not a style guide (a document describing visual design decisions) or a component library (a code repository of UI components) — it is both of these things, plus the documentation, principles, and governance that connect them. Large organisations like Salesforce (Lightning Design System), Google (Material Design), and Apple (Human Interface Guidelines) have made their design systems public. The business value of a design system is consistency, speed, and scale: once a component is designed and built to the standard, every team can use it without redesigning or rebuilding it.
+
+__SUB__ Atoms, Molecules, and Organisms
+Brad Frost's Atomic Design methodology provides a useful mental model for organising design system components. Atoms are the most basic elements: buttons, input fields, icons, typography styles, colour tokens. Molecules are simple groups of atoms that function together: a search field (input + button + icon). Organisms are complex, reusable sections: a navigation bar (logo + links + search + account menu). Templates are page-level compositions of organisms, and Pages are specific instances of templates with real content. The hierarchy exists to make the system composable — you can change an atom (a colour token) and the change propagates through every molecule, organism, and page that uses it.
+
+__LI__ Atoms: primitive elements — colours, type styles, spacing scale, icons, buttons
+__LI__ Molecules: functional combinations — form groups, card headers, notification badges
+__LI__ Organisms: complete sections — headers, footers, data tables, navigation drawers
+__LI__ Design tokens: named variables for colour, spacing, radius — the connective tissue of consistency
+
+__SUB__ Governance and Adoption
+A design system without governance becomes inconsistent and loses trust. Governance defines: who is responsible for maintaining the system (typically a platform or design system team), how contributions are made and reviewed, how breaking changes are versioned and communicated, and how adoption is tracked and encouraged. The most common failure mode for design systems is that they are created and then not maintained — components become stale relative to the live product, teams start diverging, and the system becomes a source of confusion rather than consistency. Successful design systems treat components as products: they have owners, roadmaps, versioning, and release notes.
+
+__LI__ Designate a system owner: someone accountable for maintenance, versioning, and adoption
+__LI__ Version the system: semver (major.minor.patch) so teams know the impact of updates
+__LI__ Document everything: every component needs usage guidance, do/don't examples, and code
+__LI__ Measure adoption: track the % of product UI built from system components — this is your health metric` },
+    { title: `Figma for PMs and BAs`, content: `__H__ Figma for PMs and BAs
+
+Figma is the industry-standard design tool, and while PMs and BAs do not need to master it as designers do, understanding how to navigate and critique Figma files is an increasingly important professional skill. Being able to inspect a design file, comment on screens, understand components, and hand off to developers without a designer as an intermediary makes teams faster.
+
+__SUB__ Navigating Figma as a Non-Designer
+In Figma, designs are organised into files, pages, and frames. Pages organise different sections of a project (e.g., Flows, Components, Archive). Frames are artboards representing individual screens. The left panel shows the layer hierarchy — components nest within frames, groups within components. Selecting a layer shows its properties in the right panel: dimensions, spacing, colour, typography, and any component properties. The inspect panel (available in View mode, no editor seat required) shows developers the exact CSS properties, spacing values, and export settings for any element. PMs and BAs should be comfortable navigating frames, reading annotations, and leaving comments on specific elements.
+
+__LI__ Use View mode (free) to inspect designs without needing an editor seat
+__LI__ Click any element in inspect mode to see its exact spacing, colour, and typography values
+__LI__ Comment with @mentions to notify specific team members of decisions or concerns
+__LI__ Look for component instances: right-click → Go to Main Component to see the system definition
+
+__SUB__ Reviewing Designs as a PM or BA
+When reviewing a design, focus your critique on function, not aesthetics. Useful PM/BA feedback challenges: completeness (are all states and edge cases covered?), consistency (does this interaction pattern match what's used elsewhere?), feasibility (are there data or technical constraints that make this impossible?), and clarity (would a real user know what to do here?). Avoid style feedback ('I prefer blue') unless it contradicts brand guidelines — that is not PM or BA territory. The goal of design review is to catch functional problems before development, not to participate in aesthetic decision-making.
+
+__LI__ Check completeness: empty states, loading, error, success — ask for any missing screens
+__LI__ Check consistency: does this match the design system and existing patterns in the product?
+__LI__ Check edge cases: long text, mobile breakpoints, RTL languages, accessibility states
+__LI__ Avoid aesthetic opinions — defer to design expertise on style unless it violates guidelines` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#7C3AED">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

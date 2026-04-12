@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Roadmap | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C1220', accent: '#4F62F5', teal: '#0D9488',
+                        surface: '#EDF2F7', dark: '#111827', warm: '#FAFAF8'
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+        .topic-panel { display: none; }
+        .topic-panel.active { display: block; }
+        .side-link {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            padding: 0.45rem 0.75rem; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 500; color: #64748b;
+            cursor: pointer; transition: all 0.18s ease;
+            border-left: 2px solid transparent; line-height: 1.4;
+        }
+        .side-link:hover { color: #4F62F5; background: rgba(79,98,245,0.05); border-left-color: #4F62F5; }
+        .side-link.active { color: #4F62F5; background: rgba(79,98,245,0.07); border-left-color: #4F62F5; font-weight: 600; }
+        .topic-pill {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: #fff;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap;
+        }
+        .topic-pill:hover { border-color: #4F62F5; color: #4F62F5; }
+        .topic-pill.active { background: #4F62F5; border-color: #4F62F5; color: #fff; }
+        .notes h2 {
+            font-size: 1.15rem; font-weight: 800; color: #0C1220;
+            margin-top: 1.75rem; margin-bottom: 0.5rem;
+            padding-bottom: 0.35rem; border-bottom: 2px solid #EDF2F7;
+        }
+        .notes h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+        .notes p { font-size: 0.9rem; line-height: 1.85; color: #374151; margin-bottom: 0.85rem; }
+        .notes ul { list-style: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes ol { list-style: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes li { font-size: 0.9rem; line-height: 1.8; color: #374151; margin-bottom: 0.3rem; }
+        .notes strong { color: #0C1220; font-weight: 700; }
+        .notes img { max-width: 100%; border-radius: 10px; margin: 14px 0; border: 1px solid #e2e8f0; }
+        .callout-blue { background: #f8faff; border-left: 3px solid #4F62F5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-amber { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-teal  { background: #f0fdfa; border-left: 3px solid #0D9488; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+    <meta name="description" content="PM Week 7 — Product Roadmap: customer feedback, OKRs, prioritisation frameworks, roadmapping, stakeholder management, and writing PRDs." />
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w7.html" />
+</head>
+<body class="bg-warm text-dark">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-arrow-left text-xs"></i> Learning Hub
+        </a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="bg-navy pt-20 pb-8 border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10">
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <span class="text-accent font-semibold">Week 7</span>
+        </div>
+        <div class="flex flex-wrap items-start justify-between gap-5 mb-7">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 7 of 7</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">6 Topics</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">Self-paced</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Product Roadmap</h1>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="pm-w6.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-sm rounded-lg transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Week 6</a>
+                <span class="px-4 py-2 bg-white/10 text-gray-500 text-sm rounded-lg cursor-not-allowed">Next →</span>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showTopic('t0')" id="pill-t0" class="topic-pill active">Customer Feedback</button>
+            <button onclick="showTopic('t1')" id="pill-t1" class="topic-pill ">OKRs — Objectives and Key Resu…</button>
+            <button onclick="showTopic('t2')" id="pill-t2" class="topic-pill ">Prioritisation Frameworks</button>
+            <button onclick="showTopic('t3')" id="pill-t3" class="topic-pill ">Product Roadmap</button>
+            <button onclick="showTopic('t4')" id="pill-t4" class="topic-pill ">Stakeholder Management</button>
+            <button onclick="showTopic('t5')" id="pill-t5" class="topic-pill ">Writing PRDs</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="flex gap-10">
+        <aside class="hidden lg:block w-60 flex-shrink-0">
+            <div class="sticky top-24 space-y-4">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Module</div>
+                    <div class="font-bold text-navy text-sm">Product Roadmap</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Week 7 of 7 · 6 topics</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Topics</div>
+                    <div class="space-y-0.5">
+                        <div onclick="showTopic('t0')" id="side-t0" class="side-link active">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Customer Feedback
+                        </div>
+                        <div onclick="showTopic('t1')" id="side-t1" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            OKRs — Objectives and Key Results
+                        </div>
+                        <div onclick="showTopic('t2')" id="side-t2" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Prioritisation Frameworks
+                        </div>
+                        <div onclick="showTopic('t3')" id="side-t3" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Product Roadmap
+                        </div>
+                        <div onclick="showTopic('t4')" id="side-t4" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Stakeholder Management
+                        </div>
+                        <div onclick="showTopic('t5')" id="side-t5" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Writing PRDs
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <main class="flex-1 min-w-0">
+
+            <!-- TOPIC: Customer Feedback -->
+            <div id="panel-t0" class="topic-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 1 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Customer Feedback</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Customer Feedback</strong></h2>
+<p>Customer feedback is information your business receives directly from customers about their experience and satisfaction levels. It can come from email, social media, live chat, and messenger tools.</p>
+<strong>Why is customer feedback important?</strong>
+<p>Customer feedback is critical for future product development, improving customer experience, and increasing satisfaction levels. Proper analysis provides a clearer view of what to change and improve, helping to increase customer loyalty and reduce support cases.</p>
+<strong>Six rules for collecting better customer feedback:</strong>
+<ul>
+<li>The type of customer giving feedback matters — feedback from long-term loyal customers may be weighted more heavily than new customers.</li>
+</ul>
+<ul>
+<li>Whether it's prompted or unprompted matters — unprompted feedback can reveal important issues you were unaware of.</li>
+</ul>
+<ul>
+<li>The customer's motivation matters — customers are more motivated to give feedback when they've had extreme positive or negative experiences.</li>
+</ul>
+<ul>
+<li>Volume matters — if a large volume of feedback concerns the same issue, that indicates an important problem to address.</li>
+</ul>
+<ul>
+<li>Repetition matters — recurring feedback, even if heard for years, can indicate an unresolved core issue that needs prioritising.</li>
+</ul>
+<ul>
+<li>Stakes matter — high-stakes feedback about severe issues like security vulnerabilities should trigger immediate action.</li>
+</ul>
+<strong>How to collect customer feedback:</strong>
+<ul>
+<li><strong>Chat</strong> — live chat is a frictionless way for customers to communicate directly.</li>
+</ul>
+<ul>
+<li><strong>Short surveys</strong> — ask specific questions regarding features, aspects of the platform, or parts of the experience.</li>
+</ul>
+<ul>
+<li><strong>Social media</strong> — people express strong feelings on Facebook, Twitter, and other platforms. Feedback tends to sit at extremes — elated or infuriated — but trends are valuable.</li>
+</ul>
+<strong>How to analyse customer feedback:</strong>
+<ul>
+<li>Collate all open-ended feedback into a spreadsheet with metadata (customer tenure, spend levels, date, source).</li>
+</ul>
+<ul>
+<li>Categorise by type (usability issue, feature request, bug), theme (product feature/area), and code (concise rephrasing).</li>
+</ul>
+<ul>
+<li>Scan through to get a sense of diversity in responses.</li>
+</ul>
+<ul>
+<li>Code each piece of feedback objectively and concisely.</li>
+</ul>
+<ul>
+<li>Refine coding — break high-level codes into more specific ones as you process more feedback.</li>
+</ul>
+<ul>
+<li>Calculate frequency — sort by coding columns, highlight identical codes, count frequencies.</li>
+</ul>
+<ul>
+<li>Summarise and share — create a summary report, prioritise top issues to inform your product roadmap.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t1')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        OKRs — Objectives and Key Results <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: OKRs — Objectives and Key Results -->
+            <div id="panel-t1" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 2 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">OKRs — Objectives and Key Results</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>OKRs — Objectives and Key Results</strong></h2>
+<p>OKR stands for Objectives and Key Results — a goal-setting and leadership tool used by organisations to communicate what they want to accomplish and how they'll measure progress.</p>
+<img src="assets/pm-images/OKRs (Objective and Key Results)/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>Breaking it down:</strong>
+<ul>
+<li><strong>Objectives</strong> — clear, ambitious, qualitative descriptions of what an organisation wants to achieve. Example: "Increase revenue by 20%."</li>
+</ul>
+<ul>
+<li><strong>Key Results</strong> — specific, measurable, time-bound outcomes that indicate the successful achievement of the objectives. They are the measurable results needed to reach the objective.</li>
+</ul>
+<p>OKRs are typically written with an Objective at the top and 3–5 supporting Key Results below:</p>
+<p><p><em>"I will [Objective] as measured by [Key Results]."</em></p></p>
+<strong>Personal example:</strong>
+<p>Objective: Lose 10 kg over the next 6 months.</p>
+<ul>
+<li>Go to gym 4 times per week for next 24 weeks.</li>
+</ul>
+<ul>
+<li>Eat fewer than 2,000 calories per day for the next 24 weeks.</li>
+</ul>
+<strong>Business example:</strong>
+<p>Objective: Increase revenue by 20% in the next quarter.</p>
+<ul>
+<li>Increase new users acquired by 10% every month.</li>
+</ul>
+<ul>
+<li>Increase Month 1 retention by 30%.</li>
+</ul>
+<ul>
+<li>Increase free-to-paid conversion rate by at least 10% this quarter.</li>
+</ul>
+<strong>How Duolingo used OKRs:</strong>
+<p>When Conor Walsh joined Duolingo, the Duolingo Stories feature had been declining for months. Resources were tight and management was sceptical. Rather than starting with an Objective like "increase Stories traffic by 50%," Walsh set an OKR centred on deeply understanding their Stories users.</p>
+<img src="assets/pm-images/OKRs (Objective and Key Results)/Untitled 1.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<p>After hours of user interviews, the team identified that users found it challenging to use Stories on their phones. Enhancing the mobile experience became another Objective. After redesigning the entire UX, Stories users grew from fewer than 20,000 to more than 80,000 in just over a year.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t2')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Prioritisation Frameworks <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Prioritisation Frameworks -->
+            <div id="panel-t2" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 3 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Prioritisation Frameworks</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Prioritisation</strong></h2>
+<p>If you've put effort into brainstorming ideas, finding improvement opportunities, and collecting feedback, you'll have a roadmap full of good ideas. But the order in which you tackle them deserves just as much thought.</p>
+<strong>Why prioritisation is hard:</strong>
+<ul>
+<li>It's satisfying to work on pet ideas you'd use yourself, instead of projects with broad reach.</li>
+</ul>
+<ul>
+<li>It's tempting to focus on clever ideas, instead of projects that directly impact goals.</li>
+</ul>
+<ul>
+<li>It's exciting to dive into new ideas, instead of projects you're already confident about.</li>
+</ul>
+<ul>
+<li>It's easy to discount the additional effort one project will require over another.</li>
+</ul>
+<h2>RICE Score</h2>
+<p>RICE is an acronym for the four factors used to evaluate each project idea: Reach, Impact, Confidence, and Effort.</p>
+<ul>
+<li><strong>Reach</strong> — how many people will this affect within a given period? Measure in number of people/events per time period using real product metrics.</li>
+</ul>
+<ul>
+<li><strong>Impact</strong> — estimated impact on an individual person. Use a scale: 3 (massive), 2 (high), 1 (medium), 0.5 (low), 0.25 (minimal).</li>
+</ul>
+<ul>
+<li><strong>Confidence</strong> — your level of confidence about your estimates. 100% (high), 80% (medium), 50% (low). Be honest about how much support you have for your estimates.</li>
+</ul>
+<ul>
+<li><strong>Effort</strong> — total time a project requires from all team members in "person-months". More effort is a bad thing.</li>
+</ul>
+<strong>Formula:</strong>
+<img src="assets/pm-images/Prioritisation/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<h2>MoSCoW Framework</h2>
+<p>The MoSCoW method categorises requirements into four groups:</p>
+<ul>
+<li><strong>Must Have</strong> — critical to the current delivery timeline. Without even one, the project is considered a failure.</li>
+</ul>
+<ul>
+<li><strong>Should Have</strong> — important but not absolutely necessary for current delivery. Second priority.</li>
+</ul>
+<ul>
+<li><strong>Could Have</strong> — desirable but not necessary. Included if time and resources permit after Must Haves and Should Haves.</li>
+</ul>
+<ul>
+<li><strong>Won't Have</strong> — lowest priority. Not implemented in the current delivery but may be reconsidered for future releases.</li>
+</ul>
+<p>Note: these frameworks shouldn't be used as hard rules. Sometimes a lower-scored project needs to happen first as a dependency, or a feature is "table stakes" for certain customers. With a scoring system, you can clearly identify when you're making these trade-offs.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t3')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Product Roadmap <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Product Roadmap -->
+            <div id="panel-t3" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 4 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Product Roadmap</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Product Roadmap</strong></h2>
+<p>A product roadmap is a high-level visual summary that maps out the vision and direction for a product over time. It communicates the why and what behind what you're building — both a guiding strategic document and an execution plan for the product strategy.</p>
+<img src="assets/pm-images/Product Roadmap/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>Key goals of a product roadmap:</strong>
+<ul>
+<li>Describe the product vision and strategy.</li>
+</ul>
+<ul>
+<li>Provide a plan for executing the strategy.</li>
+</ul>
+<ul>
+<li>Align internal stakeholders around shared goals.</li>
+</ul>
+<ul>
+<li>Facilitate discussion and scenario planning.</li>
+</ul>
+<ul>
+<li>Communicate with external stakeholders like customers.</li>
+</ul>
+<strong>Why is a product roadmap important?</strong>
+<p>Roadmaps encapsulate how the product strategy becomes a reality. They help prioritise competing priorities and focus efforts on work that drives key metrics. Roadmaps inspire teams, provide shared ownership, and prevent chaos from unimportant tasks.</p>
+<strong>Building an Outcome-Driven Roadmap using JTBD:</strong>
+<ul>
+<li><strong>Define the job(s)</strong> — list the core functional jobs/tasks your product helps customers get done.</li>
+</ul>
+<ul>
+<li><strong>List desired outcome statements</strong> — for each job, list the outcomes customers want. Score each for importance and satisfaction to calculate an "opportunity score".</li>
+</ul>
+<ul>
+<li><strong>Map features to outcomes</strong> — use MoSCoW to prioritise which features are essential to deliver each outcome.</li>
+</ul>
+<ul>
+<li><strong>Package an MVP</strong> — group "Must" features into an initial MVP release solving the highest-opportunity outcomes.</li>
+</ul>
+<ul>
+<li><strong>Plan releases</strong> — package additional features into future releases, focused on high-opportunity outcomes not addressed in the MVP.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t4')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Stakeholder Management <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Stakeholder Management -->
+            <div id="panel-t4" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 5 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Stakeholder Management</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Stakeholder Management</strong></h2>
+<p>No one in the tech industry works in isolation, and no product is made in isolation. Product Managers connect teams, meet with many people, and — critically — manage stakeholders.</p>
+<strong>What is a stakeholder?</strong>
+<p>A stakeholder is anyone who has an interest or is involved in a product. In a tiny startup that might be seven people. As investors join, the pool grows. When acquired by a larger company, it gets much larger. Customers, PR companies, and stockists are all stakeholders.</p>
+<p>Not all stakeholders are created equal. The CEO has the final say on high-level product decisions. Engineers have intimate day-to-day knowledge. The PM runs interference between all of them.</p>
+<strong>Alignment</strong>
+<p>The goal of stakeholder management is alignment — ensuring everyone understands and agrees on three key aspects:</p>
+<ul>
+<li><strong>The Vision</strong> — everyone has the same North Star and knows the desired outcome.</li>
+</ul>
+<ul>
+<li><strong>The Outputs</strong> — everyone agrees on what the product does and how it works.</li>
+</ul>
+<ul>
+<li><strong>The Outcomes</strong> — how users are supposed to feel about the product and how it fits into their lives.</li>
+</ul>
+<strong>Stakeholder Management Strategies:</strong>
+<ul>
+<li><strong>Stakeholder Mapping</strong> — a visual map of your stakeholder pool, showing who needs to be involved and when.</li>
+</ul>
+<img src="assets/pm-images/Stakeholder Management/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<ul>
+<li><strong>Stakeholder Prioritisation</strong> — organise stakeholders into 4 groups by power and interest:</li>
+</ul>
+<img src="assets/pm-images/Stakeholder Management/Untitled 1.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<ul>
+<li>High power, low interest → keep satisfied, routine reporting.</li>
+</ul>
+<ul>
+<li>High power, high interest → maximum effort, your highest priority.</li>
+</ul>
+<ul>
+<li>Low power, low interest → minimum effort, monitor.</li>
+</ul>
+<ul>
+<li>Low power, high interest → update regularly.</li>
+</ul>
+<ul>
+<li><strong>Always Bring the Data</strong> — without data, you're just another person with an opinion. Come armed with more than just opinions when communicating with stakeholders.</li>
+</ul>
+<ul>
+<li><strong>Be Human</strong> — remember stakeholders are people too. They have goals and things they need from you. Work out what those are and you'll know how to best relate to them.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t5')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Writing PRDs <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Writing PRDs -->
+            <div id="panel-t5" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 6 of 6</div>
+                        <h2 class="text-xl font-extrabold text-navy">Writing PRDs</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Writing Product Requirement Documents (PRDs)</strong></h2>
+<p>A PRD is a high-level document that outlines the features and attributes of the product you're working on. But more practically — it's how a PM communicates to every other team what needs to be built, why, and how it's supposed to work.</p>
+<ul>
+<li>The design team uses the PRD to understand what's required and come up with designs.</li>
+</ul>
+<ul>
+<li>The tech team uses the PRD and designs to understand what needs to be built.</li>
+</ul>
+<ul>
+<li>The marketing team looks at the PRD to understand the product and create campaigns.</li>
+</ul>
+<strong>When do we write a PRD?</strong>
+<p>A PRD is generally written once the problem has been identified and a solution has been thought of. It then evolves as other teams interact with it and add their inputs.</p>
+<h2>How to Write a PRD</h2>
+<ul>
+<li><strong>1. Define the product</strong> — summarise your plan. State the product you'll create, the project team and stakeholders, and a tentative release date. Include the product's purpose and the pain points it alleviates.</li>
+</ul>
+<ul>
+<li><strong>2. Determine goals</strong> — write the team's objectives for the product development process. Generate SMART goals — specific, measurable, achievable, relevant, and time-bound — that serve as goalposts.</li>
+</ul>
+<ul>
+<li><strong>3. Identify assumptions and constraints</strong> — assumptions are known roadblocks you'll encounter. Constraints are unknown external pressures. Defining them upfront leads to more accurate final expectations.</li>
+</ul>
+<ul>
+<li><strong>4. Limit the scope of work</strong> — define what is and isn't within the project scope. Setting boundaries prevents scope creep and keeps the team on track.</li>
+</ul>
+<ul>
+<li><strong>5. List features</strong> — identify the product's primary features, describing how end users will use them. Describe each requirement in as much detail as possible. This section should be the most robust.</li>
+</ul>
+<ul>
+<li><strong>6. Define release criteria</strong> — identify the criteria that determine whether your product is customer-ready. This might include functionality, usability, and reliability.</li>
+</ul>
+<ul>
+<li><strong>7. Set metrics for success</strong> — decide on a methodology for approving work and ensuring quality. Track these metrics as you develop the product.</li>
+</ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-8 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">Mohammad Rashad Nadeer Kutty — PM Learning</div>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub</a>
+    </div>
+</footer>
+
+<script>
+    function showTopic(id) {
+        document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.side-link').forEach(s => s.classList.remove('active'));
+        document.getElementById('panel-' + id).classList.add('active');
+        document.getElementById('pill-' + id).classList.add('active');
+        document.getElementById('side-' + id).classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>

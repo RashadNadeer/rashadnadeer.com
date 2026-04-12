@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Fundamentals | Mohammad Rashad Nadeer Kutty</title>
+    <meta name="description" content="Comprehensive API Fundamentals learning module — REST, HTTP, OAuth 2.0, JWT, GraphQL, gRPC, Postman testing and API design best practices." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://rashadnadeer.com/api-learning.html" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(217,119,6,.08); border-left-color:rgba(217,119,6,.4); }
+        .week-item.active { background:rgba(217,119,6,.12); border-left-color:#D97706; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#D97706; border-color:#D97706; background:rgba(217,119,6,.1); }
+        .week-item.active .view-btn { color:#D97706; border-color:rgba(217,119,6,.5); background:rgba(217,119,6,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#D97706; background:rgba(217,119,6,.02); box-shadow:0 2px 8px rgba(217,119,6,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#D97706; }
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #fde68a; border-radius:10px; margin-bottom:8px; background:rgba(217,119,6,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#D97706; background:rgba(217,119,6,.07); box-shadow:0 2px 8px rgba(217,119,6,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(217,119,6,.1); border-radius:8px; display:flex; align-items:center; justify-content:flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#D97706; font-weight:500; margin-top:2px; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#D97706; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#D97706; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#D97706; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(217,119,6,.15); color:#D97706">
+            <i class="fas fa-plug text-[9px]"></i> API Fundamentals
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" onmouseover="this.style.color='#D97706'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">API Fundamentals</div>
+                <div class="sidebar-week-count">7 modules &middot; 15 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">What is an API?</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">HTTP & REST Principles</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">HTTP Methods & Status Codes</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Authentication & Security</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">API Design Best Practices</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Testing APIs with Postman</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+        <div class="week-item" data-week="6" onclick="selectWeek(6)">
+          <div class="week-info">
+            <span class="week-name">GraphQL vs REST vs gRPC</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(6)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(217,119,6,.1)">
+                        <i class="fas fa-plug text-2xl" style="color:#D97706"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">API Fundamentals</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from API fundamentals and HTTP anatomy through REST constraints, OAuth 2.0, JWT, API design best practices, Postman testing, and GraphQL vs gRPC comparisons.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">7 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">15 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `What is an API?`,
+    topics: [
+    { title: `APIs — Definition, Purpose & the Digital Economy`, content: `__H__ APIs — Definition, Purpose & the Digital Economy
+
+An API — Application Programming Interface — is a defined contract that specifies how two software components can communicate with each other. It is the set of rules, protocols, and tools that one system exposes so that another system can interact with it, without knowing or caring how the internals work. Think of an API as a restaurant menu: the menu tells you what dishes you can order and in what format to make the request; you do not need to go into the kitchen or understand how the chef prepares the food. You make a structured request, and a structured response comes back.
+
+__SUB__ The Waiter Analogy — the Clearest Way to Explain APIs
+Imagine you are sitting at a restaurant table. The kitchen is the server (the system with data and logic). You are the client (the application wanting that data or logic). The waiter is the API — the intermediary that accepts your order (request), takes it to the kitchen, and brings back your food (response). The menu is the API documentation. You can only order what is on the menu (what the API exposes). You cannot walk into the kitchen yourself (direct database access). The waiter enforces the rules of the interaction and keeps you separated from the kitchen's internals. This separation is the fundamental value of an API: it creates a stable, documented interface while allowing the kitchen to change its recipes (internal implementation) without affecting the customer.
+
+__LI__ Client: the application making the request — browser, mobile app, another server
+__LI__ Server: the system with the data or business logic being exposed
+__LI__ API: the contract that defines what requests are valid and what responses look like
+__LI__ Endpoint: a specific URL/address where the API listens for a particular type of request
+
+__SUB__ Why APIs Drive the Digital Economy
+Modern software is built by composing APIs. Stripe's payment API lets any startup accept credit card payments in hours rather than building a PCI-compliant payment system from scratch. Twilio's messaging API lets applications send SMS globally without telecom infrastructure. Google Maps API powers navigation in thousands of third-party applications. AWS provides hundreds of APIs to provision cloud infrastructure. Without APIs, every company would need to build every capability from scratch — the digital economy as it exists today would be impossible. APIs are also the foundation of the platform business model: companies like Salesforce, Shopify, and Twitter (X) generate enormous value by allowing third parties to build on top of their platforms through APIs.
+
+__LI__ Reusability: build once, consumed by many — Stripe processes payments for millions of businesses
+__LI__ Speed: integrate existing capability in hours instead of building it in months
+__LI__ Ecosystem: APIs enable marketplaces of composable services — the microservices revolution
+__LI__ Monetisation: API-as-a-product — Twilio, Stripe, SendGrid built billion-dollar businesses selling API access
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fffbeb;border-radius:12px;border:1px solid #fde68a;overflow-x:auto"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">How an API Call Works — End to End</div><div style="display:flex;align-items:center;gap:6px;min-width:620px;font-size:12px"><div style="background:#D97706;color:white;padding:10px 14px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:16px;margin-bottom:4px">📱</div><div style="font-weight:700">Client</div><div style="font-size:10px;opacity:.85">Mobile App</div></div><div style="flex:1;border-top:2px dashed #D97706;position:relative"><div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:#D97706;font-weight:600;white-space:nowrap">HTTP Request</div><div style="position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:#059669;font-weight:600;white-space:nowrap">HTTP Response</div><div style="border-top:2px dashed #059669;margin-top:8px"></div></div><div style="background:#0C1220;color:white;padding:10px 14px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:16px;margin-bottom:4px">⚡</div><div style="font-weight:700">API Layer</div><div style="font-size:10px;opacity:.7">Route + Auth</div></div><div style="flex:1;border-top:2px dashed #64748b;position:relative"><div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:#64748b;font-weight:600">Query</div><div style="border-top:2px dashed #475569;margin-top:8px"></div></div><div style="background:#1e293b;color:white;padding:10px 14px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:16px;margin-bottom:4px">🗄️</div><div style="font-weight:700">Database</div><div style="font-size:10px;opacity:.7">Data Store</div></div></div><div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:#78350f"><div style="background:#fef3c7;padding:8px 12px;border-radius:6px"><strong>Request contains:</strong> Method, URL, Headers, Body</div><div style="background:#fef3c7;padding:8px 12px;border-radius:6px"><strong>Response contains:</strong> Status Code, Headers, Body (JSON)</div></div></div>` },
+    { title: `Types of APIs — Public, Private, Partner & Composite`, content: `__H__ Types of APIs — Public, Private, Partner & Composite
+
+Not all APIs are created equal. APIs are categorised by their audience and access model, and choosing the right type has significant implications for security, monetisation, and governance.
+
+__SUB__ Access-Based Classification
+Public APIs (also called Open APIs) are available to any developer — usually with an API key for rate limiting and monitoring. Examples: OpenWeatherMap, Unsplash, and the Google Maps API. Public APIs drive developer ecosystems and are often part of a freemium business model. Private APIs are internal to an organisation — they connect microservices, front-end to back-end, or systems across business units. They are not exposed to the internet but still follow the same API design principles and should be documented and versioned. Partner APIs are exposed to specific trusted third parties under a formal agreement — for example, a bank exposing transaction data to a licensed fintech under Open Banking regulations. They require authentication, legal agreements, and often rate limits tailored to each partner. Composite APIs bundle multiple API calls into a single request — reducing the number of round trips from a client that needs data from several services simultaneously.
+
+__LI__ Public: open to all developers — API key for rate limiting, often freemium
+__LI__ Private: internal only — microservice-to-microservice, front-end to back-end
+__LI__ Partner: selective external access — formal agreement, custom rate limits, higher trust
+__LI__ Composite: combine multiple service calls into one — reduce round trips, optimise for clients
+
+__SUB__ API Protocols and Paradigms Overview
+Beyond access model, APIs also differ by protocol and architectural style. REST (Representational State Transfer) over HTTP is the dominant paradigm — stateless, text-based, and universally supported. SOAP (Simple Object Access Protocol) is an older XML-based protocol still common in enterprise and financial systems — verbose but with strict standards for security and transactions. GraphQL is a query language for APIs that lets clients request exactly the data they need — no over-fetching, no under-fetching. gRPC uses Protocol Buffers over HTTP/2 for high-performance, strongly-typed inter-service communication. WebSocket enables real-time, bidirectional communication — essential for chat, live dashboards, and collaborative applications. The choice of protocol should be driven by the use case, not fashion.
+
+__LI__ REST: stateless HTTP, JSON, human-readable — best for public and web APIs
+__LI__ SOAP: XML, WS-Security, ACID transactions — legacy enterprise, banking, healthcare
+__LI__ GraphQL: client-defined queries, single endpoint — best for complex data graphs
+__LI__ gRPC: binary Protocol Buffers, HTTP/2, streaming — best for high-performance internal services
+__LI__ WebSocket: persistent bidirectional connection — best for real-time features` }
+    ]
+  },
+  {
+    id: 1,
+    name: `HTTP & REST Principles`,
+    topics: [
+    { title: `HTTP Fundamentals — Request & Response Anatomy`, content: `__H__ HTTP Fundamentals — Request & Response Anatomy
+
+Every API call over the internet is an HTTP message exchange. Understanding the structure of HTTP requests and responses is the single most important prerequisite for API work. HTTP (HyperText Transfer Protocol) is the application-layer protocol that the web runs on — and REST APIs are simply HTTP used in a structured, consistent way.
+
+__SUB__ Anatomy of an HTTP Request
+An HTTP request has four parts: the request line (method + URL + HTTP version), the request headers (metadata about the request), an optional blank line, and an optional request body. The method (GET, POST, PUT, etc.) tells the server what the client wants to do. The URL identifies the resource being acted upon. The headers carry context — the Accept header tells the server what format the client can handle; the Authorization header carries authentication credentials; the Content-Type header tells the server the format of the request body. The body (present for POST, PUT, PATCH) carries the data being sent — typically JSON.
+
+__LI__ Request Line: METHOD /path/to/resource HTTP/1.1
+__LI__ Host header: identifies the target server — required in HTTP/1.1
+__LI__ Authorization: Bearer <token> — the most common authentication pattern
+__LI__ Content-Type: application/json — tells the server the body is JSON
+__LI__ Accept: application/json — tells the server the client wants JSON back
+
+__RAW__ <div style="margin:1.5rem 0;background:#0C1220;border-radius:12px;overflow:hidden;font-family:'Courier New',monospace"><div style="padding:8px 16px;background:#1e293b;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.1em">SAMPLE HTTP REQUEST</div><div style="padding:16px;font-size:13px;line-height:1.8"><div style="color:#f59e0b;font-weight:700">POST /api/v1/patients HTTP/1.1</div><div style="color:#94a3b8">Host: api.hospital.com</div><div style="color:#94a3b8">Authorization: <span style="color:#34d399">Bearer eyJhbGci...</span></div><div style="color:#94a3b8">Content-Type: <span style="color:#a78bfa">application/json</span></div><div style="color:#94a3b8">Accept: <span style="color:#a78bfa">application/json</span></div><div style="color:#94a3b8">X-Request-ID: <span style="color:#60a5fa">a1b2c3d4-e5f6</span></div><div style="color:#475569;margin-top:8px">&nbsp;</div><div style="color:#e2e8f0">{</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"name"</span>: <span style="color:#34d399">"Rashad Nadeer"</span>,</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"dob"</span>: <span style="color:#34d399">"1990-01-15"</span>,</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"mrn"</span>: <span style="color:#34d399">"MRN-00123"</span></div><div style="color:#e2e8f0">}</div></div><div style="padding:8px 16px;background:#1e293b;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.1em;margin-top:4px">SAMPLE HTTP RESPONSE</div><div style="padding:16px;font-size:13px;line-height:1.8"><div style="color:#34d399;font-weight:700">HTTP/1.1 201 Created</div><div style="color:#94a3b8">Content-Type: application/json</div><div style="color:#94a3b8">Location: /api/v1/patients/P-9876</div><div style="color:#e2e8f0;margin-top:8px">{</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"id"</span>: <span style="color:#34d399">"P-9876"</span>,</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"name"</span>: <span style="color:#34d399">"Rashad Nadeer"</span>,</div><div style="color:#e2e8f0">&nbsp;&nbsp;<span style="color:#f59e0b">"createdAt"</span>: <span style="color:#34d399">"2026-04-12T09:00:00Z"</span></div><div style="color:#e2e8f0">}</div></div></div>
+
+__SUB__ Query Parameters, Path Parameters & Headers
+URLs carry information in several ways. Path parameters identify a specific resource: /patients/P-9876 — the patient ID P-9876 is embedded in the path. Query parameters modify the request or filter results: /patients?ward=ICU&status=admitted — the ward and status filter the returned list. Headers carry cross-cutting concerns — authentication, content negotiation, caching, and custom metadata. Understanding when to use each is a core API design skill: resource identity goes in the path; filtering, sorting, and pagination go in query params; authentication and content type go in headers; resource data goes in the body.` },
+    { title: `REST — The 6 Architectural Constraints`, content: `__H__ REST — The 6 Architectural Constraints
+
+REST is not a protocol — it is an architectural style defined by Roy Fielding in his 2000 PhD dissertation. A REST API is one that honours six constraints. Violating any of these constraints means the API is not truly RESTful — though many APIs called 'REST' APIs violate one or more of these constraints in practice.
+
+__SUB__ Constraint 1 — Uniform Interface
+The most important REST constraint is the uniform interface — a standardised way for clients to interact with any server. The uniform interface has four sub-constraints: resource identification in requests (URIs identify resources, not actions); resource manipulation through representations (the client receives a representation of the resource — usually JSON — not the resource itself); self-descriptive messages (each message includes enough information to describe how to process it — via Content-Type headers); and hypermedia as the engine of application state (HATEOAS — responses include links to related actions). The uniform interface decouples client from server implementation: clients know only the interface contract, not the server internals.
+
+__LI__ URI identifies the resource: /patients/P-9876 — not /getPatientById?id=P-9876
+__LI__ Representation: client gets a JSON view of the patient, not the database row
+__LI__ Self-descriptive: Content-Type: application/json tells the client how to parse the response
+__LI__ HATEOAS: response includes links to next actions — {links: {discharge: '/patients/P-9876/discharge'}}
+
+__SUB__ Constraints 2–6 — Stateless, Cacheable, Layered, Code on Demand, Client-Server
+Stateless: each request must contain all information needed to process it — the server stores no session state. This enables horizontal scaling: any server can handle any request. Cacheable: responses must define whether they can be cached (Cache-Control headers), enabling clients and intermediaries to cache responses and reduce load. Layered System: the client cannot tell whether it is connected directly to the server or through an intermediary (load balancer, CDN, API gateway) — this enables infrastructure flexibility. Code on Demand (optional): servers can extend client functionality by returning executable code (JavaScript). Client-Server: clients and servers are separate and interact only through the uniform interface — the client is not concerned with data storage; the server is not concerned with UI.
+
+__LI__ Stateless: no sessions on the server — credentials in every request via Authorization header
+__LI__ Cacheable: GET responses can be cached; POST/DELETE responses typically not
+__LI__ Layered: API gateway, load balancer, and CDN are invisible to the client
+__LI__ Client-Server: front-end can evolve independently of back-end as long as the interface is stable` }
+    ]
+  },
+  {
+    id: 2,
+    name: `HTTP Methods & Status Codes`,
+    topics: [
+    { title: `HTTP Methods — Safe, Idempotent & Unsafe Operations`, content: `__H__ HTTP Methods — Safe, Idempotent & Unsafe Operations
+
+HTTP defines a set of request methods (also called verbs) that indicate the desired action. Each method has specific semantics that both clients and servers must honour. Two critical properties classify methods: safety (does the method change server state?) and idempotency (is repeating the request multiple times equivalent to making it once?).
+
+__SUB__ The CRUD-to-HTTP Mapping
+REST maps the four CRUD operations (Create, Read, Update, Delete) to HTTP methods in a standard way. GET retrieves a resource — safe (no state change) and idempotent (GET /patients/P-9876 returns the same patient every time). POST creates a new resource or triggers a non-idempotent action — unsafe and non-idempotent (POST /patients creates a new patient each time). PUT replaces a resource entirely — unsafe but idempotent (PUT /patients/P-9876 with the full patient object produces the same result however many times you call it). PATCH partially updates a resource — unsafe, may or may not be idempotent depending on implementation. DELETE removes a resource — unsafe but idempotent (DELETE /patients/P-9876 produces the same state whether called once or five times: the patient does not exist).
+
+__LI__ GET: read — safe, idempotent, cacheable. Never use GET to change state.
+__LI__ POST: create or trigger action — unsafe, non-idempotent. Body contains new resource data.
+__LI__ PUT: full replacement — unsafe, idempotent. Body contains the complete new representation.
+__LI__ PATCH: partial update — unsafe, usually idempotent. Body contains only changed fields.
+__LI__ DELETE: remove — unsafe, idempotent. Response: 204 No Content on success.
+__LI__ HEAD: like GET but returns headers only — useful for checking if a resource exists.
+__LI__ OPTIONS: returns supported methods for a URL — used in CORS preflight requests.
+
+__RAW__ <div style="margin:1.5rem 0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#0C1220;color:#f1f5f9"><th style="padding:10px 14px;text-align:left;font-weight:700">Method</th><th style="padding:10px 14px;text-align:left">CRUD</th><th style="padding:10px 14px;text-align:left">Safe?</th><th style="padding:10px 14px;text-align:left">Idempotent?</th><th style="padding:10px 14px;text-align:left">Has Body?</th><th style="padding:10px 14px;text-align:left">Cacheable?</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#059669">GET</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Read</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#D97706">POST</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Create</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td></tr><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#4F62F5">PUT</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Replace</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#7C3AED">PATCH</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Update</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Usually</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">✅ Yes</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">❌ No</td></tr><tr style="background:#fff"><td style="padding:9px 14px;font-weight:700;color:#DC2626">DELETE</td><td style="padding:9px 14px">Delete</td><td style="padding:9px 14px">❌ No</td><td style="padding:9px 14px">✅ Yes</td><td style="padding:9px 14px">Optional</td><td style="padding:9px 14px">❌ No</td></tr></tbody></table></div>` },
+    { title: `HTTP Status Codes — The Complete Reference`, content: `__H__ HTTP Status Codes — The Complete Reference
+
+HTTP status codes are three-digit numbers returned by the server to tell the client what happened with its request. They are grouped into five classes by their first digit. Understanding status codes is critical — a misconfigured API that returns 200 OK for every response (even failures) is one of the most painful debugging experiences in software.
+
+__SUB__ 2xx — Success Codes
+200 OK is the standard success response for GET and PUT/PATCH requests that return a body. 201 Created is returned when a POST successfully creates a new resource — the response should include a Location header pointing to the new resource's URL. 202 Accepted indicates the request has been queued for asynchronous processing — the work has not happened yet. 204 No Content is returned on successful DELETE or PUT/PATCH operations where there is nothing to return in the body. 206 Partial Content is used with range requests for streaming large files.
+
+__LI__ 200 OK: success with response body — GET, PUT, PATCH
+__LI__ 201 Created: resource created — POST, include Location: /api/v1/patients/P-9876
+__LI__ 202 Accepted: async processing started — return a job ID for polling
+__LI__ 204 No Content: success, no body — DELETE, PUT when returning nothing
+
+__SUB__ 3xx, 4xx & 5xx — Redirects, Client Errors & Server Errors
+301 Moved Permanently and 302 Found are redirects — the resource has moved. 304 Not Modified means the cached version is still current (used with ETags). 400 Bad Request is the generic client error — the request is malformed, missing required fields, or has invalid data. 401 Unauthorized (confusingly named) means the client is not authenticated — credentials are missing or invalid. 403 Forbidden means the client is authenticated but not authorised — it does not have permission. 404 Not Found means the resource does not exist. 409 Conflict means the request conflicts with current resource state (e.g., duplicate email). 422 Unprocessable Entity means the syntax is correct but the semantics are invalid (validation errors). 429 Too Many Requests is the rate limit response. 500 Internal Server Error is the catch-all server error. 503 Service Unavailable means the server is temporarily down.
+
+__LI__ 401: not authenticated — 'Who are you?' Show a login prompt.
+__LI__ 403: not authorised — 'I know who you are, but you can't do this.'
+__LI__ 404: not found — can also be used intentionally to hide existence of a resource
+__LI__ 422: validation failure — return a body explaining which fields failed and why
+__LI__ 429: rate limited — include Retry-After header with seconds to wait
+__LI__ 500: server bug — the client did nothing wrong; log it and alert on it` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Authentication & Security`,
+    topics: [
+    { title: `API Keys, Basic Auth & Security Fundamentals`, content: `__H__ API Keys, Basic Auth & Security Fundamentals
+
+API security is not optional. An unsecured API exposes your data, your users, and your infrastructure to anyone who can find the endpoint. Authentication answers 'who are you?' Authorisation answers 'what are you allowed to do?' These are distinct concepts that are often conflated. Every API request must be authenticated; every authenticated request must be checked against authorisation rules.
+
+__SUB__ API Keys — Simple but Limited
+An API key is a long random string (e.g., sk_live_abc123xyz) that the client includes in every request — typically in an Authorization header or a custom X-API-Key header. The server looks up the key in a database, identifies the owner, and applies their rate limits and permissions. API keys are simple to implement and appropriate for server-to-server communication where the key can be kept secret. They are not appropriate for client-side use (browser/mobile apps) where the key would be exposed in the JavaScript source code or the device storage — any user could extract the key and use it to impersonate the application. API keys should be scoped (read-only vs read-write), have expiry dates, and be rotatable without downtime.
+
+__LI__ Never hardcode API keys in source code — they will end up in version control
+__LI__ Store keys in environment variables or secret management tools (AWS Secrets Manager, HashiCorp Vault)
+__LI__ Scope keys to minimum necessary permissions: a reporting key should be read-only
+__LI__ Rotate keys regularly and provide a way to rotate without service interruption
+
+__SUB__ Basic Authentication and Why to Avoid It
+HTTP Basic Auth sends the username and password Base64-encoded in the Authorization header: Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=. This is not encryption — Base64 is trivially reversible. Basic Auth is only safe over HTTPS (which encrypts the entire request including headers). Even over HTTPS, Basic Auth is problematic: the password is sent with every request, increasing the attack surface; there is no built-in expiry or revocation mechanism; and the server must store the password (or its hash) and compare it on every request. Basic Auth is acceptable for internal tooling and simple APIs, but should never be used for user-facing authentication at scale.
+
+__LI__ Base64 is encoding, not encryption — Authorization: Basic dXNlcjpwYXNz decodes to 'user:pass'
+__LI__ Always use HTTPS with Basic Auth — never plain HTTP
+__LI__ Prefer token-based auth (OAuth 2.0, JWT) for anything user-facing or at scale` },
+    { title: `OAuth 2.0 — Delegated Authorisation`, content: `__H__ OAuth 2.0 — Delegated Authorisation
+
+OAuth 2.0 is the industry-standard protocol for delegated authorisation — it allows a user to grant a third-party application limited access to their account on another service, without sharing their password with the third party. When you click 'Sign in with Google' or 'Connect with LinkedIn', you are using OAuth 2.0.
+
+__SUB__ The OAuth 2.0 Actors
+OAuth 2.0 defines four actors. The Resource Owner is the user who owns the data (e.g., you, the Gmail user). The Client is the third-party application that wants access to the data (e.g., a CRM that wants to read your Gmail). The Resource Server is the API that holds the protected data (e.g., Gmail's API). The Authorisation Server is the system that authenticates the user and issues tokens (e.g., Google's identity platform). The key insight is that the client never sees the user's credentials — the user authenticates directly with the Authorisation Server, which then issues a token that the client uses to access the Resource Server.
+
+__LI__ Resource Owner: the user — decides what access to grant
+__LI__ Client: the application wanting access — must be registered with the Auth Server
+__LI__ Resource Server: the API with the protected data — validates tokens
+__LI__ Authorisation Server: issues access tokens — Google, Azure AD, Okta, Auth0
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fffbeb;border-radius:12px;border:1px solid #fde68a"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">OAuth 2.0 — Authorisation Code Flow (Most Secure)</div><div style="font-size:12px;color:#374151"><div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;align-items:center;gap:10px"><div style="background:#D97706;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><div><strong>User</strong> clicks "Sign in with Google" on the Client app</div></div><div style="display:flex;align-items:center;gap:10px"><div style="background:#D97706;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><div><strong>Client</strong> redirects user to Google's Auth Server with scope &amp; redirect_uri</div></div><div style="display:flex;align-items:center;gap:10px"><div style="background:#D97706;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><div><strong>User</strong> authenticates with Google and grants consent</div></div><div style="display:flex;align-items:center;gap:10px"><div style="background:#059669;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div><div><strong>Auth Server</strong> redirects back to Client with a short-lived <strong>authorisation code</strong></div></div><div style="display:flex;align-items:center;gap:10px"><div style="background:#059669;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">5</div><div><strong>Client</strong> (server-side) exchanges code + client_secret for an <strong>access token</strong> (never exposed to browser)</div></div><div style="display:flex;align-items:center;gap:10px"><div style="background:#4F62F5;color:white;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">6</div><div><strong>Client</strong> uses access token to call the Resource Server (Gmail API) on behalf of the user</div></div></div><div style="margin-top:12px;background:#fef3c7;border-radius:6px;padding:8px 12px;font-size:11px;color:#92400e">🔑 Key point: The user's Google password is NEVER shared with the Client app. The access token is scoped and time-limited.</div></div></div>
+
+__SUB__ OAuth 2.0 Grant Types
+OAuth 2.0 defines several grant types (flows) for different scenarios. The Authorisation Code flow (shown above) is the most secure and is used for server-side web applications. PKCE (Proof Key for Code Exchange) extends the Authorisation Code flow for mobile apps and SPAs where a client secret cannot be kept confidential. The Client Credentials flow is for machine-to-machine (M2M) authentication — no user is involved; the client authenticates with its own credentials and gets a token to call services. The Refresh Token mechanism allows clients to obtain new access tokens without re-authenticating the user — access tokens are short-lived (1 hour), but refresh tokens are long-lived (days/weeks) and can be used to get new access tokens silently.
+
+__LI__ Authorisation Code + PKCE: for browser/mobile apps — most secure for user-facing flows
+__LI__ Client Credentials: for M2M — no user; service authenticates itself to another service
+__LI__ Refresh Token: exchange for new access token silently — users stay logged in
+__LI__ Implicit flow: deprecated — was for SPAs, replaced by Auth Code + PKCE` },
+    { title: `JWT — JSON Web Tokens`, content: `__H__ JWT — JSON Web Tokens
+
+JSON Web Tokens (JWT, pronounced 'jot') are a compact, URL-safe means of representing claims — assertions — between two parties. They are the most common token format for modern APIs. A JWT is a self-contained token: the server does not need to look up anything to validate it, because all the information needed is encoded in the token itself.
+
+__SUB__ JWT Structure — Header.Payload.Signature
+A JWT consists of three Base64URL-encoded parts separated by dots: Header.Payload.Signature. The header identifies the token type (JWT) and the signing algorithm (typically HS256 for symmetric HMAC or RS256 for asymmetric RSA). The payload contains the claims — statements about the user: sub (subject/user ID), iss (issuer), exp (expiration timestamp), iat (issued at), and any custom claims (roles, permissions, user metadata). The signature is computed over the header and payload using the signing key — it ensures the token has not been tampered with. If any part of the header or payload is modified, the signature verification fails.
+
+__LI__ Header: {"alg": "RS256", "typ": "JWT"} — Base64URL encoded
+__LI__ Payload: {"sub": "usr_abc", "email": "rashad@company.com", "roles": ["admin"], "exp": 1713000000}
+__LI__ Signature: HMACSHA256(base64url(header) + '.' + base64url(payload), secret)
+__LI__ Full JWT: eyJhbGci... .eyJzdWIi... .SflKxwRJSMeKKF2QT4fw... (three base64url parts joined by dots)
+
+__RAW__ <div style="margin:1.5rem 0;background:#0C1220;border-radius:12px;overflow:hidden"><div style="padding:8px 16px;background:#1e293b;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.1em">JWT ANATOMY</div><div style="padding:16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7"><div style="margin-bottom:12px"><span style="color:#f59e0b;font-weight:700">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9</span><span style="color:#4F62F5">.</span><span style="color:#34d399;font-weight:700">eyJzdWIiOiJ1c3JfYWJjIiwibmFtZSI6IlJhc2hhZCIsInJvbGVzIjpbImFkbWluIl0sImV4cCI6MTcxMzAwMDAwMH0</span><span style="color:#4F62F5">.</span><span style="color:#a78bfa;font-weight:700">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11px"><div style="background:#1e293b;padding:10px;border-radius:6px;border-top:3px solid #f59e0b"><div style="color:#f59e0b;font-weight:700;margin-bottom:6px">HEADER</div><div style="color:#94a3b8">{</div><div style="color:#94a3b8">&nbsp;&nbsp;"alg": "RS256",</div><div style="color:#94a3b8">&nbsp;&nbsp;"typ": "JWT"</div><div style="color:#94a3b8">}</div></div><div style="background:#1e293b;padding:10px;border-radius:6px;border-top:3px solid #34d399"><div style="color:#34d399;font-weight:700;margin-bottom:6px">PAYLOAD (CLAIMS)</div><div style="color:#94a3b8">{</div><div style="color:#94a3b8">&nbsp;&nbsp;"sub": "usr_abc",</div><div style="color:#94a3b8">&nbsp;&nbsp;"roles": ["admin"],</div><div style="color:#94a3b8">&nbsp;&nbsp;"exp": 1713000000</div><div style="color:#94a3b8">}</div></div><div style="background:#1e293b;padding:10px;border-radius:6px;border-top:3px solid #a78bfa"><div style="color:#a78bfa;font-weight:700;margin-bottom:6px">SIGNATURE</div><div style="color:#94a3b8">RS256(</div><div style="color:#94a3b8">&nbsp;header + payload,</div><div style="color:#94a3b8">&nbsp;private_key</div><div style="color:#94a3b8">)</div></div></div></div><div style="padding:10px 16px;background:#0f172a;font-size:11px;color:#64748b">⚠️ JWTs are Base64-encoded, not encrypted. Do not put sensitive data in the payload. Anyone can decode the payload — only the signature is secret.</div></div>
+
+__SUB__ JWT vs Sessions — Stateless vs Stateful Auth
+Traditional session-based authentication stores a session ID in a cookie; the server maintains a session table mapping session IDs to user data. Every request requires a database lookup to validate the session. JWTs are stateless: the token contains all user information, signed by the server's key. Any server can validate a JWT without a database lookup — just verify the signature. This makes JWTs ideal for distributed systems and microservices where multiple services need to validate identity. The tradeoff is revocation: a session can be invalidated by deleting it from the session table; a JWT cannot be invalidated before its expiry time (without maintaining a token blacklist, which reintroduces statefulness). Use short expiry times (15 minutes to 1 hour) for access tokens and refresh tokens with a blacklist for revocation.
+
+__LI__ Stateless: no server-side session storage — scale horizontally with no coordination
+__LI__ Cross-service: any service with the public key can validate — perfect for microservices
+__LI__ Revocation challenge: can't invalidate a valid JWT until expiry — keep access tokens short-lived
+__LI__ Short-lived access tokens (15m–1h) + long-lived refresh tokens with a revocation list` }
+    ]
+  },
+  {
+    id: 4,
+    name: `API Design Best Practices`,
+    topics: [
+    { title: `RESTful URL Design, Naming & Resource Modelling`, content: `__H__ RESTful URL Design, Naming & Resource Modelling
+
+Good API design is about building an interface that developers enjoy using. An API is a product — it has users (developers), and those users will form a long-term relationship with it. The investment in good design pays dividends over the years that the API is in use. Poor API design is one of the most expensive forms of technical debt: changing an API breaks all its clients, requiring coordinated migration.
+
+__SUB__ Nouns, Not Verbs — Resource-Oriented URLs
+The most common RESTful URL design mistake is putting actions in URLs. Action-in-URL style (RPC style) looks like: /getPatients, /createPatient, /deletePatient. Resource-oriented style (REST style) looks like: /patients (collection), /patients/P-9876 (specific resource). The action is expressed by the HTTP method (GET, POST, DELETE), not the URL. This keeps URLs stable and predictable. Good URLs are plural nouns (patients not patient), hierarchical to show relationships (/hospitals/H-01/wards/ICU/patients), lowercase with hyphens (/patient-records not /PatientRecords or /patient_records), and never include verbs (/patients not /getPatients).
+
+__LI__ ✅ GET /patients — list all patients
+__LI__ ✅ POST /patients — create a new patient
+__LI__ ✅ GET /patients/P-9876 — get patient P-9876
+__LI__ ✅ PATCH /patients/P-9876 — update patient P-9876 partially
+__LI__ ✅ DELETE /patients/P-9876 — delete patient P-9876
+__LI__ ❌ GET /getPatient?id=P-9876 — verb in URL, query param for identity
+__LI__ ❌ POST /patients/P-9876/doDischarge — verb in path (/discharge is better as POST /patients/P-9876/discharge or PUT /patients/P-9876/status)
+
+__SUB__ Pagination, Filtering & Sorting
+Any endpoint that returns a collection must be paginated — never return unbounded lists. Cursor-based pagination (using an opaque cursor that points to the position in the dataset) is more robust than offset-based pagination for large, frequently updated datasets, because offset pagination skips or duplicates records when items are added or removed during pagination. The standard cursor-based response includes a data array, a nextCursor field (null if there are no more pages), and a total count. Filtering should use query parameters that mirror field names: GET /patients?ward=ICU&status=admitted&admittedAfter=2026-01-01. Sorting: GET /patients?sort=admittedAt&order=desc. Field selection (sparse fieldsets) reduces payload size: GET /patients?fields=id,name,status.
+
+__LI__ Limit/offset: GET /patients?limit=20&offset=40 — simple but fragile for live data
+__LI__ Cursor-based: GET /patients?after=cGF0aWVudF9Q — stable, handles data changes mid-pagination
+__LI__ Include pagination metadata: {data: [...], pagination: {nextCursor: '...', total: 1247}}
+__LI__ Filtering: GET /patients?ward=ICU&status=admitted — use AND for same param
+__LI__ Sorting: GET /patients?sort=admittedAt&order=desc` },
+    { title: `Versioning, Error Responses & API Documentation`, content: `__H__ Versioning, Error Responses & API Documentation
+
+Every API will need to evolve. The question is not whether to version your API, but how. Changes that break existing clients — removing a field, changing a field type, removing an endpoint — must be communicated through versioning. Changes that do not break clients — adding optional fields, adding new endpoints, adding new optional query parameters — can be deployed without a version change.
+
+__SUB__ API Versioning Strategies
+Three main strategies exist for versioning. URL versioning embeds the version in the path: /api/v1/patients, /api/v2/patients. This is the most explicit and easiest to test in a browser, but it can lead to URL proliferation. Header versioning uses a custom header: Accept: application/vnd.myapi.v2+json. This keeps URLs clean but is harder to test without tooling. Query parameter versioning: /patients?version=2. Avoid this — it is the most ambiguous and easy to accidentally omit. URL versioning is the most widely adopted and is recommended for public APIs. When releasing v2, keep v1 running for a documented deprecation period (typically 12-24 months), giving clients time to migrate.
+
+__LI__ URL versioning: /api/v1/... — most visible, easy to test, recommended for public APIs
+__LI__ Header versioning: Accept: application/vnd.api.v2+json — clean URLs but harder to test
+__LI__ Deprecation policy: announce v1 deprecation, give 12-24 months, send deprecation warnings in headers
+
+__SUB__ Error Response Design & OpenAPI Documentation
+Inconsistent error responses are one of the most common API design failures. Every error response should follow the same structure so that clients can handle errors generically. A good error response includes: the HTTP status code (in the response line), a machine-readable error code (a string like VALIDATION_FAILED), a human-readable message, and optionally an array of field-level errors for validation failures. The RFC 7807 Problem Details standard provides a standardised error format. API documentation should be generated from the API specification, not written separately. OpenAPI (formerly Swagger) is the standard specification format — define your API in a YAML or JSON OpenAPI spec, and generate interactive documentation (Swagger UI, Redoc), client SDKs, and server stubs from it automatically.
+
+__LI__ Error shape: {status: 422, code: 'VALIDATION_FAILED', message: '...', errors: [{field: 'dob', message: 'Invalid date format'}]}
+__LI__ Always include the same fields in error responses — don't return a string in one case and an object in another
+__LI__ OpenAPI Spec → Swagger UI (interactive docs), client SDK generation, mock server
+__LI__ Document all possible response codes for each endpoint — including error codes
+
+__RAW__ <div style="margin:1.5rem 0;background:#0C1220;border-radius:12px;overflow:hidden"><div style="padding:8px 16px;background:#1e293b;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.1em">STANDARDISED ERROR RESPONSE</div><div style="padding:16px;font-family:'Courier New',monospace;font-size:13px;line-height:1.8;color:#e2e8f0"><div>{</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"status"</span>: <span style="color:#60a5fa">422</span>,</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"code"</span>: <span style="color:#34d399">"VALIDATION_FAILED"</span>,</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"message"</span>: <span style="color:#34d399">"One or more fields failed validation"</span>,</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"requestId"</span>: <span style="color:#34d399">"req_a1b2c3d4"</span>,</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"errors"</span>: [</div><div>&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="color:#f59e0b">"field"</span>: <span style="color:#34d399">"dob"</span>, <span style="color:#f59e0b">"message"</span>: <span style="color:#34d399">"Must be a valid ISO 8601 date"</span> },</div><div>&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="color:#f59e0b">"field"</span>: <span style="color:#34d399">"mrn"</span>, <span style="color:#f59e0b">"message"</span>: <span style="color:#34d399">"MRN already exists in the system"</span> }</div><div>&nbsp;&nbsp;]</div><div>}</div></div></div>` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Testing APIs with Postman`,
+    topics: [
+    { title: `Postman — Collections, Environments & Test Scripts`, content: `__H__ Postman — Collections, Environments & Test Scripts
+
+Postman is the most widely used API development and testing tool. It provides a GUI for constructing and sending HTTP requests, organising requests into collections, managing environments, and writing automated test assertions. For anyone working with APIs — as a developer, BA, QA engineer, or implementation consultant — Postman fluency is essential.
+
+__SUB__ Collections and Environments
+A Postman Collection is an organised set of requests — grouped by resource or feature — that represents the complete API surface. Collections can be shared with the team, exported as JSON, and run from the command line. Variables are the key to making collections reusable. Environment variables hold values that differ between environments: {{base_url}} might be https://api.staging.hospital.com in the staging environment and https://api.hospital.com in production. Collection variables hold values that are constant across environments. Variable scoping in Postman is hierarchical: global > collection > environment > local — narrower scope wins.
+
+__LI__ Collection: folder of related requests — share with team, run in CI, export to OpenAPI
+__LI__ {{base_url}}: environment variable — switch between staging and prod by changing one value
+__LI__ Pre-request scripts: JavaScript that runs before a request — get a token, set a timestamp
+__LI__ Tests: JavaScript that runs after a response — assert status code, validate response schema
+
+__SUB__ Writing Postman Test Scripts
+Postman test scripts are JavaScript that runs after a request and makes assertions about the response. They use Postman's built-in pm library. A comprehensive test script for a POST /patients request would assert: the status code is 201, the response body has an id field, the id matches the expected format, the name in the response matches what was sent, the Content-Type header is application/json, and the response time is under 500ms. Chaining requests is one of Postman's most powerful features: run a POST to create a resource, extract the created resource's ID from the response using pm.environment.set(), and use that ID in subsequent GET, PATCH, and DELETE requests — simulating a realistic API usage scenario.
+
+__LI__ pm.test('Status is 201', () => pm.response.to.have.status(201));
+__LI__ pm.test('Has id', () => pm.expect(pm.response.json().id).to.be.a('string'));
+__LI__ pm.environment.set('patientId', pm.response.json().id); // chain to next request
+__LI__ pm.test('Response time < 500ms', () => pm.expect(pm.response.responseTime).to.be.below(500));` },
+    { title: `Newman, Mock Servers & API Testing in CI/CD`, content: `__H__ Newman, Mock Servers & API Testing in CI/CD
+
+Postman is a GUI tool — but API tests should run automatically in CI/CD pipelines without human interaction. Newman is Postman's command-line collection runner, designed exactly for this purpose.
+
+__SUB__ Newman — Running Postman Collections in CI/CD
+Newman can run any exported Postman collection from the command line: newman run collection.json --environment staging.json --reporters cli,junit. The JUnit reporter produces an XML test report that CI systems (Jenkins, GitHub Actions, GitLab CI) can ingest and display alongside unit test results. This means your API contract tests — does the API return the right shape of data with the right status codes? — run on every pull request, catching regressions before they reach staging. Newman supports pre-request scripts and test scripts exactly as Postman does, so collections built in the GUI run identically in the CLI.
+
+__LI__ newman run my-api.postman_collection.json -e staging.env.json --reporters cli,junit
+__LI__ Fail the CI build if any Postman test fails — newman exits with code 1 on test failure
+__LI__ Run against staging after deployment — integration test before promoting to production
+__LI__ Use --delay-request 100 to add delay between requests — avoid overwhelming rate limits
+
+__SUB__ Mock Servers and Contract Testing
+Postman mock servers let you create a simulated API from your collection — without a real backend. The mock server returns example responses defined in your collection. This enables front-end development to proceed in parallel with back-end development: the front-end team points to the mock server and works against real API shapes without waiting for the back-end to be ready. Contract testing goes further: tools like Pact define a formal contract between a consumer (front-end or another service) and a provider (the API). Both sides run tests against the contract — the consumer generates a contract from its test, and the provider verifies it can fulfil that contract. If the provider changes its API in a way that breaks the consumer contract, the build fails — before the change reaches production.
+
+__LI__ Postman Mock: auto-generate from collection examples — front-end can start without back-end
+__LI__ Contract testing (Pact): consumer publishes what it expects; provider verifies it can deliver
+__LI__ Consumer-driven contracts: the consumer defines the contract, preventing provider from making breaking changes` }
+    ]
+  },
+  {
+    id: 6,
+    name: `GraphQL vs REST vs gRPC`,
+    topics: [
+    { title: `GraphQL — Flexible Queries & the Over/Under-Fetching Problem`, content: `__H__ GraphQL — Flexible Queries & the Over/Under-Fetching Problem
+
+GraphQL is a query language for APIs, developed by Facebook (Meta) in 2012 and open-sourced in 2015. It solves a specific problem with REST: the mismatch between what a client needs and what a REST endpoint returns.
+
+__SUB__ The Over-Fetching and Under-Fetching Problem
+Over-fetching: a REST endpoint returns more data than the client needs. A mobile app showing a patient list only needs the patient name and ward — but GET /patients returns 40 fields per patient including full medical history. The client receives and processes data it discards. Under-fetching: the client needs data that requires multiple REST requests. To show a patient's doctor and ward, the client fetches GET /patients/P-9876, then GET /doctors/D-123, then GET /wards/ICU — three round trips for data needed on a single screen. GraphQL solves both by letting the client specify exactly what data it needs in a single query — the server returns precisely that, nothing more and nothing less.
+
+__LI__ Over-fetching: GET /patients returns 40 fields; mobile app uses 3 — wasted bandwidth
+__LI__ Under-fetching: patient screen needs 3 API calls to assemble one view — 3x latency
+__LI__ GraphQL solution: one query specifies exactly what fields from which entities are needed
+
+__RAW__ <div style="margin:1.5rem 0;display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#0C1220;border-radius:10px;overflow:hidden"><div style="padding:8px 14px;background:#DC2626;font-size:11px;font-weight:700;color:white">❌ REST — 3 round trips</div><div style="padding:14px;font-family:'Courier New',monospace;font-size:12px;color:#94a3b8;line-height:1.7"><div style="color:#f59e0b">GET /patients/P-9876</div><div style="color:#475569">→ 40 fields (need 3)</div><div style="margin-top:8px;color:#f59e0b">GET /doctors/D-123</div><div style="color:#475569">→ 25 fields (need 2)</div><div style="margin-top:8px;color:#f59e0b">GET /wards/ICU</div><div style="color:#475569">→ 15 fields (need 1)</div><div style="margin-top:10px;padding:6px 8px;background:#1e293b;border-radius:4px;color:#94a3b8;font-size:11px">3 requests · 80 fields received · 6 fields used</div></div></div><div style="background:#0C1220;border-radius:10px;overflow:hidden"><div style="padding:8px 14px;background:#059669;font-size:11px;font-weight:700;color:white">✅ GraphQL — 1 round trip</div><div style="padding:14px;font-family:'Courier New',monospace;font-size:12px;color:#94a3b8;line-height:1.7"><div style="color:#34d399">query {</div><div style="color:#e2e8f0">&nbsp;&nbsp;patient(id: "P-9876") {</div><div style="color:#e2e8f0">&nbsp;&nbsp;&nbsp;&nbsp;name</div><div style="color:#e2e8f0">&nbsp;&nbsp;&nbsp;&nbsp;doctor { name }</div><div style="color:#e2e8f0">&nbsp;&nbsp;&nbsp;&nbsp;ward { name }</div><div style="color:#e2e8f0">&nbsp;&nbsp;}</div><div style="color:#34d399">}</div><div style="margin-top:10px;padding:6px 8px;background:#1e293b;border-radius:4px;color:#94a3b8;font-size:11px">1 request · 6 fields received · 6 fields used</div></div></div></div>
+
+__SUB__ GraphQL Schema, Mutations & Subscriptions
+GraphQL APIs are defined by a schema — a strongly typed description of every type, query, mutation, and subscription the API supports. Queries (read operations) and Mutations (write operations) are the two main operation types. Subscriptions enable real-time data: the client subscribes to an event (e.g., new message in a chat room) and the server pushes updates over a WebSocket whenever the event occurs. The schema-first approach is one of GraphQL's strengths: the schema is the contract, and both front-end and back-end teams can work against a mock of the schema before any implementation is complete. Tools like Apollo Studio provide schema versioning, change detection, and client usage analytics — which fields are being queried by which clients — enabling safe deprecation of unused fields.
+
+__LI__ Schema: strongly typed — every field, type, and relationship is declared
+__LI__ Query: read data — client specifies exactly which fields to return
+__LI__ Mutation: write data — create, update, delete
+__LI__ Subscription: real-time — server pushes data to client over WebSocket` },
+    { title: `gRPC & Protocol Buffers — High-Performance Internal APIs`, content: `__H__ gRPC & Protocol Buffers — High-Performance Internal APIs
+
+gRPC (Google Remote Procedure Call) is a high-performance, open-source RPC framework developed by Google. Where REST uses HTTP/1.1 and JSON, gRPC uses HTTP/2 and Protocol Buffers (protobuf). The result is dramatically faster communication — gRPC payloads are typically 5-10x smaller and 2-5x faster to serialise/deserialise than equivalent JSON.
+
+__SUB__ Protocol Buffers — Typed, Binary Serialisation
+Protocol Buffers are Google's language-neutral, platform-neutral binary serialisation format. You define your data structures in a .proto file using the Protocol Buffer language. The protoc compiler then generates type-safe client and server code in any supported language (Go, Java, Python, C++, Node.js, etc.). Because protobuf is binary (not text), it is compact — no field names, just field numbers. Because it is schema-driven, it is strongly typed — if you add a field, old clients that don't know about it simply ignore it; if you remove a field, old clients get a default value. This backward and forward compatibility is a significant advantage over JSON, which has no schema enforcement.
+
+__LI__ Proto definition: message Patient { string id = 1; string name = 2; string ward = 3; }
+__LI__ Code generation: protoc --go_out=. patient.proto → type-safe Go structs + client/server code
+__LI__ Binary: 3-10x smaller than JSON — critical for high-frequency internal communication
+__LI__ Strongly typed: schema enforced at compile time, not at runtime
+
+__SUB__ gRPC Streaming & When to Choose Each Paradigm
+gRPC supports four communication patterns. Unary RPC is the classic request-response — like a REST call. Server streaming RPC: client sends one request, server responds with a stream of messages (e.g., real-time sensor data). Client streaming RPC: client sends a stream of messages, server responds once (e.g., uploading a large file in chunks). Bidirectional streaming RPC: both client and server send streams simultaneously (e.g., real-time collaborative editing). This streaming capability makes gRPC the natural choice for real-time, high-throughput internal APIs.
+
+__LI__ REST: public APIs, web browsers, simple CRUD — universal support, human-readable
+__LI__ GraphQL: complex data graphs, mobile apps, APIs with many consumers with different data needs
+__LI__ gRPC: internal microservice communication, real-time streaming, performance-critical paths
+__LI__ WebSocket: real-time bidirectional browser communication — chat, live dashboards
+
+__RAW__ <div style="margin:1.5rem 0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#0C1220;color:#f1f5f9"><th style="padding:10px 14px;text-align:left">Aspect</th><th style="padding:10px 14px;text-align:center;color:#60a5fa">REST</th><th style="padding:10px 14px;text-align:center;color:#f59e0b">GraphQL</th><th style="padding:10px 14px;text-align:center;color:#a78bfa">gRPC</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Protocol</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">HTTP/1.1 or 2</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">HTTP/1.1 or 2</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">HTTP/2 only</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Data Format</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">JSON (text)</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">JSON (text)</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Protobuf (binary)</td></tr><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Type Safety</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Optional (OpenAPI)</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Schema-first</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Compile-time</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Browser Support</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">✅ Native</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">✅ Native</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">⚠️ Needs proxy</td></tr><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Streaming</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Limited</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">Subscriptions</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:center">✅ 4 modes</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;font-weight:600">Best For</td><td style="padding:9px 14px;text-align:center">Public APIs</td><td style="padding:9px 14px;text-align:center">Complex UIs</td><td style="padding:9px 14px;text-align:center">Internal services</td></tr></tbody></table></div>` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#D97706">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

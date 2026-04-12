@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Software Testing & QA | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(220,38,38,.08); border-left-color:rgba(220,38,38,.4); }
+        .week-item.active { background:rgba(220,38,38,.12); border-left-color:#DC2626; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#DC2626; border-color:#DC2626; background:rgba(220,38,38,.1); }
+        .week-item.active .view-btn { color:#DC2626; border-color:rgba(220,38,38,.5); background:rgba(220,38,38,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#DC2626; background:rgba(220,38,38,.02); box-shadow:0 2px 8px rgba(220,38,38,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#DC2626; }
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #fecaca; border-radius:10px; margin-bottom:8px; background:rgba(220,38,38,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#DC2626; background:rgba(220,38,38,.07); box-shadow:0 2px 8px rgba(220,38,38,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(220,38,38,.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#DC2626; font-weight:500; margin-top:2px; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#DC2626; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#DC2626; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#DC2626; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete Software Testing & QA learning module — STLC, test case design, automation strategy, Selenium, API testing, and defect lifecycle." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/test-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(220,38,38,.15); color:#DC2626">
+            <i class="fas fa-flask text-[9px]"></i> Software Testing & QA
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" style="--tw-text-opacity:1" onmouseover="this.style.color='#DC2626'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">Software Testing & QA</div>
+                <div class="sidebar-week-count">8 modules &middot; 15 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Testing Fundamentals</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">Test Types</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Test Planning</span>
+            <span class="week-meta">2 topics + 1 templates</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">The Test Pyramid</span>
+            <span class="week-meta">1 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">TDD & BDD</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Test Automation</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+        <div class="week-item" data-week="6" onclick="selectWeek(6)">
+          <div class="week-info">
+            <span class="week-name">Defect Management</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(6)">View</button>
+        </div>
+        <div class="week-item" data-week="7" onclick="selectWeek(7)">
+          <div class="week-info">
+            <span class="week-name">Testing in Agile</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(7)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(220,38,38,.1)">
+                        <i class="fas fa-flask text-2xl" style="color:#DC2626"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">Software Testing & QA</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from testing fundamentals and test types to TDD, BDD, automation frameworks, and testing in Agile CI/CD pipelines.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">8 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">15 Topics</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">1 Template</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Testing Fundamentals`,
+    topics: [
+    { title: `Why We Test`, content: `__H__ Why We Test
+
+Software defects are inevitable — but when they are found determines how expensive they are to fix. The cost of finding and resolving a defect multiplies dramatically the further through the development lifecycle it travels. A defect caught during requirements analysis costs roughly one unit of effort to fix. The same defect found in design costs six times that, during coding it costs ten times, during testing fifteen times, and if it reaches production it can cost a hundred times the original effort or more. This is not a theoretical model — it reflects the real cost of rework, rollback, lost customer trust, and production incidents. Testing is not overhead; it is cost control.
+
+__SUB__ QA vs QC vs Testing — Understanding the Triad
+These three terms are frequently used interchangeably, but they describe fundamentally different activities. Quality Assurance is process-oriented: it focuses on preventing defects from occurring in the first place by establishing and auditing the processes, standards, and practices used to build software. Quality Control is product-oriented: it inspects the output to detect defects that have already been introduced. Testing is the execution activity within QC — it involves running the software against defined test cases to identify failures. Confusing these three leads to misaligned responsibilities: teams that only test and never assure, or organisations that audit processes but never validate the product.
+
+__LI__ QA — prevents defects by improving processes: code reviews, standards, checklists, retrospectives
+__LI__ QC — detects defects by inspecting products: reviews, walkthroughs, inspections, testing
+__LI__ Testing — executes the software to find failures: manual, automated, exploratory
+
+__SUB__ Verification vs Validation
+Verification asks: are we building the product right? It checks that the software conforms to its specification — the design, the requirements documents, the agreed acceptance criteria. Validation asks: are we building the right product? It checks that the software actually meets the real needs of the users and the business, regardless of what was specified. Verification is about correctness to specification; validation is about fitness for purpose. A system can pass all its verification checks and still fail validation if the specification itself was wrong — which is precisely why user acceptance testing exists.` },
+    { title: `QA vs QC vs Testing — The Distinction`, content: `__H__ QA vs QC vs Testing — The Distinction
+
+The distinction between Quality Assurance, Quality Control, and Testing matters because each demands a different mindset, different activities, and different organisational placement. When an organisation collapses all three into 'the QA team does testing', it has typically eliminated the process-improvement function entirely and left verification to chance.
+
+__SUB__ Quality Assurance — The Upstream Investment
+Quality Assurance is an upstream investment in preventing defects. QA professionals define the development standards, establish peer review processes, conduct process audits, and run retrospectives that feed improvements back into how the team works. The output of effective QA is not a test report — it is a development culture where defects are unlikely to be introduced in the first place. QA is proactive, not reactive, and its value is measured by what doesn't happen: the bugs that were never written, the rework that never occurred.
+
+__SUB__ Quality Control and the Shift-Left Philosophy
+Quality Control operates on finished or partially-finished artefacts — inspecting documents, reviewing designs, and testing built software. The shift-left philosophy argues that QC activities should happen as early as possible in the lifecycle rather than being saved for the end. Reviewing requirements before development begins, testing APIs before the UI is built, and writing tests before writing code are all expressions of shifting quality left. Earlier detection is cheaper detection, and shift-left transforms QC from a final gate into a continuous practice woven through every phase.
+
+__LI__ Shift-left: move quality activities earlier to reduce the cost of defect discovery
+__LI__ Requirements reviews and design walkthroughs are QC activities — not bureaucracy
+__LI__ The three amigos (BA, dev, QA) reviewing a story before it is built is shift-left in practice` }
+    ]
+  },
+  {
+    id: 1,
+    name: `Test Types`,
+    topics: [
+    { title: `Unit, Integration & System Testing`, content: `__H__ Unit, Integration & System Testing
+
+Testing is organised into levels that correspond to the levels at which software is built. Each level has a different scope, a different owner, and a different purpose. Understanding which level a test belongs to is essential for designing an effective test strategy and for avoiding the common failure of relying on a single level while ignoring the others.
+
+__SUB__ Unit Testing — The Developer's Responsibility
+Unit tests verify the smallest testable units of the software — individual functions, methods, or classes — in isolation from their dependencies. Dependencies are typically replaced with mocks or stubs so that the test is deterministic and fast. Unit tests are written and owned by developers, ideally at the same time or before the code they test. Because they run in milliseconds and require no infrastructure, they can be run on every commit without slowing the development workflow. A solid unit test suite is the foundation of every reliable test pyramid.
+
+__LI__ JUnit (Java), pytest (Python), Jest (JavaScript) — the standard unit testing frameworks
+__LI__ Mocks replace real dependencies: databases, HTTP calls, file systems
+__LI__ Coverage metrics (line, branch, condition) guide completeness — aim for 80%+ on critical paths
+
+__SUB__ Integration Testing — Verifying the Interfaces
+Integration tests verify that two or more components work correctly together. Where unit tests deliberately isolate components, integration tests deliberately connect them. The most common integration testing targets are APIs — verifying that the application's service layer behaves correctly when called with real HTTP requests. Integration tests are slower than unit tests because they require real infrastructure — databases, message queues, external services — and they are typically owned by both developers and QA engineers.
+
+__LI__ Postman and Newman for API integration testing — request-response validation
+__LI__ REST Assured (Java) for programmatic API test suites within the CI pipeline
+__LI__ Database integration tests verify that persistence, transactions, and queries behave correctly
+
+__SUB__ System Testing — End-to-End Verification
+System testing validates the complete, integrated system against its requirements. It tests the software as a whole — all layers, all integrations, all components working together — in an environment that mirrors production. System tests are the most expensive to build and maintain, the slowest to run, and the most sensitive to environmental issues. They are owned by QA, happen after integration testing, and provide confidence that the system as a whole meets its specified behaviour.
+
+__LI__ Selenium (browser automation), Cypress, Playwright — the major system test frameworks
+__LI__ System tests run in dedicated test environments — not on developer laptops
+__LI__ Focus on critical business flows rather than comprehensive coverage — too slow for everything` },
+    { title: `UAT, Regression, Smoke & Exploratory Testing`, content: `__H__ UAT, Regression, Smoke & Exploratory Testing
+
+Beyond the structured test levels, there are several testing types that serve specific purposes in the software delivery lifecycle. Each fills a gap that the formal test levels cannot address alone.
+
+__SUB__ User Acceptance Testing — The Business Validates
+UAT is conducted by business users or their representatives to confirm that the software meets their real-world needs. It is the final quality gate before release, and it is fundamentally different from system testing: UAT is not about finding technical bugs but about validating that the system supports the business processes it was designed to support. A system can pass all technical tests and fail UAT because the requirements were misunderstood, the workflow doesn't match how users actually work, or edge cases in business logic were not adequately specified.
+
+__SUB__ Regression, Smoke, and Exploratory Testing
+Regression testing verifies that previously working functionality has not been broken by recent changes. Every new feature, bug fix, or refactoring is a risk to the existing system, and regression suites — ideally automated — provide the safety net that catches unintended breakage before it reaches users. Smoke testing is a rapid sanity check run immediately after a new build is deployed: it verifies that the most critical functions work before investing time in deeper testing. Exploratory testing is the antidote to scripted testing — a skilled tester explores the software freely, using knowledge, intuition, and curiosity to find defects that no test script would ever cover.
+
+__LI__ Regression suites should be automated — running them manually is unsustainable as the product grows
+__LI__ Smoke tests cover 10-15 critical paths and should complete in minutes — if they fail, deeper testing stops
+__LI__ Exploratory testing is structured around time-boxed sessions with a charter defining the scope of exploration` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Test Planning`,
+    topics: [
+    { title: `The Test Plan — IEEE 829`, content: `__H__ The Test Plan — IEEE 829
+
+A test plan is the document that communicates what will be tested, how it will be tested, who will test it, when testing will happen, and what constitutes a successful outcome. The IEEE 829 standard defines the structure of a test plan, and while modern Agile teams may use lighter-weight versions, the thinking behind each section remains essential. A test plan that sits in a drawer and guides nothing is worse than no plan — because it creates false confidence.
+
+__SUB__ Scope, Strategy, and Entry/Exit Criteria
+The scope section defines the features and functions that will be tested and — equally importantly — those that will not. Explicitly documenting out-of-scope items prevents the classic failure of stakeholders assuming everything is being tested when only a subset was agreed. The test strategy describes the approach at a high level: which test types will be used, what levels of testing are planned, and what the risk-based prioritisation is. Entry criteria define what must be true before testing begins (build stable, test data prepared, environment available). Exit criteria define what must be achieved before testing ends (all critical defects fixed, no severity-1 open, 95% test execution complete).
+
+__LI__ Entry criteria: build deployed to test environment, smoke tests passed, test data loaded
+__LI__ Exit criteria: 100% test execution, 0 critical/high open defects, regression suite green
+__LI__ Risk-based approach: allocate more testing effort to high-impact, high-probability risk areas
+
+__SUB__ Test Environment, Schedule, and Resource Allocation
+The test environment section describes the infrastructure, data, and configuration required to execute the tests — and assigns responsibility for setting it up and maintaining it. Environment problems are one of the most common causes of testing delays: servers not provisioned, data not available, the wrong software version deployed. A good test plan identifies these risks upfront and assigns owners to resolve them. The schedule section integrates testing with the delivery timeline, making testing visible as a dependency rather than an afterthought bolted onto the end of the project.` },
+    { title: `Test Case Design Techniques`, content: `__H__ Test Case Design Techniques
+
+Writing good test cases is a skill, and good test engineers use systematic techniques rather than intuition alone to derive cases. Each technique is suited to particular types of inputs and conditions. Using the right technique for the right situation produces comprehensive coverage with the minimum number of test cases.
+
+__SUB__ Equivalence Partitioning and Boundary Value Analysis
+Equivalence partitioning divides the input domain into classes where all values in a class are expected to behave identically. Instead of testing every possible input, you test one representative value from each partition — valid partitions and invalid partitions. Boundary value analysis focuses on the edges of each partition, because defects cluster disproportionately at boundaries. If a field accepts values 1-100, you test at 0, 1, 2, 99, 100, and 101 — the boundaries and their neighbours. These two techniques together provide comprehensive coverage of numeric and range-based inputs with a small number of test cases.
+
+__LI__ Equivalence partitioning: one test per class (valid and invalid) rather than exhaustive testing
+__LI__ Boundary value analysis: test at exactly the limit, one below, and one above
+__LI__ Combined: partition first, then apply BVA to each partition boundary
+
+__SUB__ Decision Tables and State Transition Testing
+Decision tables are used when behaviour is determined by multiple conditions in combination. They systematically enumerate every combination of true/false conditions and the expected action for each. This technique ensures that complex business rules — especially those involving multiple simultaneous conditions — are fully covered. State transition testing models systems that behave differently depending on their current state (a login system with states: logged out, logged in, locked). Tests verify that valid transitions work correctly and that invalid transitions are rejected. This technique is particularly valuable for workflow systems, e-commerce carts, authentication flows, and any system with clear lifecycle states.` }
+    ]
+  },
+  {
+    id: 3,
+    name: `The Test Pyramid`,
+    topics: [
+    { title: `Mike Cohn's Test Pyramid`, content: `__H__ Mike Cohn's Test Pyramid
+
+Mike Cohn's Test Pyramid is the most influential model in modern software testing strategy. It provides a simple, visual framework for thinking about the right distribution of automated tests across the three main testing levels, and for understanding the trade-offs involved in each level in terms of speed, cost, and reliability.
+
+__SUB__ The Pyramid — Unit, Integration, and E2E
+The pyramid prescribes that the majority of tests — roughly 70% — should be unit tests. They are fast, cheap, reliable, and provide excellent fault localisation. Integration tests should make up around 20% of the suite: slower and more complex than unit tests but essential for verifying that components work together. End-to-end or UI tests should be only about 10% of the suite: they are the most expensive to write, the slowest to run, and the most brittle because any change to the UI can break them. The pyramid shape reflects the cost structure: you can afford many unit tests, fewer integration tests, and only the most critical E2E tests.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fafaf8;border-radius:12px;border:1px solid #e2e8f0;text-align:center;font-family:Inter,sans-serif"><div style="display:inline-block;width:100%;max-width:360px"><div style="background:#fecaca;color:#991b1b;padding:10px;border-radius:6px 6px 0 0;font-size:12px;font-weight:700;border-bottom:2px solid #f87171">E2E / UI Tests — 10%<br><span style="font-weight:400;font-size:11px">Slow · Expensive · Brittle</span></div><div style="background:#fed7aa;color:#9a3412;padding:12px;font-size:12px;font-weight:700;border-bottom:2px solid #fb923c">Integration Tests — 20%<br><span style="font-weight:400;font-size:11px">Medium speed · Medium cost</span></div><div style="background:#bbf7d0;color:#14532d;padding:16px;border-radius:0 0 6px 6px;font-size:12px;font-weight:700">Unit Tests — 70%<br><span style="font-weight:400;font-size:11px">Fast · Cheap · Reliable</span></div><div style="margin-top:8px;font-size:11px;color:#64748b">The ideal test suite distribution</div></div></div>
+
+__SUB__ The Ice Cream Anti-Pattern
+Many teams inadvertently build an inverted pyramid — the ice cream cone. They have few unit tests, some integration tests, and a large suite of slow, brittle UI tests. This happens because E2E tests are the most visible and intuitive form of testing: they click through the interface just like a user would, which feels satisfying. But the cost is brutal. A large E2E suite can take hours to run, fails unpredictably due to network timeouts and timing issues, and provides poor fault localisation when it fails. Teams with inverted pyramids typically have slow CI pipelines, frequent flaky failures, and developers who ignore test results because failures are normal. The pyramid corrects this by making unit tests the primary investment and reserving E2E tests for the most critical user journeys only.` }
+    ]
+  },
+  {
+    id: 4,
+    name: `TDD & BDD`,
+    topics: [
+    { title: `Test-Driven Development (TDD)`, content: `__H__ Test-Driven Development (TDD)
+
+Test-Driven Development is a software development practice in which tests are written before the code they test. This reversal of the traditional order is not merely a testing technique — it is a design technique. Writing a test first forces the developer to specify the behaviour they want before considering implementation, which leads to cleaner interfaces, better-defined responsibilities, and code that is inherently testable.
+
+__SUB__ The Red-Green-Refactor Cycle
+TDD operates in a tight feedback loop of three steps. Red: write a test that defines the desired behaviour, run it, watch it fail — because the code doesn't exist yet. Green: write the minimum code necessary to make the test pass — not the most elegant code, just enough. Refactor: with the test suite green and providing a safety net, improve the structure, readability, and design of the code. Then repeat. This cycle keeps development incremental, focused, and protected by a suite of tests that grows continuously with the codebase.
+
+__LI__ Red: write a failing test that describes one specific piece of required behaviour
+__LI__ Green: write the simplest code that makes the test pass — resist over-engineering
+__LI__ Refactor: clean up the code with confidence, knowing the test will catch regressions
+
+__SUB__ Benefits and Common Misconceptions
+The primary benefit of TDD is not the tests themselves — it is the design improvement that emerges from thinking about interfaces and behaviour before implementation. TDD forces interface-first thinking: because you write the calling code (the test) before the implementation, you naturally design APIs that are easy to use rather than easy to build. The test suite that accumulates is a secondary benefit: a comprehensive, living documentation of the system's intended behaviour. A common misconception is that TDD means writing more code and slowing down development. Studies and practitioner experience consistently show that TDD reduces debugging time and rework, and that the initial slowdown is recovered through reduced defect rates and faster future development on a clean, well-understood codebase.` },
+    { title: `Behaviour-Driven Development (BDD)`, content: `__H__ Behaviour-Driven Development (BDD)
+
+Behaviour-Driven Development extends the TDD philosophy across the communication boundary between business and engineering. Where TDD is a developer practice, BDD is a collaboration practice. It provides a shared language — Gherkin — that allows business stakeholders, analysts, and engineers to express requirements in a format that is simultaneously human-readable and machine-executable.
+
+__SUB__ Gherkin Syntax — Given, When, Then
+BDD scenarios are written in Gherkin, a structured natural language format built around three keywords. Given describes the initial state or context — the preconditions for the scenario. When describes the action or event that triggers the behaviour being tested. Then describes the expected outcome. This format forces clarity: every scenario must have a clear starting point, a clear trigger, and a clear expected result. Scenarios written in Gherkin become the acceptance criteria for stories, the automated tests in the CI pipeline, and the living documentation of how the system behaves.
+
+__LI__ Given [initial context] — the state of the system before the action
+__LI__ When [action or event] — what the user or system does
+__LI__ Then [expected outcome] — the observable result that confirms the behaviour is correct
+__LI__ And/But — extend Given, When, or Then for multi-part conditions
+
+__SUB__ BDD Tools and the Difference from TDD
+Cucumber (Java, Ruby, JavaScript) and SpecFlow (.NET) are the leading BDD frameworks. They parse Gherkin feature files and map each step to a code implementation called a step definition. The critical difference from TDD is the audience and purpose: TDD is a developer discipline for driving design at the code level; BDD is a team discipline for driving shared understanding at the feature level. BDD does not replace TDD — the step definitions that power BDD scenarios are themselves implemented using unit testing principles. The two practices complement each other: BDD defines what the system should do, TDD defines how each component should work.` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Test Automation`,
+    topics: [
+    { title: `When and What to Automate`, content: `__H__ When and What to Automate
+
+Test automation is not a goal in itself — it is a means to achieve faster, more reliable, and more repeatable testing. The decision to automate a specific test should be driven by a return on investment calculation, not by enthusiasm for technology or a belief that all testing should eventually be automated.
+
+__SUB__ The ROI Calculation for Automation
+Automation has an upfront cost (time to write the test, set up the framework, integrate with CI) and an ongoing cost (maintenance as the application changes). It provides a return each time it runs instead of a human running it manually. The break-even point depends on how frequently the test runs and how much manual effort it replaces. A test that runs daily in CI breaks even in days; a test that runs quarterly for a release may never break even. The criteria for a test worth automating: it is repetitive (run frequently, same steps every time), it is stable (the underlying feature is unlikely to change constantly), it covers high-value functionality (failures in this area are business-critical), and it is time-consuming to run manually.
+
+__LI__ Automate: regression tests, smoke tests, data-driven tests with many input combinations
+__LI__ Automate: API tests — they are stable, fast, and independent of UI changes
+__LI__ Do not automate: exploratory testing — it requires human curiosity and adaptive intelligence
+__LI__ Do not automate: usability testing — only a human can assess ease of use
+__LI__ Do not automate: one-off tests for a feature being deprecated next sprint
+
+__SUB__ The Automation Maintenance Burden
+The most underestimated cost of test automation is ongoing maintenance. Every time the application changes, some automated tests break — not because the software has a bug, but because the test was written against an implementation detail that changed. UI tests are particularly fragile: a developer renames a CSS class or changes a button's position, and ten tests fail. This maintenance burden grows as the suite grows, and teams that don't actively manage it end up with large suites of broken, ignored tests that provide no value. The solution is to write tests against stable interfaces (APIs, not UIs), use the Page Object Model pattern to encapsulate UI knowledge in one place, and review and prune the test suite regularly.` },
+    { title: `Automation Frameworks & Tools`, content: `__H__ Automation Frameworks & Tools
+
+The automation tool landscape is large and evolving, but a clear hierarchy of options exists for the most common use cases. Choosing the right tool depends on the technology stack, the level of testing (unit, API, or UI), and the team's existing expertise.
+
+__SUB__ Selenium, Cypress, and Playwright
+Selenium is the original browser automation framework — mature, widely supported, and capable of testing any browser. Its weaknesses are verbosity, flakiness due to timing issues, and relatively slow execution. Cypress was designed specifically for modern JavaScript applications: it runs inside the browser, has excellent developer experience, and handles asynchronous behaviour naturally. Its limitation is that it works best with JavaScript/TypeScript applications and runs in a single browser tab. Playwright, from Microsoft, is the newest of the three and arguably the most capable: it supports all major browsers (Chromium, Firefox, WebKit), runs tests in parallel, has excellent auto-waiting to eliminate timing issues, and supports multiple languages. For new automation projects without legacy constraints, Playwright is increasingly the default choice.
+
+__LI__ Selenium: mature, multi-browser, multi-language — best for enterprise legacy test suites
+__LI__ Cypress: excellent for JavaScript SPAs — fast feedback, great debugging experience
+__LI__ Playwright: best for new projects — multi-browser, parallel, reliable auto-waiting
+
+__SUB__ pytest, Page Object Model, and CI Integration
+pytest is the dominant test framework for Python — it is concise, powerful, and extensible through a rich plugin ecosystem. pytest fixtures provide dependency injection for test setup and teardown, allowing test authors to compose reusable infrastructure (database connections, API clients, browser sessions) cleanly. The Page Object Model (POM) is a design pattern for UI automation: each page of the application is represented by a class that encapsulates all the locators and interactions for that page. Tests interact with pages through the POM rather than directly with locators, so when the UI changes, only the page object needs updating, not every test that uses it. CI integration means the test suite runs automatically on every commit — the pipeline fails if tests fail, providing an automated gate that prevents defective code from advancing to the next stage.` }
+    ]
+  },
+  {
+    id: 6,
+    name: `Defect Management`,
+    topics: [
+    { title: `The Defect Lifecycle`, content: `__H__ The Defect Lifecycle
+
+A defect is not simply a bug found and fixed — it is an item that must be tracked, assigned, investigated, resolved, and verified through a formal lifecycle. Without a defined lifecycle and clear state transitions, defects get lost, duplicated, reopened without investigation, or closed without proper verification.
+
+__SUB__ States and Ownership Through the Lifecycle
+A defect begins in the New state when it is first logged by a tester or user. It moves to Assigned when a development lead allocates it to a developer. The developer acknowledges it and moves it to Open while investigating and implementing the fix. After fixing, it moves to Fixed and is returned to the QA team for verification. The tester retests and either moves it to Closed (if fixed) or reopens it to Assigned or Open if the fix is incomplete or has introduced a regression. Two important alternative paths exist: Rejected (the developer determines it is not a defect — either expected behaviour or a duplicate) and Deferred (the defect is valid but the decision is made to fix it in a future release). Each state must have a clear owner, and SLAs should define the maximum time a defect can spend in each state based on severity.
+
+__LI__ New → Assigned: development lead reviews and allocates within SLA (e.g., 4 hours for critical)
+__LI__ Assigned → Open: developer acknowledges and begins investigation
+__LI__ Fixed → Retest: QA retests in the same build where the fix was made
+__LI__ Retest → Closed: fix verified; Retest → Reopened: fix insufficient or regression introduced
+__LI__ Deferred: valid defect, intentionally not fixed in this release — documented and prioritised for future` },
+    { title: `Severity vs Priority — and Writing Good Bug Reports`, content: `__H__ Severity vs Priority — and Writing Good Bug Reports
+
+Two of the most commonly confused concepts in defect management are severity and priority. They are separate dimensions that must both be specified, and conflating them leads to misaligned fix decisions and poor quality outcomes.
+
+__SUB__ Severity and Priority — The Two Dimensions
+Severity describes the technical impact of the defect: how badly does it break the software? A severity-1 (critical) defect causes complete system failure or data loss. A severity-2 (major) defect breaks a significant feature with no workaround. A severity-3 (minor) defect causes an issue but with a workaround available. A severity-4 (cosmetic) defect affects appearance but not functionality. Priority describes the business urgency of fixing the defect: how soon must it be fixed? A cosmetic bug on the homepage of a consumer product (low severity, high priority) must be fixed before the next marketing campaign even though it doesn't break anything. A critical bug in a rarely-used admin panel (high severity, low priority) can wait for the next release. Both dimensions are necessary to make good fix decisions.
+
+__LI__ Classic example: spelling error on the login page — low severity, high priority (brand visibility)
+__LI__ System crash in a beta feature used by 2 users — high severity, low priority (limited impact)
+__LI__ Both dimensions together determine the fix schedule, not either one alone
+
+__SUB__ Writing Defect Reports That Get Fixed
+A defect report has one job: to give the developer everything they need to reproduce, understand, and fix the defect without asking any follow-up questions. A poor bug report that says 'the system crashed when I clicked something' will be rejected or deprioritised. A good defect report has: a descriptive title summarising the symptom, clear steps to reproduce (numbered, specific, starting from a known state), the expected result (what should have happened), the actual result (what did happen), the environment details (browser, OS, build version, test data used), the severity and priority, and if possible a screenshot or screen recording. Taking five minutes to write a complete bug report saves the developer thirty minutes of investigation and prevents the defect from being rejected as irreproducible.` }
+    ]
+  },
+  {
+    id: 7,
+    name: `Testing in Agile`,
+    topics: [
+    { title: `Whole-Team Quality`, content: `__H__ Whole-Team Quality
+
+In traditional software development, quality was the responsibility of a dedicated QA team operating as a final gate at the end of the development process. Agile fundamentally rejects this model. In Agile, quality is the responsibility of the entire team — developers, BAs, POs, and QA working together from the start of a story to the point of delivery.
+
+__SUB__ Shift-Left and the Three Amigos
+Shift-left testing in Agile means that QA involvement begins when a story is being written — not when it is being tested. The Three Amigos practice brings together a Business Analyst (or Product Owner), a Developer, and a QA Engineer to review each story before it enters the Sprint. The BA brings the business requirement, the developer brings the technical understanding, and the QA brings the testing perspective — asking 'what could go wrong?' and surfacing edge cases, ambiguities, and missing acceptance criteria before a single line of code is written. This early collaboration eliminates ambiguity before it becomes a defect.
+
+__LI__ Three Amigos: BA defines the requirement, developer identifies the approach, QA identifies the risks
+__LI__ Definition of Done must include QA criteria: acceptance tests passing, regression suite updated
+__LI__ QA writes acceptance criteria before development starts — not after the feature is built
+
+__SUB__ Quality as a Team Value
+When quality is delegated to a QA team, the implicit message to developers is that quality is not their problem — they can write what they want and QA will catch the failures. This creates a handoff model that is fundamentally incompatible with the pace of Agile delivery. Whole-team quality means developers write unit tests as standard practice, participate in code reviews with quality as the lens, and care about the outcome of QA testing as a team responsibility. The QA engineer's role shifts from gate-keeper to quality coach — embedded in the team, providing expertise on testing strategy, automation, and risk, rather than sitting at the end of the pipeline catching what falls through.` },
+    { title: `Testing in CI/CD`, content: `__H__ Testing in CI/CD
+
+Continuous Integration and Continuous Delivery pipelines transform testing from a phase into a continuous automated process. Every commit to the codebase triggers a pipeline that runs automated tests at multiple levels, providing near-instant feedback on the quality of every change.
+
+__SUB__ Test Stages in the Pipeline
+A well-designed CI/CD pipeline has distinct test stages that run in sequence, with each stage providing a quality gate: if tests fail at any stage, the pipeline stops and the commit does not advance. The typical order is unit tests (run in seconds, must pass before anything else), followed by integration tests (run in minutes, verify component interactions), followed by a smoke test against the deployed build in a staging environment (verify the application is alive and basic functions work), followed optionally by a regression suite (the full automated test suite, may run in parallel to save time). Each stage filters out a class of defects before the cost of the next stage is incurred.
+
+__LI__ Unit tests: run on every commit, fail fast — 30 seconds to 2 minutes
+__LI__ Integration tests: run after unit tests pass — 5 to 20 minutes
+__LI__ Smoke tests: run after deployment to staging — verify the build is deployable
+__LI__ Regression suite: may run on a schedule (nightly) rather than every commit if it is slow
+
+__SUB__ Canary Deployments and Feature Flags as Quality Mechanisms
+Beyond automated testing, modern delivery teams use deployment strategies to reduce the blast radius of defects that reach production. Canary deployments route a small percentage of production traffic (1-5%) to the new version, allowing teams to monitor error rates and performance metrics before committing to a full rollout. Feature flags allow new functionality to be deployed to production in a disabled state, then enabled progressively for specific user segments — enabling real-world testing without exposing all users to potential failures. Both mechanisms transform deployment from a binary all-or-nothing event into a controlled, observable, and reversible process.` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    let tmpl = '';
+    if (id === TEMPLATE_MODULE) {
+        tmpl = '<div class="mt-6 mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Templates</div>' +
+            TEMPLATES.map(t =>
+                '<a class="template-card" href="' + t.file + '" download>' +
+                '<div class="template-icon"><i class="fas ' + t.icon + ' text-sm" style="color:#DC2626"></i></div>' +
+                '<div><div class="template-title">' + t.name + '</div>' +
+                '<div class="template-meta"><i class="fas fa-download text-[9px] mr-1"></i>Download Excel Template</div></div></a>'
+            ).join('');
+    }
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics' +
+        (id === TEMPLATE_MODULE ? ' &nbsp;&middot;&nbsp; 1 template' : '') + '</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards + tmpl;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#DC2626">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

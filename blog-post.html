@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Post Title | Mohammad Rashad Nadeer Kutty</title>
+    <meta name="description" content="Blog post description here." />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy:   '#0C1220',
+                        accent: '#4F62F5',
+                        teal:   '#0D9488',
+                        surface:'#EDF2F7',
+                        dark:   '#111827',
+                        warm:   '#FAFAF8',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        ::selection { background: rgba(79, 98, 245, 0.18); color: inherit; }
+
+        /* TOC sidebar */
+        .toc-sidebar {
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .toc-sidebar::-webkit-scrollbar { width: 3px; }
+        .toc-sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+        /* TOC link styles */
+        .toc-h2 {
+            display: block;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+        .toc-h2:hover { color: #4F62F5; border-left-color: #4F62F5; background: rgba(79,98,245,0.04); }
+        .toc-h2.active { color: #4F62F5; border-left-color: #4F62F5; background: rgba(79,98,245,0.06); }
+
+        .toc-h3 {
+            display: block;
+            padding: 0.25rem 0.75rem 0.25rem 1.5rem;
+            font-size: 0.73rem;
+            font-weight: 400;
+            color: #94a3b8;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+        .toc-h3:hover { color: #4F62F5; border-left-color: #c7d2fe; }
+        .toc-h3.active { color: #4F62F5; border-left-color: #c7d2fe; }
+
+        /* Article typography */
+        .article-content h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0C1220;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #EDF2F7;
+            scroll-margin-top: 2rem;
+        }
+        .article-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            scroll-margin-top: 2rem;
+        }
+        .article-content p {
+            font-size: 1rem;
+            line-height: 1.85;
+            color: #374151;
+            margin-bottom: 1.25rem;
+        }
+        .article-content ul, .article-content ol {
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+        .article-content ul { list-style: disc; }
+        .article-content ol { list-style: decimal; }
+        .article-content li {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+        .article-content strong { color: #0C1220; font-weight: 700; }
+        .article-content a { color: #4F62F5; text-decoration: underline; text-underline-offset: 3px; }
+        .article-content blockquote {
+            border-left: 4px solid #4F62F5;
+            background: rgba(79,98,245,0.04);
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #4b5563;
+        }
+        .article-content code {
+            background: #EDF2F7;
+            color: #4F62F5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-family: monospace;
+        }
+        .article-content pre {
+            background: #0C1220;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        .article-content hr {
+            border: none;
+            border-top: 2px solid #EDF2F7;
+            margin: 2.5rem 0;
+        }
+    </style>
+</head>
+
+<body class="bg-warm text-dark">
+
+    <!-- Top bar -->
+    <header class="bg-navy border-b border-white/10 py-3 px-10 flex items-center justify-between sticky top-0 z-50">
+        <a href="index.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Portfolio
+        </a>
+        <a href="index.html" class="text-gray-200 font-bold text-base tracking-tight">
+            Mohammad Rashad Nadeer Kutty
+        </a>
+        <a href="index.html" class="text-gray-400 hover:text-accent text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+
+    <!-- Page layout -->
+    <div class="max-w-[1400px] mx-auto px-10 py-10 flex gap-12">
+
+        <!-- LEFT: Sticky TOC -->
+        <aside class="hidden lg:block w-64 flex-shrink-0">
+            <div class="toc-sidebar">
+                <!-- Category + read time -->
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-[11px] font-semibold px-3 py-1 rounded-full">
+                        <i class="fas fa-tag text-[9px]"></i> Business Analysis
+                    </span>
+                    <div class="flex items-center gap-1.5 text-gray-400 text-xs mt-3">
+                        <i class="fas fa-clock text-[10px]"></i>
+                        <span>8 min read</span>
+                    </div>
+                </div>
+
+                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Contents</div>
+                <nav id="toc-nav">
+                    <!-- Auto-generated by JS or manually written -->
+                    <a href="#section-1" class="toc-h2">Section Header 1</a>
+                    <a href="#sub-1-1" class="toc-h3">Subheader 1.1</a>
+                    <a href="#sub-1-2" class="toc-h3">Subheader 1.2</a>
+
+                    <a href="#section-2" class="toc-h2">Section Header 2</a>
+                    <a href="#sub-2-1" class="toc-h3">Subheader 2.1</a>
+
+                    <a href="#section-3" class="toc-h2">Section Header 3</a>
+                    <a href="#sub-3-1" class="toc-h3">Subheader 3.1</a>
+                    <a href="#sub-3-2" class="toc-h3">Subheader 3.2</a>
+
+                    <a href="#section-4" class="toc-h2">Section Header 4</a>
+                </nav>
+
+                <!-- Share -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Share</div>
+                    <div class="flex gap-2 px-1">
+                        <a href="#" onclick="shareLinkedIn()" class="w-8 h-8 bg-surface hover:bg-accent hover:text-white text-gray-500 rounded-lg flex items-center justify-center transition-all duration-200 text-xs">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" onclick="shareTwitter()" class="w-8 h-8 bg-surface hover:bg-navy hover:text-white text-gray-500 rounded-lg flex items-center justify-center transition-all duration-200 text-xs">
+                            <i class="fab fa-x-twitter"></i>
+                        </a>
+                        <button onclick="copyLink()" class="w-8 h-8 bg-surface hover:bg-teal hover:text-white text-gray-500 rounded-lg flex items-center justify-center transition-all duration-200 text-xs">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT: Article content -->
+        <main class="flex-1 min-w-0">
+
+            <!-- Article header -->
+            <div class="mb-10">
+                <div class="flex flex-wrap items-center gap-3 mb-5 text-sm text-gray-400">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-[11px] font-semibold px-3 py-1 rounded-full">
+                        <i class="fas fa-tag text-[9px]"></i> Business Analysis
+                    </span>
+                    <span class="flex items-center gap-1"><i class="fas fa-calendar-alt text-[11px]"></i> April 2026</span>
+                    <span class="flex items-center gap-1"><i class="fas fa-clock text-[11px]"></i> 8 min read</span>
+                </div>
+
+                <h1 class="text-4xl md:text-5xl font-extrabold text-navy leading-tight mb-5 tracking-tight">
+                    Your Blog Post Title Goes Here
+                </h1>
+
+                <p class="text-lg text-gray-500 leading-relaxed max-w-2xl">
+                    A short compelling subtitle or summary of what this article covers. Keep it one or two sentences.
+                </p>
+
+                <div class="flex items-center gap-3 mt-8 pt-6 border-t border-gray-200">
+                    <img src="assets/images/profile.jpg" alt="Mohammad Rashad Nadeer Kutty"
+                         class="w-11 h-11 rounded-full object-cover object-top" />
+                    <div>
+                        <div class="font-semibold text-navy text-sm">Mohammad Rashad Nadeer Kutty</div>
+                        <div class="text-gray-400 text-xs">Implementation & Support Lead · Dubai, UAE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article body -->
+            <article class="article-content">
+
+                <h2 id="section-1">Section Header 1</h2>
+                <p>Start writing your content here. This is the first section of your article. You can write as much as you need — the layout handles long-form content well.</p>
+
+                <h3 id="sub-1-1">Subheader 1.1</h3>
+                <p>Add your detailed content under this subheader. Use paragraphs, lists, quotes, or code blocks as needed.</p>
+                <ul>
+                    <li>First key point</li>
+                    <li>Second key point</li>
+                    <li>Third key point</li>
+                </ul>
+
+                <h3 id="sub-1-2">Subheader 1.2</h3>
+                <p>Continue with more content here. The table of contents on the left will highlight whichever section the reader is currently in.</p>
+                <blockquote>
+                    "A great quote or highlight from this section that you want readers to notice."
+                </blockquote>
+
+                <h2 id="section-2">Section Header 2</h2>
+                <p>Each major section gets its own heading and auto-updates the active state in the table of contents as the reader scrolls.</p>
+
+                <h3 id="sub-2-1">Subheader 2.1</h3>
+                <p>More content here. Add images, code samples, or whatever supports your article.</p>
+
+                <hr />
+
+                <h2 id="section-3">Section Header 3</h2>
+                <p>Continue writing. The layout is built to handle articles of any length comfortably.</p>
+
+                <h3 id="sub-3-1">Subheader 3.1</h3>
+                <p>Supporting content for this section.</p>
+
+                <h3 id="sub-3-2">Subheader 3.2</h3>
+                <p>More supporting content here.</p>
+
+                <h2 id="section-4">Section Header 4</h2>
+                <p>Final section of your article. Wrap up your key takeaways and conclusion here.</p>
+
+            </article>
+
+            <!-- Footer: author card + back link -->
+            <div class="mt-16 pt-8 border-t border-gray-200">
+                <div class="bg-surface rounded-2xl p-6 flex items-center gap-5">
+                    <img src="assets/images/profile.jpg" alt="Mohammad Rashad Nadeer Kutty"
+                         class="w-16 h-16 rounded-full object-cover object-top flex-shrink-0" />
+                    <div>
+                        <div class="font-bold text-navy">Mohammad Rashad Nadeer Kutty</div>
+                        <div class="text-gray-500 text-sm mt-0.5">Implementation & Support Lead with 10+ years across healthcare systems, enterprise platforms, and complex business environments. Based in Dubai, UAE.</div>
+                        <a href="https://www.linkedin.com/in/rashadnadeer/" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1.5 text-accent text-sm font-semibold mt-2 hover:underline">
+                            <i class="fab fa-linkedin text-xs"></i> Connect on LinkedIn
+                        </a>
+                    </div>
+                </div>
+
+                <a href="index.html#blog" class="inline-flex items-center gap-2 text-gray-500 hover:text-accent text-sm font-medium mt-6 transition-colors">
+                    <i class="fas fa-arrow-left text-xs"></i> All Articles
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    // Highlight active TOC link on scroll
+    const headings = document.querySelectorAll('.article-content h2, .article-content h3');
+    const tocLinks = document.querySelectorAll('#toc-nav a');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                tocLinks.forEach(link => link.classList.remove('active'));
+                const active = document.querySelector(`#toc-nav a[href="#${entry.target.id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+
+    headings.forEach(h => observer.observe(h));
+
+    // Share functions
+    function shareLinkedIn() {
+        window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
+    }
+    function shareTwitter() {
+        window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.title), '_blank');
+    }
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard.');
+        });
+    }
+</script>
+
+</body>
+</html>

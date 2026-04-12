@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Week 2 — Increasing Repeat Orders | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{navy:'#0C1220',accent:'#4F62F5',teal:'#0D9488',surface:'#EDF2F7',dark:'#111827',warm:'#FAFAF8'},fontFamily:{sans:['Inter','ui-sans-serif','system-ui','sans-serif']}}}}</script>
+    <style>
+        html{scroll-behavior:smooth}body{font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#EDF2F7}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:8px}
+        ::selection{background:rgba(79,98,245,0.18);color:inherit}
+        .day-panel{display:none}.day-panel.active{display:block}
+        .day-pill{padding:.5rem 1.25rem;border-radius:9999px;font-size:.8rem;font-weight:600;border:2px solid #e2e8f0;color:#64748b;background:#fff;cursor:pointer;transition:all .2s}
+        .day-pill:hover{border-color:#4F62F5;color:#4F62F5}
+        .day-pill.active{background:#4F62F5;border-color:#4F62F5;color:#fff}
+        .day-pill.done{background:#f0fdf4;border-color:#86efac;color:#16a34a}
+        .day-pill.done.active{background:#4F62F5;border-color:#4F62F5;color:#fff}
+        .note-block{background:#fffbeb;border-left:4px solid #f59e0b;padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:1.25rem 0}
+        .verbatim-block{background:#f8faff;border-left:4px solid #4F62F5;padding:1.25rem 1.5rem;border-radius:0 10px 10px 0;margin:1.25rem 0}
+        .task-item{display:flex;align-items:flex-start;gap:.75rem;padding:1rem 1.25rem;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:.75rem}
+        .resource-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;margin-bottom:.75rem;transition:border-color .2s,box-shadow .2s}
+        .resource-card:hover{border-color:#4F62F5;box-shadow:0 4px 16px -4px rgba(79,98,245,.12)}
+        .content-body h2{font-size:1.4rem;font-weight:800;color:#0C1220;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #EDF2F7}
+        .content-body h3{font-size:1.05rem;font-weight:700;color:#1e293b;margin-top:1.5rem;margin-bottom:.5rem}
+        .content-body p{font-size:.95rem;line-height:1.85;color:#374151;margin-bottom:1rem}
+        .content-body ul{list-style:disc;padding-left:1.5rem;margin-bottom:1rem}
+        .content-body ol{list-style:decimal;padding-left:1.5rem;margin-bottom:1rem}
+        .content-body li{font-size:.95rem;line-height:1.8;color:#374151;margin-bottom:.35rem}
+        .content-body strong{color:#0C1220;font-weight:700}
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <meta name="description" content="PM Learning Week 2 — product discovery, user research, and customer interviews." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w2.html" />
+</head>
+<body class="bg-warm text-dark">
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <div class="flex items-center gap-6">
+            <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5"><i class="fas fa-arrow-left text-xs"></i> Learning Hub</a>
+            <a href="learn.html" class="bg-accent text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">PM Module</a>
+        </div>
+    </div>
+</nav>
+
+<div class="pt-20 pb-0 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-3 flex items-center gap-2 text-xs text-gray-500">
+        <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+        <i class="fas fa-chevron-right text-[9px]"></i>
+        <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+        <i class="fas fa-chevron-right text-[9px]"></i>
+        <span class="text-accent font-semibold">Week 2</span>
+    </div>
+</div>
+
+<div class="bg-navy pb-8">
+    <div class="max-w-[1400px] mx-auto px-10 pt-8">
+        <div class="flex flex-wrap items-start justify-between gap-6 mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 2 of 7</span>
+                    <span class="inline-flex items-center gap-1.5 bg-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full"><i class="fas fa-check text-[10px]"></i> Completed</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Increasing Repeat Orders</h1>
+                <p class="text-gray-400 text-sm max-w-xl">In this assignment, you will develop a focused user research strategy to understand user behaviour and use those insights to create various user segments to target.</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="pm-w1.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-sm rounded-lg transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Week 1</a>
+                <a href="pm-w3.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 3 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2" id="day-pills">
+            <button onclick="showDay(1)" id="pill-1" class="day-pill done active"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 1</button>
+            <button onclick="showDay(2)" id="pill-2" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 2</button>
+            <button onclick="showDay(3)" id="pill-3" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 3</button>
+            <button onclick="showDay(4)" id="pill-4" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 4</button>
+            <button onclick="showDay(5)" id="pill-5" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 5</button>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="grid lg:grid-cols-4 gap-8">
+
+        <aside class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">This Week</div>
+                    <div class="font-bold text-navy text-sm mb-1">User Research and Problem Definition</div>
+                    <div class="text-gray-500 text-xs">Self-Study Topic</div>
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Assignment</div>
+                        <div class="font-semibold text-navy text-xs">Zomato — Repeat Orders</div>
+                        <div class="text-gray-400 text-xs mt-0.5">Research Plan + Segments + Journey Map</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Resources</div>
+                    <div class="space-y-2">
+                        <div class="flex items-start gap-2 text-xs text-gray-600"><i class="fas fa-book-open text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>JTBD Framework</div>
+                        <div class="flex items-start gap-2 text-xs text-gray-600"><i class="fas fa-book-open text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>User Research</div>
+                        <div class="flex items-start gap-2 text-xs text-gray-600"><i class="fas fa-book-open text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>User Segmentation</div>
+                        <div class="flex items-start gap-2 text-xs text-gray-600"><i class="fas fa-book-open text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>Customer Journey Maps</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Day Progress</div>
+                    <div class="space-y-1.5" id="day-progress">
+                        <div onclick="showDay(1)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-1"><i class="fas fa-check-circle text-green-500 text-[11px]"></i><span class="text-gray-600">Day 1 — Company Background</span></div>
+                        <div onclick="showDay(2)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-2"><i class="fas fa-check-circle text-green-500 text-[11px]"></i><span class="text-gray-600">Day 2 — JTBD Framework</span></div>
+                        <div onclick="showDay(3)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-3"><i class="fas fa-check-circle text-green-500 text-[11px]"></i><span class="text-gray-600">Day 3 — Research + Segmentation</span></div>
+                        <div onclick="showDay(4)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-4"><i class="fas fa-check-circle text-green-500 text-[11px]"></i><span class="text-gray-600">Day 4 — Customer Journey Map</span></div>
+                        <div onclick="showDay(5)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-5"><i class="fas fa-check-circle text-green-500 text-[11px]"></i><span class="text-gray-600">Day 5 — Tasks + Submit</span></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="lg:col-span-3">
+
+            <!-- DAY 1 -->
+            <div id="day-1" class="day-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div><div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 1 — Monday</div><h2 class="text-xl font-extrabold text-navy">Company Background and Scenario</h2></div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+                        <div class="note-block"><p class="text-sm text-amber-800 font-medium m-0">Read the full assignment today. Understand the company, the problem being asked, and the specific question you need to answer before starting any research or writing.</p></div>
+
+                        <h2>Assignment Overview</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <div class="grid sm:grid-cols-3 gap-4 text-sm">
+                                <div><div class="text-xs font-semibold text-gray-400 mb-1">Status</div><div class="font-semibold text-navy">Completed</div></div>
+                                <div><div class="text-xs font-semibold text-gray-400 mb-1">Week</div><div class="font-semibold text-navy">Week 2</div></div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-indigo-100">
+                                <div class="text-xs font-semibold text-gray-400 mb-1">Description</div>
+                                <p class="text-sm text-gray-700 m-0">In this assignment, you will develop a focused user research strategy to understand user behaviour and use those insights to create various user segments to target.</p>
+                            </div>
+                        </div>
+
+                        <h2>Company Background</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">Zomato is a popular food delivery service that partners with local restaurants and offers online ordering and delivery services to customers. While Zomato has been successful in urban areas, they have recently noticed a decline in customer retention and repeat orders, particularly among their suburban and rural customer base.</p>
+                        </div>
+
+                        <h2>Scenario</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">Zomato recognizes the importance of retaining existing customers and encouraging repeat orders, as it is more cost-effective than acquiring new customers.</p>
+                            <p class="text-gray-800 mt-3 m-0">You are a Product Manager at Zomato and you have been asked this question — <strong>"How might we enhance the customer experience and loyalty program to improve customer retention and encourage repeat orders from Zomato's suburban and rural customers?"</strong></p>
+                        </div>
+
+                        <h2>What You Need to Produce</h2>
+                        <div class="space-y-3 mt-4">
+                            <div class="task-item"><div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-accent text-xs font-bold">1</span></div><div><div class="font-semibold text-navy text-sm">User Research Plan</div><p class="text-gray-500 text-xs mt-0.5 m-0">Design a user research plan to gather insights from Zomato's existing suburban and rural customers. What user research methods would you choose and why?</p></div></div>
+                            <div class="task-item"><div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-accent text-xs font-bold">2</span></div><div><div class="font-semibold text-navy text-sm">User Segments</div><p class="text-gray-500 text-xs mt-0.5 m-0">Assume you have conducted the user research and have collected the necessary data. Based on the user research findings, identify and define at least two distinct user segments within Zomato's suburban and rural customer demographic.</p></div></div>
+                            <div class="task-item"><div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-accent text-xs font-bold">3</span></div><div><div class="font-semibold text-navy text-sm">Customer Journey Map</div><p class="text-gray-500 text-xs mt-0.5 m-0">Analyse the user flow and create a customer journey map for a user ordering food on the platform.</p></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6"><button onclick="showDay(2)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 2 — JTBD Framework <i class="fas fa-arrow-right text-xs"></i></button></div>
+            </div>
+
+            <!-- DAY 2 -->
+            <div id="day-2" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div><div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 2 — Tuesday</div><h2 class="text-xl font-extrabold text-navy">Study: JTBD Framework</h2></div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+                        <div class="verbatim-block"><div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resource Listed in Notes</div><p class="text-navy font-bold text-base m-0">1. JTBD Framework</p></div>
+
+                        <h2>What is Jobs to Be Done?</h2>
+                        <p><strong>Jobs to Be Done (JTBD)</strong> is a framework developed by Clayton Christensen. The core idea: customers do not buy products — they <em>hire</em> products to do a job in their lives.</p>
+                        <p>For Zomato's suburban and rural customers, the question is not "why aren't they ordering?" — it is "what job were they trying to get done, and is Zomato helping them do that job better than their alternatives?"</p>
+
+                        <h2>The JTBD Statement Formula</h2>
+                        <div class="verbatim-block"><p class="text-navy font-semibold m-0">When I [situation], I want to [motivation / action], so I can [expected outcome].</p></div>
+
+                        <h3>Practice with Zomato</h3>
+                        <div class="space-y-3 mt-3">
+                            <div class="resource-card"><div class="text-xs font-bold text-accent mb-2">Suburban Customer — Job 1</div><p class="text-sm text-gray-700 m-0">When I am too tired after a long commute to cook dinner, I want to order food quickly without spending too much, so I can feed my family without effort.</p></div>
+                            <div class="resource-card"><div class="text-xs font-bold text-accent mb-2">Rural Customer — Job 1</div><p class="text-sm text-gray-700 m-0">When there is a special occasion at home and I want to serve something different from what I can cook, I want to order restaurant food, so I can make the event feel special without travelling to the city.</p></div>
+                            <div class="resource-card"><div class="text-xs font-bold text-accent mb-2">Suburban Customer — Job 2</div><p class="text-sm text-gray-700 m-0">When I am working from home and skipping lunch, I want a fast food option nearby, so I can eat without losing working time.</p></div>
+                        </div>
+
+                        <h2>Three Types of Jobs</h2>
+                        <div class="grid md:grid-cols-3 gap-4 mt-3">
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-2">Functional Job</div><p class="text-gray-500 text-xs m-0">The practical task — "get food delivered to my home."</p></div>
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-2">Emotional Job</div><p class="text-gray-500 text-xs m-0">How they want to feel — "feel like I took care of my family."</p></div>
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-2">Social Job</div><p class="text-gray-500 text-xs m-0">How they want to be seen — "appear modern and up-to-date."</p></div>
+                        </div>
+
+                        <h2>Why JTBD Matters for This Assignment</h2>
+                        <p>Understanding what job suburban and rural customers are hiring Zomato to do tells you why they are not returning. If the job they need is "reliable and affordable food for daily meals," but Zomato's pricing or restaurant availability does not support that job — they will stop ordering.</p>
+                        <p>Your user research plan (Task 1) should be designed to uncover the specific jobs your target customers are trying to get done.</p>
+
+                        <div class="note-block"><p class="text-sm text-amber-800 font-medium m-0">Today: Study the JTBD resource. Write 3-5 JTBD statements for Zomato's suburban and rural customers from your own perspective. These will shape your research plan on Day 5.</p></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(1)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 1</button>
+                    <button onclick="showDay(3)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 3 — User Research + Segmentation <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- DAY 3 -->
+            <div id="day-3" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div><div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 3 — Wednesday</div><h2 class="text-xl font-extrabold text-navy">Study: User Research and User Segmentation</h2></div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+                        <div class="verbatim-block"><div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resources Listed in Notes</div><p class="text-navy font-bold text-sm m-0">2. User Research</p><p class="text-navy font-bold text-sm m-0 mt-1">3. User Segmentation</p></div>
+
+                        <h2>User Research Methods</h2>
+                        <p>A user research plan defines who you will talk to, what you want to learn, and how you will gather the data. Different methods answer different questions.</p>
+                        <div class="space-y-3 mt-3">
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-1">1-on-1 Interviews</div><p class="text-gray-600 text-xs leading-relaxed m-0">Best for: understanding motivations, emotions, and reasoning behind behaviour. Ask open-ended questions. Never lead the user towards an answer. Goal: understand the "why" behind what they do.</p></div>
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-1">Surveys</div><p class="text-gray-600 text-xs leading-relaxed m-0">Best for: validating hypotheses at scale. Run after interviews when you have a hypothesis to test. Closed questions with rating scales. Goal: see if patterns from interviews hold up across a larger group.</p></div>
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-1">Usability Testing</div><p class="text-gray-600 text-xs leading-relaxed m-0">Best for: seeing where users struggle in the product. Ask users to complete a task on the Zomato app while you watch. Goal: identify friction points in the ordering flow that cause abandonment.</p></div>
+                            <div class="resource-card"><div class="font-bold text-navy text-sm mb-1">Contextual Inquiry</div><p class="text-gray-600 text-xs leading-relaxed m-0">Best for: understanding context and environment. Visit users at home or in their location and observe how they decide on food ordering in real life. Goal: see the full context around when and why they order (or don't).</p></div>
+                        </div>
+
+                        <h2>How to Write a Research Plan</h2>
+                        <ol>
+                            <li><strong>Research Objective:</strong> What question are you trying to answer? (e.g. Why are suburban customers not re-ordering on Zomato?)</li>
+                            <li><strong>Methodology:</strong> Which methods will you use and why?</li>
+                            <li><strong>Sample:</strong> Who will you recruit? How many? What criteria?</li>
+                            <li><strong>Discussion Guide / Survey Questions:</strong> What specific questions will you ask?</li>
+                            <li><strong>Timeline:</strong> When will you run the research?</li>
+                            <li><strong>Expected Outputs:</strong> What will you deliver after research is done?</li>
+                        </ol>
+
+                        <h2>User Segmentation</h2>
+                        <p>Segmentation means dividing users into distinct groups based on shared characteristics. Good segments are:</p>
+                        <ul>
+                            <li><strong>Distinct</strong> — each segment is meaningfully different from the others</li>
+                            <li><strong>Actionable</strong> — you can build or change something specific for each segment</li>
+                            <li><strong>Accessible</strong> — you can reach and identify people in each segment</li>
+                        </ul>
+                        <p>For this assignment, you need at least two distinct segments within Zomato's suburban and rural demographic. Go beyond demographics (age, gender). Segment by behaviour and motivation.</p>
+
+                        <div class="note-block"><p class="text-sm text-amber-800 font-medium m-0">Today: Study the User Research and User Segmentation resources. Tomorrow you study Customer Journey Maps — then Day 5 is the full assignment work.</p></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(2)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 2</button>
+                    <button onclick="showDay(4)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 4 — Customer Journey Map <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- DAY 4 -->
+            <div id="day-4" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div><div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 4 — Thursday</div><h2 class="text-xl font-extrabold text-navy">Study: Customer Journey Maps</h2></div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+                        <div class="verbatim-block"><div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resource Listed in Notes</div><p class="text-navy font-bold text-base m-0">4. Customer Journey Maps</p></div>
+
+                        <h2>What is a Customer Journey Map?</h2>
+                        <p>A Customer Journey Map visualises the end-to-end experience of a user as they interact with your product — from the moment they first think about ordering to the moment they finish and rate the experience.</p>
+                        <p>It captures not just what users <em>do</em> at each stage, but also how they <em>feel</em> and where they experience <em>friction</em>.</p>
+
+                        <h2>Structure of a Customer Journey Map</h2>
+                        <div class="overflow-x-auto mt-3 mb-4">
+                            <table class="w-full text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-navy text-white">
+                                        <th class="px-3 py-2 text-left rounded-tl-lg">Stage</th>
+                                        <th class="px-3 py-2 text-left">Trigger</th>
+                                        <th class="px-3 py-2 text-left">Browse</th>
+                                        <th class="px-3 py-2 text-left">Order</th>
+                                        <th class="px-3 py-2 text-left">Wait</th>
+                                        <th class="px-3 py-2 text-left rounded-tr-lg">Post-delivery</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-surface">
+                                        <td class="px-3 py-2 font-semibold text-navy">User Action</td>
+                                        <td class="px-3 py-2 text-gray-600">Feels hungry, opens Zomato</td>
+                                        <td class="px-3 py-2 text-gray-600">Searches restaurants, filters</td>
+                                        <td class="px-3 py-2 text-gray-600">Adds to cart, pays</td>
+                                        <td class="px-3 py-2 text-gray-600">Tracks order status</td>
+                                        <td class="px-3 py-2 text-gray-600">Eats, rates order</td>
+                                    </tr>
+                                    <tr class="bg-white">
+                                        <td class="px-3 py-2 font-semibold text-navy">Emotion</td>
+                                        <td class="px-3 py-2 text-gray-600">Hopeful</td>
+                                        <td class="px-3 py-2 text-gray-600">Frustrated (few options)</td>
+                                        <td class="px-3 py-2 text-gray-600">Anxious (will it work?)</td>
+                                        <td class="px-3 py-2 text-gray-600">Impatient</td>
+                                        <td class="px-3 py-2 text-gray-600">Satisfied or disappointed</td>
+                                    </tr>
+                                    <tr class="bg-surface">
+                                        <td class="px-3 py-2 font-semibold text-navy">Pain Point</td>
+                                        <td class="px-3 py-2 text-gray-600">Few restaurants near them</td>
+                                        <td class="px-3 py-2 text-gray-600">No filter for suburban areas</td>
+                                        <td class="px-3 py-2 text-gray-600">Delivery fees too high</td>
+                                        <td class="px-3 py-2 text-gray-600">Inaccurate ETA</td>
+                                        <td class="px-3 py-2 text-gray-600">Wrong order delivered</td>
+                                    </tr>
+                                    <tr class="bg-white">
+                                        <td class="px-3 py-2 font-semibold text-navy">Opportunity</td>
+                                        <td class="px-3 py-2 text-gray-600">Add more local restaurants</td>
+                                        <td class="px-3 py-2 text-gray-600">Localised recommendations</td>
+                                        <td class="px-3 py-2 text-gray-600">Subscription to reduce fees</td>
+                                        <td class="px-3 py-2 text-gray-600">Better tracking updates</td>
+                                        <td class="px-3 py-2 text-gray-600">Proactive reorder offer</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h2>Tips for Your Journey Map Submission</h2>
+                        <ul>
+                            <li>Choose ONE user segment to build the map for — do not try to cover all users in one map</li>
+                            <li>The map should cover the full journey from trigger to post-delivery</li>
+                            <li>Be specific about the pain points — generic pain points are not useful</li>
+                            <li>Opportunities should flow directly from pain points — not invented ideas</li>
+                            <li>You can create this as a table (Google Docs, Notion) or a visual diagram (Figma, Canva)</li>
+                        </ul>
+
+                        <div class="note-block"><p class="text-sm text-amber-800 font-medium m-0">Today: Study the Customer Journey Maps resource. Draft the stages for the Zomato journey map in rough form. Day 5 is when you write up the full assignment including the research plan, segments, and journey map together.</p></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(3)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 3</button>
+                    <button onclick="showDay(5)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 5 — Tasks + Submit <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- DAY 5 -->
+            <div id="day-5" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-green-50 border-b border-green-100 px-8 py-5 flex items-center justify-between">
+                        <div><div class="text-[11px] font-bold uppercase tracking-widest text-teal mb-1">Day 5 — Friday</div><h2 class="text-xl font-extrabold text-navy">Full Assignment Tasks and Submission</h2></div>
+                        <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Submitted</span>
+                    </div>
+                    <div class="p-8 content-body">
+                        <h2>Your Tasks — From the Notes</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 font-semibold m-0">Your Tasks:</p>
+                            <ul class="mt-3 space-y-3">
+                                <li class="text-gray-800">Design a user research plan to gather insights from Zomato's existing suburban and rural customers. What user research methods would you choose and why?</li>
+                                <li class="text-gray-800">Assume you have conducted the user research and have collected the necessary data. Based on the user research findings, identify and define at least two distinct user segments within Zomato's suburban and rural customer demographic.</li>
+                                <li class="text-gray-800">Analyse the user flow and create a customer journey map for a user ordering food on the platform.</li>
+                            </ul>
+                        </div>
+
+                        <h2>Submission Guidelines — From the Notes</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">You can submit the assignment as a link to a 1-2 page deck or document.</p>
+                            <p class="text-gray-800 mt-3 m-0">If you want any help, checkout the resources —</p>
+                            <ol class="mt-2 space-y-1">
+                                <li class="text-gray-800">JTBD Framework</li>
+                                <li class="text-gray-800">User Research</li>
+                                <li class="text-gray-800">User Segmentation</li>
+                                <li class="text-gray-800">Customer Journey Maps</li>
+                            </ol>
+                            <p class="text-gray-800 mt-3 m-0">Feel free to choose any platform like Notion, Google Doc, Canva, Figma or Google Slides to make the document/ deck. You need to share the public link to the doc as your submission.</p>
+                            <p class="text-gray-800 mt-3 m-0">If you choose any data from any source, please mention the source in the assignment only.</p>
+                            <p class="text-gray-800 mt-3 m-0">Please remember that its more important to attempt than to strive for perfection. So, submitting the assignment and getting feedback is most important.</p>
+                        </div>
+
+                        <h2>Final Checklist</h2>
+                        <div class="space-y-2 mt-4">
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">User research plan — objective, methodology (at least 2 methods), sample criteria, and key questions</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">At least 2 distinct user segments defined with segment profile, key needs, and differentiating behaviour</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Customer journey map covering stages from trigger to post-delivery — including emotions and pain points at each stage</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">All data sources cited if any external data is used</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Public link shared for submission (Notion / Google Doc / Canva / Figma / Google Slides)</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(4)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 4</button>
+                    <a href="pm-w3.html" class="flex items-center gap-2 bg-teal hover:bg-teal/90 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Next: Week 3 <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-6 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4 text-sm">
+        <div class="text-gray-500">Week 2 of 7 — Product Management Module</div>
+        <div class="flex items-center gap-4">
+            <a href="pm-w1.html" class="text-gray-400 hover:text-white transition-colors flex items-center gap-1"><i class="fas fa-arrow-left text-xs"></i> Week 1</a>
+            <a href="learn.html" class="text-gray-400 hover:text-white transition-colors">Learning Hub</a>
+            <a href="pm-w3.html" class="text-accent hover:text-white transition-colors flex items-center gap-1">Week 3 <i class="fas fa-arrow-right text-xs"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    function showDay(n) {
+        document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#day-progress > div').forEach(d => d.classList.remove('bg-accent/5','font-semibold'));
+        const panel = document.getElementById('day-' + n);
+        const pill  = document.getElementById('pill-' + n);
+        const prog  = document.getElementById('prog-' + n);
+        if (panel) panel.classList.add('active');
+        if (pill)  pill.classList.add('active');
+        if (prog)  prog.classList.add('bg-accent/5','font-semibold');
+        window.scrollTo({ top: 280, behavior: 'smooth' });
+        window.location.hash = 'day-' + n;
+    }
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#day-')) {
+            const n = parseInt(hash.replace('#day-', ''));
+            if (n >= 1 && n <= 5) showDay(n);
+        }
+    });
+</script>
+</body>
+</html>

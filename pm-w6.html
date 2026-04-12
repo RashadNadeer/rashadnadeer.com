@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tech, Database & SQL | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C1220', accent: '#4F62F5', teal: '#0D9488',
+                        surface: '#EDF2F7', dark: '#111827', warm: '#FAFAF8'
+                    },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #EDF2F7; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        ::selection { background: rgba(79,98,245,0.18); color: inherit; }
+        .topic-panel { display: none; }
+        .topic-panel.active { display: block; }
+        .side-link {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            padding: 0.45rem 0.75rem; border-radius: 8px;
+            font-size: 0.78rem; font-weight: 500; color: #64748b;
+            cursor: pointer; transition: all 0.18s ease;
+            border-left: 2px solid transparent; line-height: 1.4;
+        }
+        .side-link:hover { color: #4F62F5; background: rgba(79,98,245,0.05); border-left-color: #4F62F5; }
+        .side-link.active { color: #4F62F5; background: rgba(79,98,245,0.07); border-left-color: #4F62F5; font-weight: 600; }
+        .topic-pill {
+            padding: 0.4rem 1rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: #fff;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap;
+        }
+        .topic-pill:hover { border-color: #4F62F5; color: #4F62F5; }
+        .topic-pill.active { background: #4F62F5; border-color: #4F62F5; color: #fff; }
+        .notes h2 {
+            font-size: 1.15rem; font-weight: 800; color: #0C1220;
+            margin-top: 1.75rem; margin-bottom: 0.5rem;
+            padding-bottom: 0.35rem; border-bottom: 2px solid #EDF2F7;
+        }
+        .notes h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+        .notes p { font-size: 0.9rem; line-height: 1.85; color: #374151; margin-bottom: 0.85rem; }
+        .notes ul { list-style: disc; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes ol { list-style: decimal; padding-left: 1.4rem; margin-bottom: 0.85rem; }
+        .notes li { font-size: 0.9rem; line-height: 1.8; color: #374151; margin-bottom: 0.3rem; }
+        .notes strong { color: #0C1220; font-weight: 700; }
+        .notes img { max-width: 100%; border-radius: 10px; margin: 14px 0; border: 1px solid #e2e8f0; }
+        .callout-blue { background: #f8faff; border-left: 3px solid #4F62F5; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-amber { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .callout-teal  { background: #f0fdfa; border-left: 3px solid #0D9488; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+    <meta name="description" content="PM Week 6 — Tech, Database & SQL: APIs, databases, web application architecture, technical debt, webhooks, and SQL for product managers." />
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w6.html" />
+</head>
+<body class="bg-warm text-dark">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+            <i class="fas fa-arrow-left text-xs"></i> Learning Hub
+        </a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="bg-navy pt-20 pb-8 border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10">
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6">
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+            <i class="fas fa-chevron-right text-[9px]"></i>
+            <span class="text-accent font-semibold">Week 6</span>
+        </div>
+        <div class="flex flex-wrap items-start justify-between gap-5 mb-7">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 6 of 7</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">7 Topics</span>
+                    <span class="bg-white/10 text-gray-300 text-xs px-3 py-1 rounded-full">Self-paced</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Tech, Database & SQL</h1>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="pm-w5.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-sm rounded-lg transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Week 5</a>
+                <a href="pm-w7.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 7 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showTopic('t0')" id="pill-t0" class="topic-pill active">APIs</button>
+            <button onclick="showTopic('t1')" id="pill-t1" class="topic-pill ">Databases</button>
+            <button onclick="showTopic('t2')" id="pill-t2" class="topic-pill ">How Web Applications Are Built</button>
+            <button onclick="showTopic('t3')" id="pill-t3" class="topic-pill ">Technical Debt</button>
+            <button onclick="showTopic('t4')" id="pill-t4" class="topic-pill ">Webhooks</button>
+            <button onclick="showTopic('t5')" id="pill-t5" class="topic-pill ">System Design for PMs</button>
+            <button onclick="showTopic('t6')" id="pill-t6" class="topic-pill ">Writing SQL Queries</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="flex gap-10">
+        <aside class="hidden lg:block w-60 flex-shrink-0">
+            <div class="sticky top-24 space-y-4">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Module</div>
+                    <div class="font-bold text-navy text-sm">Tech, Database & SQL</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Week 6 of 7 · 7 topics</div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Topics</div>
+                    <div class="space-y-0.5">
+                        <div onclick="showTopic('t0')" id="side-t0" class="side-link active">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            APIs
+                        </div>
+                        <div onclick="showTopic('t1')" id="side-t1" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Databases
+                        </div>
+                        <div onclick="showTopic('t2')" id="side-t2" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            How Web Applications Are Built
+                        </div>
+                        <div onclick="showTopic('t3')" id="side-t3" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Technical Debt
+                        </div>
+                        <div onclick="showTopic('t4')" id="side-t4" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Webhooks
+                        </div>
+                        <div onclick="showTopic('t5')" id="side-t5" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            System Design for PMs
+                        </div>
+                        <div onclick="showTopic('t6')" id="side-t6" class="side-link ">
+                            <i class="fas fa-circle text-[6px] flex-shrink-0 mt-1.5"></i>
+                            Writing SQL Queries
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <main class="flex-1 min-w-0">
+
+            <!-- TOPIC: APIs -->
+            <div id="panel-t0" class="topic-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 1 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">APIs</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>APIs — Application Programming Interfaces</strong></h2>
+<p>An API, in its simplest sense, is a technology that connects two systems.</p>
+<strong>The library analogy:</strong>
+<ul>
+<li>The library → the <strong>database</strong></li>
+</ul>
+<ul>
+<li>The books → the <strong>data</strong></li>
+</ul>
+<ul>
+<li>You → the <strong>requestor</strong> (application looking for information)</li>
+</ul>
+<ul>
+<li>The librarian → the <strong>API</strong> (takes the request to the database and returns information)</li>
+</ul>
+<ul>
+<li>Your book request → the <strong>call</strong> made to the API</li>
+</ul>
+<ul>
+<li>The catalog → the <strong>specific format the request must follow</strong></li>
+</ul>
+<ul>
+<li>The book received → the <strong>response</strong></li>
+</ul>
+<img src="assets/pm-images/APIs/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>Real-life example:</strong> On LinkedIn, you search for fintech companies. LinkedIn executes the search and displays results from thousands of companies in under a second. This is facilitated by LinkedIn's Company Search API.
+<strong>Why should PMs care about APIs?</strong>
+<p>APIs open up opportunities to build a more integrated product. As a PM, it helps to understand the benefits and constraints of technical solutions so you can make and communicate product decisions effectively. You don't need to dig into code — you need to understand the value it provides and be able to communicate why it's necessary to stakeholders.</p>
+<strong>API types:</strong>
+<ul>
+<li><strong>Public APIs</strong> — open for use external to a company. Examples: Google Maps API, Braintree payments API, LinkedIn Company Search API.</li>
+</ul>
+<ul>
+<li><strong>Private APIs</strong> — developed for internal use with specific access. Examples: internal customer information APIs used by different business functions.</li>
+</ul>
+<strong>Key API formats:</strong>
+<ul>
+<li><strong>REST (Representational State Transfer)</strong> — the most common type today. Uses HTTP functions (GET, POST, PUT, DELETE). Flexible in terms of data types and has low bandwidth. Information typically sent/received via JSON files.</li>
+</ul>
+<ul>
+<li><strong>SOAP (Simple Object Access Protocol)</strong> — an actual protocol. Uses HTTP and XML. Heavier in terms of bandwidth and payload.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t1')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Databases <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Databases -->
+            <div id="panel-t1" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 2 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">Databases</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Databases — A Deeper Dive</strong></h2>
+<p>A database is essentially a structured way of storing and managing data. It's like a highly organised digital filing system that allows you to store different types of information — user profiles, product details, orders, etc. — in a way that makes it easy to access, update, and search.</p>
+<strong>Types of databases:</strong>
+<ul>
+<li><strong>Relational databases</strong> — organise data into tables with rows and columns, like a spreadsheet. Use SQL (Structured Query Language) to interact with and manipulate data. Examples: MySQL, PostgreSQL, Oracle.</li>
+</ul>
+<ul>
+<li><strong>NoSQL (non-relational) databases</strong> — designed to handle large amounts of unstructured or semi-structured data more efficiently. Often used in applications that need to scale rapidly, such as social media platforms or real-time analytics. Examples: MongoDB, Cassandra, Redis.</li>
+</ul>
+<strong>Why should PMs know SQL?</strong>
+<ul>
+<li>Understanding product data.</li>
+</ul>
+<ul>
+<li>Uncovering insights not easily available in product analytics tools.</li>
+</ul>
+<ul>
+<li>Making decisions and executing faster by eliminating dependency on data teams.</li>
+</ul>
+<p>While PMs don't need to be SQL experts, basic proficiency in SQL can greatly enhance your ability to make data-driven decisions and communicate effectively with technical teams.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t2')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        How Web Applications Are Built <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: How Web Applications Are Built -->
+            <div id="panel-t2" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 3 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">How Web Applications Are Built</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>How Are Web Applications Built?</strong></h2>
+<p>Web applications are built using a combination of programming languages and technologies. The core components:</p>
+<strong>Front-end (what the user sees):</strong>
+<ul>
+<li><strong>HTML</strong> — provides the structure and content of web pages.</li>
+</ul>
+<ul>
+<li><strong>CSS</strong> — handles the styling and layout.</li>
+</ul>
+<ul>
+<li><strong>JavaScript</strong> — adds interactivity and dynamic behaviour.</li>
+</ul>
+<strong>Back-end (what runs on the server):</strong>
+<ul>
+<li><strong>Python</strong> (with Django or Flask)</li>
+</ul>
+<ul>
+<li><strong>JavaScript</strong> (with Node.js and Express.js)</li>
+</ul>
+<ul>
+<li><strong>PHP, Ruby, Java, C#</strong></li>
+</ul>
+<strong>Databases:</strong>
+<ul>
+<li>Relational — MySQL, PostgreSQL, Oracle</li>
+</ul>
+<ul>
+<li>NoSQL — MongoDB, Cassandra, Redis</li>
+</ul>
+<strong>APIs</strong> — allow different systems to communicate and exchange data.
+<strong>Web Servers</strong> — handle client requests and deliver web content. Examples: Apache, Nginx, Microsoft IIS.
+<strong>The typical build workflow:</strong>
+<ul>
+<li>Set up the development environment.</li>
+</ul>
+<ul>
+<li>Build the front-end UI using HTML, CSS, and JavaScript.</li>
+</ul>
+<ul>
+<li>Develop the back-end logic using a server-side language.</li>
+</ul>
+<ul>
+<li>Integrate front-end and back-end.</li>
+</ul>
+<ul>
+<li>Implement data storage and retrieval with a database.</li>
+</ul>
+<ul>
+<li>Incorporate third-party APIs if needed.</li>
+</ul>
+<ul>
+<li>Test thoroughly, then deploy to a web server or hosting platform.</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t3')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Technical Debt <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Technical Debt -->
+            <div id="panel-t3" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 4 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">Technical Debt</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Technical Debt</strong></h2>
+<p>Technical debt is incurred when developers make the trade-off to do something quick and dirty vs. slower and cleaner. Like financial debt, this involves "interest payments" in the future — development becomes more clunky and at some point teams need to "pay down the principal" by refactoring code.</p>
+<strong>The house analogy:</strong>
+<p>Imagine building a house quickly by taking shortcuts — laying no proper foundation. The house may look fine, but over time you'll need to invest more effort to fix issues, make repairs, or even rebuild parts. Software technical debt works the same way.</p>
+<strong>Is tech debt always bad?</strong>
+<p>No. Tech debt taken on to quickly test and validate ideas is acceptable — it's the bedrock of lean product development. Testing small iterations and validating need before investing in a scalable solution is smart. There's no point building a perfect technical solution if customers reject the product.</p>
+<strong>However:</strong> tech debt is only acceptable if there's a commitment to pay it down before the product or feature is scaled.
+<strong>How should PMs approach tech debt?</strong>
+<ul>
+<li><strong>Case by case decisions</strong> — negotiation between product and engineering on how much effort goes to new features vs. paying down debt. Requires a strong, trusting relationship between leaders.</li>
+</ul>
+<ul>
+<li><strong>A fixed "budget"</strong> — a more prudent approach. Agree to a fixed allocation of capacity for tech debt each sprint, or dedicate one in every four sprints to technical effort.</li>
+</ul>
+<strong>Best practices:</strong> documentation and explicitly tracking tech debt in the backlog. This retains context and rationale and ensures visibility to the work being done.
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t4')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Webhooks <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Webhooks -->
+            <div id="panel-t4" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 5 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">Webhooks</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Webhooks</strong></h2>
+<strong>Common webhook use cases:</strong>
+<ul>
+<li><strong>Sending notifications</strong> — webhooks can send notifications when a specific event happens. For example, notifying a user when a package's delivery status changes from 'processing' to 'out for delivery'.</li>
+</ul>
+<ul>
+<li><strong>Third-party integrations</strong> — a CRM might use a webhook to update a specific customer's personal account information.</li>
+</ul>
+<ul>
+<li><strong>Workflow automation</strong> — webhooks power no-code automation workflows. A productivity tool might use webhooks to automatically assign tasks to team members.</li>
+</ul>
+<strong>The cafe analogy:</strong>
+<p>You want to know when your friend arrives at a cafe. You tell them "text me when you arrive." When they arrive, that's the trigger — they send you a text to the number you gave them.</p>
+<p>This is how webhooks work. Your engineers write code that 'subscribes' to a specific event and specifies where to receive it. This process is called 'listening' for an event.</p>
+<img src="assets/pm-images/Webhooks/Untitled.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>Real-world example — payment failure notifications:</strong>
+<ul>
+<li>You tell Stripe: "whenever a payment method fails, let me know."</li>
+</ul>
+<ul>
+<li>You provide a URL for Stripe to send the failure notification.</li>
+</ul>
+<ul>
+<li>When a customer's payment fails, the business owner receives a webhook notification automatically.</li>
+</ul>
+<img src="assets/pm-images/Webhooks/Untitled 1.png" style="max-width:100%;border-radius:8px;margin:12px 0;">
+<strong>APIs and Webhooks together:</strong>
+<p>While APIs and Webhooks serve different purposes, they can be used together. An application might use an API to retrieve data and configure webhooks, and then use webhooks to receive real-time updates from the same service.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t5')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        System Design for PMs <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: System Design for PMs -->
+            <div id="panel-t5" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 6 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">System Design for PMs</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>System Design and Architecture for PMs</strong></h2>
+<p>As a product manager, you don't need extensive knowledge of designing system architecture — engineers and architects are better equipped. But you need to understand the ramifications of software design choices on the product and its future growth.</p>
+<p>An engineer usually only has the context of the requirement provided to them. They solve the problem within those constraints and might not have insight into the long-term goal. Design is an iterative process — you can't have a perfectly designed system from the start. Any choice taken in design has implications.</p>
+<strong>Why this matters for PMs:</strong>
+<ul>
+<li>Understanding design trade-offs helps you make informed product decisions.</li>
+</ul>
+<ul>
+<li>Awareness of system constraints helps you set realistic expectations with stakeholders.</li>
+</ul>
+<ul>
+<li>Knowledge of architecture helps you contribute meaningfully to technical discussions.</li>
+</ul>
+<strong>What programming languages are:</strong>
+<p>A programming language is a set of instructions and rules that allows humans to communicate with computers. Just like we use English to communicate with each other, programming languages communicate with computers.</p>
+<p>Popular languages and their uses:</p>
+<ul>
+<li><strong>Python</strong> — data analysis, machine learning, backend web development.</li>
+</ul>
+<ul>
+<li><strong>JavaScript</strong> — frontend and backend web development (Node.js).</li>
+</ul>
+<ul>
+<li><strong>Java</strong> — enterprise applications, Android apps.</li>
+</ul>
+<ul>
+<li><strong>C#</strong> — Microsoft ecosystem, game development (Unity).</li>
+</ul>
+<ul>
+<li><strong>Ruby</strong> — web development (Rails framework).</li>
+</ul>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-5">
+                    <button onclick="showTopic('t6')" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                        Writing SQL Queries <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOPIC: Writing SQL Queries -->
+            <div id="panel-t6" class="topic-panel ">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="px-8 py-5 border-b border-gray-100" style="background:rgba(79,98,245,0.03)">
+                        <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Topic 7 of 7</div>
+                        <h2 class="text-xl font-extrabold text-navy">Writing SQL Queries</h2>
+                    </div>
+                    <div class="p-8 notes">
+<h2><strong>Writing SQL Queries</strong></h2>
+<p>SQL (Structured Query Language) is the standard language for interacting with relational databases. As a PM, SQL allows you to answer product questions directly from data without depending on a data team.</p>
+<strong>Core SQL concepts:</strong>
+<ul>
+<li><strong>SELECT</strong> — retrieve data from one or more tables.</li>
+</ul>
+<ul>
+<li><strong>WHERE</strong> — filter rows based on conditions.</li>
+</ul>
+<ul>
+<li><strong>GROUP BY</strong> — aggregate data into groups.</li>
+</ul>
+<ul>
+<li><strong>JOIN</strong> — combine data from multiple tables based on a related column.</li>
+</ul>
+<ul>
+<li><strong>ORDER BY</strong> — sort results.</li>
+</ul>
+<ul>
+<li><strong>COUNT, SUM, AVG, MAX, MIN</strong> — aggregate functions for calculating metrics.</li>
+</ul>
+<strong>Example PM questions you can answer with SQL:</strong>
+<ul>
+<li>How many users signed up last week vs. the week before?</li>
+</ul>
+<ul>
+<li>What is the average order value by city?</li>
+</ul>
+<ul>
+<li>Which features are used by users who retained after 30 days?</li>
+</ul>
+<ul>
+<li>What is the signup funnel drop-off at each step?</li>
+</ul>
+<strong>Best resources to learn SQL:</strong>
+<ul>
+<li>Mode SQL Tutorial — beginners to advanced with an in-browser editor.</li>
+</ul>
+<ul>
+<li>SQLZoo — interactive exercises covering SELECT, JOIN, aggregation, subqueries.</li>
+</ul>
+<ul>
+<li>W3Schools SQL — quick reference for syntax and functions.</li>
+</ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-8 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="text-gray-400 text-sm">Mohammad Rashad Nadeer Kutty — PM Learning</div>
+        <a href="learn.html" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub</a>
+    </div>
+</footer>
+
+<script>
+    function showTopic(id) {
+        document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.side-link').forEach(s => s.classList.remove('active'));
+        document.getElementById('panel-' + id).classList.add('active');
+        document.getElementById('pill-' + id).classList.add('active');
+        document.getElementById('side-' + id).classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AWS Cloud Computing | Mohammad Rashad Nadeer Kutty</title>
+    <meta name="description" content="Comprehensive AWS Cloud Computing learning module — IAM, EC2, Lambda, S3, RDS, DynamoDB, VPC, CloudWatch, and the Well-Architected Framework." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://rashadnadeer.com/aws-learning.html" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(234,88,12,.08); border-left-color:rgba(234,88,12,.4); }
+        .week-item.active { background:rgba(234,88,12,.12); border-left-color:#EA580C; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#EA580C; border-color:#EA580C; background:rgba(234,88,12,.1); }
+        .week-item.active .view-btn { color:#EA580C; border-color:rgba(234,88,12,.5); background:rgba(234,88,12,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#EA580C; background:rgba(234,88,12,.02); box-shadow:0 2px 8px rgba(234,88,12,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#EA580C; }
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #fed7aa; border-radius:10px; margin-bottom:8px; background:rgba(234,88,12,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#EA580C; background:rgba(234,88,12,.07); box-shadow:0 2px 8px rgba(234,88,12,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(234,88,12,.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#EA580C; font-weight:500; margin-top:2px; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#EA580C; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#EA580C; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#EA580C; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(234,88,12,.15); color:#EA580C">
+            <i class="fas fa-cloud text-[9px]"></i> AWS Cloud Computing
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" onmouseover="this.style.color='#EA580C'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">AWS Cloud Computing</div>
+                <div class="sidebar-week-count">9 modules &middot; 20 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Cloud Fundamentals</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">IAM & Security</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Compute Services</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Storage Services</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">Database Services</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Networking</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+        <div class="week-item" data-week="6" onclick="selectWeek(6)">
+          <div class="week-info">
+            <span class="week-name">Monitoring & DevOps on AWS</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(6)">View</button>
+        </div>
+        <div class="week-item" data-week="7" onclick="selectWeek(7)">
+          <div class="week-info">
+            <span class="week-name">Secrets Manager & Systems Manager</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(7)">View</button>
+        </div>
+        <div class="week-item" data-week="8" onclick="selectWeek(8)">
+          <div class="week-info">
+            <span class="week-name">Well-Architected Framework</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(8)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(234,88,12,.1)">
+                        <i class="fas fa-cloud text-2xl" style="color:#EA580C"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">AWS Cloud Computing</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from cloud fundamentals and IAM through compute (EC2, Lambda, ECS), storage (S3, EBS, EFS), databases (RDS, DynamoDB), networking (VPC, ALB, Route 53), observability, and the Well-Architected Framework.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">9 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">20 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Cloud Fundamentals`,
+    topics: [
+    { title: `Cloud Computing Models — IaaS, PaaS, SaaS & the Shared Responsibility Model`, content: `__H__ Cloud Computing Models — IaaS, PaaS, SaaS & the Shared Responsibility Model
+
+Cloud computing is the on-demand delivery of IT resources — compute, storage, databases, networking, analytics, AI, and more — over the internet, with pay-as-you-go pricing. Instead of owning and operating physical data centres, organisations rent capacity from cloud providers and scale it instantly. AWS is the largest cloud provider globally, with over 200 services and data centres in 33 geographic regions.
+
+__SUB__ The Three Service Models
+Infrastructure as a Service (IaaS) provides the foundational building blocks: virtual machines, storage, networking. You control the operating system and everything above it; the cloud provider manages the physical hardware. AWS EC2 is IaaS. Platform as a Service (PaaS) provides a managed platform for running your application — no OS management, no server patching. AWS Elastic Beanstalk and Azure App Service are PaaS. Software as a Service (SaaS) is a fully managed application delivered over the internet — you consume the software but manage nothing. Salesforce, Gmail, and Slack are SaaS. The further up the stack you go, the less you manage and the faster you move — but the less control you have.
+
+__LI__ IaaS: you manage OS, runtime, app — EC2, Azure VMs, Google Compute Engine
+__LI__ PaaS: you manage app and data — cloud manages OS, runtime, scaling — Elastic Beanstalk, Heroku
+__LI__ SaaS: you just use the app — cloud manages everything — Salesforce, Gmail, Zoom
+__LI__ FaaS (Function as a Service): you write functions; cloud manages infrastructure — AWS Lambda
+
+__RAW__ <div style="margin:1.5rem 0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#0C1220;color:#f1f5f9"><th style="padding:10px 14px;text-align:left">Layer</th><th style="padding:10px 14px;text-align:center">On-Premises</th><th style="padding:10px 14px;text-align:center;color:#fbbf24">IaaS</th><th style="padding:10px 14px;text-align:center;color:#34d399">PaaS</th><th style="padding:10px 14px;text-align:center;color:#a78bfa">SaaS</th></tr></thead><tbody><tr><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Application</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#ede9fe">Cloud</td></tr><tr><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Runtime / Middleware</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#ede9fe">Cloud</td></tr><tr><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Operating System</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#ede9fe">Cloud</td></tr><tr><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">Virtualisation</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;border-bottom:1px solid #f1f5f9;text-align:center;background:#ede9fe">Cloud</td></tr><tr><td style="padding:8px 14px;font-weight:600">Physical Hardware</td><td style="padding:8px 14px;text-align:center;background:#fef3c7">You</td><td style="padding:8px 14px;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;text-align:center;background:#d1fae5">Cloud</td><td style="padding:8px 14px;text-align:center;background:#ede9fe">Cloud</td></tr></tbody></table></div>
+
+__SUB__ The Shared Responsibility Model — Who Owns What
+The Shared Responsibility Model is the most important concept for AWS security. AWS is responsible for security of the cloud — the physical infrastructure, the hardware, the global network, the managed service software. The customer is responsible for security in the cloud — everything they put on AWS: their data, their applications, their operating system configuration, their network and firewall rules, their IAM policies. A misconfigured S3 bucket that exposes private data is the customer's responsibility, not AWS's. Understanding this boundary is critical for compliance and security architecture. 'AWS manages the building; you manage everything inside your apartment.'
+
+__LI__ AWS owns: physical data centres, hardware, hypervisors, managed service software
+__LI__ Customer owns: data encryption, OS patching (for IaaS), IAM configuration, network rules
+__LI__ S3 bucket exposed publicly: customer's misconfiguration — AWS did not open it
+__LI__ RDS engine vulnerability patched: AWS's responsibility — managed service` },
+    { title: `AWS Global Infrastructure — Regions, AZs & Edge Locations`, content: `__H__ AWS Global Infrastructure — Regions, AZs & Edge Locations
+
+AWS operates the largest global cloud infrastructure in the world. Understanding its physical organisation is essential for designing highly available, disaster-resistant architectures.
+
+__SUB__ Regions, Availability Zones & the Design Philosophy
+A Region is a distinct geographic area containing multiple data centres — e.g., ap-southeast-1 (Singapore), eu-west-1 (Ireland), us-east-1 (Northern Virginia). AWS has 33 regions globally (as of 2026), each completely independent from the others. An Availability Zone (AZ) is one or more discrete data centres within a region, connected by high-bandwidth, low-latency links. Each region has at least 3 AZs. AZs are physically separated by meaningful distances — different power grids, different flood zones, different network paths — so a failure in one AZ (fire, power outage, flood) does not affect others. Designing for multi-AZ deployment is the fundamental technique for high availability on AWS: if one AZ fails, your application continues running in the other AZs.
+
+__LI__ Region: independent geographic area — 33 regions globally — choose for latency + data sovereignty
+__LI__ Availability Zone: 1–3+ data centres in a region, physically separated — design for multi-AZ
+__LI__ Multi-AZ: run workloads across 2+ AZs — survives a single AZ failure with no downtime
+__LI__ Data sovereignty: data stays in the region you choose — critical for UAE, GDPR, healthcare compliance
+
+__SUB__ Edge Locations, Local Zones & Wavelength
+Edge Locations are AWS infrastructure points of presence used by CloudFront (CDN) and Route 53 (DNS). There are over 400 edge locations globally — far more than regions — placed close to end users to minimise content delivery latency. Local Zones extend AWS infrastructure to metropolitan areas not served by full regions — ideal for latency-sensitive workloads like game streaming and media production in cities like Los Angeles or Dubai. AWS Wavelength embeds AWS compute inside 5G telecoms networks, enabling ultra-low-latency applications for mobile devices. The design philosophy throughout is consistent: bring compute and storage as close to the user and data source as possible.
+
+__LI__ CloudFront edge: content cached close to users globally — 400+ edge locations
+__LI__ Route 53 edge: DNS resolution from nearest edge — <1ms latency globally
+__LI__ Local Zones: AWS in metros not covered by regions — Dubai, LA, Manila
+__LI__ Wavelength: compute inside 5G network — <10ms latency for mobile apps
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fff7ed;border-radius:12px;border:1px solid #fed7aa"><div style="font-size:11px;font-weight:700;color:#9a3412;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">AWS Global Infrastructure — Hierarchy</div><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:12px"><div style="width:120px;background:#EA580C;color:white;padding:8px 12px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;flex-shrink:0">Region<div style="font-size:10px;font-weight:400;margin-top:2px">ap-southeast-1</div></div><div style="font-size:12px;color:#374151">Independent geographic area — choose for latency, data residency, compliance. Fully isolated from other regions. All your resources live here.</div></div><div style="display:flex;align-items:center;gap:12px;padding-left:20px"><div style="width:120px;background:#c2410c;color:white;padding:8px 12px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;flex-shrink:0">AZ ×3<div style="font-size:10px;font-weight:400;margin-top:2px">ap-southeast-1a/b/c</div></div><div style="font-size:12px;color:#374151">Physically separate data centres. Spread your EC2, RDS, and ELB targets across all 3. One AZ failure → app keeps running.</div></div><div style="display:flex;align-items:center;gap:12px;padding-left:40px"><div style="width:120px;background:#1e293b;color:white;padding:8px 12px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;flex-shrink:0">Edge ×400+<div style="font-size:10px;font-weight:400;margin-top:2px">CloudFront POPs</div></div><div style="font-size:12px;color:#374151">Content delivery nodes globally. Cache static assets, stream video, and accelerate APIs close to end users.</div></div></div></div>` }
+    ]
+  },
+  {
+    id: 1,
+    name: `IAM & Security`,
+    topics: [
+    { title: `IAM — Identity & Access Management`, content: `__H__ IAM — Identity & Access Management
+
+IAM (Identity and Access Management) is the system that controls who can do what in your AWS account. It is the foundation of AWS security — every API call made to AWS is checked against IAM before being executed. Getting IAM right is the single most important security task in AWS.
+
+__SUB__ IAM Principals — Users, Groups, Roles & Services
+IAM defines several types of principals. An IAM User is a long-term identity representing a person or application — they have permanent credentials (access key ID + secret, or password). Users should be used sparingly and only for human operators who need console access. An IAM Group is a collection of users that share the same permissions — attach policies to groups, not individual users. An IAM Role is a temporary identity that can be assumed by AWS services, EC2 instances, Lambda functions, or external identities (via SSO or federation). Roles have no permanent credentials — they issue temporary credentials that expire. This is the preferred way to grant AWS services permissions to other AWS services: instead of hardcoding an access key in your EC2 instance, assign an IAM role to the instance.
+
+__LI__ IAM User: long-term credentials — for human console access only. Never embed in application code.
+__LI__ IAM Group: collection of users — attach policies to groups for easier management
+__LI__ IAM Role: temporary credentials — assigned to EC2, Lambda, ECS tasks, or federated users
+__LI__ Best practice: applications should use roles, never hardcoded access keys
+
+__SUB__ IAM Policies — Allow, Deny & the Evaluation Logic
+Permissions in IAM are defined by policies — JSON documents that specify what actions are allowed or denied on what resources under what conditions. Policies are attached to users, groups, or roles. The evaluation logic follows a specific order: explicit Deny always wins — if any policy attached to a principal denies an action, it is denied regardless of any Allow statements. If there is no explicit Deny, the presence of any Allow grants the action. If there is no explicit Deny and no explicit Allow, the action is denied by default (implicit Deny). This means the default state is zero permissions — you must explicitly grant everything.
+
+__LI__ Explicit DENY > Allow > Implicit DENY (no permission = denied)
+__LI__ Least privilege principle: grant the minimum permissions needed for the task
+__LI__ Condition keys: restrict access by IP, time of day, MFA status, resource tag
+__LI__ Resource-based policies: attached to S3 buckets, SQS queues — who can access this resource
+
+__RAW__ <div style="margin:1.5rem 0;background:#0C1220;border-radius:12px;overflow:hidden"><div style="padding:8px 16px;background:#1e293b;font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.1em">SAMPLE IAM POLICY — Allow EC2 Read + S3 Access to Specific Bucket</div><div style="padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#e2e8f0;line-height:1.7"><div>{</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"Version"</span>: <span style="color:#34d399">"2012-10-17"</span>,</div><div>&nbsp;&nbsp;<span style="color:#f59e0b">"Statement"</span>: [</div><div>&nbsp;&nbsp;&nbsp;&nbsp;{</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Effect"</span>: <span style="color:#34d399">"Allow"</span>,</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Action"</span>: [<span style="color:#34d399">"ec2:Describe*"</span>, <span style="color:#34d399">"ec2:Get*"</span>],</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Resource"</span>: <span style="color:#34d399">"*"</span></div><div>&nbsp;&nbsp;&nbsp;&nbsp;},</div><div>&nbsp;&nbsp;&nbsp;&nbsp;{</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Effect"</span>: <span style="color:#34d399">"Allow"</span>,</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Action"</span>: [<span style="color:#34d399">"s3:GetObject"</span>, <span style="color:#34d399">"s3:PutObject"</span>],</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f59e0b">"Resource"</span>: <span style="color:#34d399">"arn:aws:s3:::my-hospital-data/*"</span></div><div>&nbsp;&nbsp;&nbsp;&nbsp;}</div><div>&nbsp;&nbsp;]</div><div>}</div></div></div>` },
+    { title: `AWS Security Best Practices — MFA, CloudTrail & Zero Trust`, content: `__H__ AWS Security Best Practices — MFA, CloudTrail & Zero Trust
+
+A secure AWS account requires layering multiple controls: identity hardening, network segmentation, data encryption, audit logging, and anomaly detection. These are not optional for production workloads.
+
+__SUB__ Identity Hardening
+Enable MFA on every IAM user — especially the root account. The root account is the most privileged identity in AWS (it cannot be restricted by any IAM policy) and should be used only for account-level tasks (closing the account, changing the support tier). Create an IAM admin user for day-to-day administration. Delete root access keys entirely. Use AWS SSO (IAM Identity Center) to federate access from your corporate identity provider (Azure AD, Okta) rather than managing per-user IAM credentials — this gives you centralised access control, automatic de-provisioning when employees leave, and consistent MFA enforcement. Rotate access keys every 90 days at minimum; prefer roles over keys wherever possible.
+
+__LI__ Root account: enable MFA, delete access keys, use only for account-level tasks
+__LI__ IAM Identity Center (SSO): federate from Azure AD / Okta — one login, consistent MFA, auto-deprovisioning
+__LI__ Access keys: rotate every 90 days; prefer roles for anything that can use them
+__LI__ Service Control Policies (SCPs): organisation-level guardrails — even admins cannot exceed SCP bounds
+
+__SUB__ CloudTrail, Config & GuardDuty — The Security Triad
+AWS CloudTrail records every API call made in your account — who called what, when, from where, with what parameters, and whether it succeeded. CloudTrail is the audit log for the entire AWS account. It must be enabled in every region and logs must be shipped to a separate, tamper-protected S3 bucket in a dedicated security account. AWS Config continuously records the configuration state of AWS resources and can evaluate them against compliance rules — alert if any S3 bucket becomes publicly accessible, if any security group allows unrestricted inbound SSH, or if encryption is disabled on any RDS instance. AWS GuardDuty is a threat detection service that analyses CloudTrail logs, VPC Flow Logs, and DNS logs using machine learning to detect anomalous behaviour — an EC2 instance querying cryptocurrency mining pools, IAM credentials used from an unusual country, or a sudden spike in API calls.
+
+__LI__ CloudTrail: every API call logged — enable in all regions, protect logs in dedicated security account
+__LI__ AWS Config: compliance rules — 'no public S3 buckets', 'all EBS volumes encrypted', 'no open SSH'
+__LI__ GuardDuty: threat detection ML — detects credential compromise, cryptomining, unusual activity
+__LI__ Security Hub: aggregates findings from GuardDuty, Config, Inspector into one pane of glass` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Compute Services`,
+    topics: [
+    { title: `EC2 — Elastic Compute Cloud`, content: `__H__ EC2 — Elastic Compute Cloud
+
+EC2 (Elastic Compute Cloud) is AWS's flagship IaaS service — virtual machines (called instances) running in the cloud. EC2 gives you complete control over the operating system, runtime, storage, and network configuration. It is the foundation on which many AWS services are built.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — Windows Server analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In traditional IT, provisioning a new Windows application server takes days or weeks — raise a request, wait for hardware procurement, have IT rack the server, install Windows Server, join the domain, configure networking. With EC2, the same server is ready in <b>60 seconds</b>. You choose the instance size (CPU + RAM), pick your OS image (Windows Server 2022, Ubuntu, Amazon Linux), and connect via RDP or SSH. The critical shift: you are <b>renting</b> the hardware by the hour, not owning it. No more idle servers sitting in a rack. When you no longer need the machine — terminate the instance. When traffic spikes — launch 10 more in under a minute and terminate them when the spike passes.</div></div>
+
+__SUB__ Instance Types, Families & Pricing Models
+EC2 instances are organised into families optimised for different workloads. General Purpose (t3, m6i) instances balance compute, memory, and network — ideal for web servers, small databases, and development environments. Compute Optimised (c6i, c7g) instances have a higher CPU-to-memory ratio — ideal for batch processing, media transcoding, and high-performance web servers. Memory Optimised (r6i, x2idn) instances have large memory — ideal for in-memory databases (Redis, SAP HANA) and real-time big data analytics. Storage Optimised (i4i, d3en) instances have high sequential read/write to local NVMe storage — ideal for data warehouses and distributed file systems. GPU instances (p4, g5) for machine learning training and inference.
+
+__LI__ t3.micro: 2 vCPU, 1 GB RAM — free tier eligible, dev/test, low traffic web
+__LI__ m6i.large: 2 vCPU, 8 GB RAM — general-purpose web/app server
+__LI__ r6i.4xlarge: 16 vCPU, 128 GB RAM — memory-heavy databases, caching
+__LI__ c6i.8xlarge: 32 vCPU, 64 GB RAM — CPU-bound batch processing
+
+__RAW__ <div style="margin:1.5rem 0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#0C1220;color:#f1f5f9"><th style="padding:10px 14px;text-align:left">Pricing Model</th><th style="padding:10px 14px;text-align:left">Commitment</th><th style="padding:10px 14px;text-align:left">Savings vs On-Demand</th><th style="padding:10px 14px;text-align:left">Best For</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#EA580C">On-Demand</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">None</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Baseline</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Short-term, unpredictable, dev/test</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#059669">Reserved (1yr)</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">1 year</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Up to 40%</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Steady-state baseline workloads</td></tr><tr style="background:#fff"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#059669">Reserved (3yr)</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">3 years</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Up to 60%</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Long-running production workloads</td></tr><tr style="background:#fafafa"><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;font-weight:700;color:#4F62F5">Savings Plans</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">1 or 3 yr commit to $/hr spend</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Up to 66%</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Flexible — works across instance types</td></tr><tr style="background:#fff"><td style="padding:9px 14px;font-weight:700;color:#DC2626">Spot</td><td style="padding:9px 14px">None (can be interrupted)</td><td style="padding:9px 14px">Up to 90%</td><td style="padding:9px 14px">Fault-tolerant batch, ML training</td></tr></tbody></table></div>
+
+__SUB__ AMIs, Auto Scaling & High Availability
+An AMI (Amazon Machine Image) is a template that contains the operating system, software, and configuration for an EC2 instance — equivalent to a server snapshot. Create custom AMIs from your hardened, configured baseline to enable fast, consistent instance launches. EC2 Auto Scaling dynamically adjusts the number of instances based on demand. A scaling policy can add instances when CPU exceeds 70% and remove them when it drops below 30%, maintaining performance during peaks and minimising cost during troughs. Combining Auto Scaling with an Application Load Balancer (ALB) distributes traffic across instances and automatically deregisters unhealthy ones — this combination is the standard pattern for fault-tolerant, scalable web application architectures on AWS.` },
+    { title: `AWS Lambda — Serverless Computing`, content: `__H__ AWS Lambda — Serverless Computing
+
+AWS Lambda is AWS's Function-as-a-Service (FaaS) offering — you upload code (functions), and Lambda runs it in response to events, scaling from zero to thousands of concurrent executions automatically, without you provisioning or managing any servers.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — Windows Service analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">A traditional Windows Service runs 24/7, consuming CPU and memory <b>even when nobody is using it</b>. It waits. It idles. You pay for the server around the clock. Lambda is the opposite: your code <b>only runs when an event fires</b> — an HTTP request, a file upload, a database change, a scheduled timer. Between invocations, no infrastructure exists and no cost is incurred. Think of it as the difference between hiring a full-time employee who sits at their desk all day (Windows Service) versus calling a skilled contractor who completes the task and leaves (Lambda). For event-driven workloads — sending a welcome email when a user registers, resizing an image on upload, processing a nightly report — Lambda is dramatically cheaper and simpler than a dedicated server.</div></div>
+
+__SUB__ How Lambda Works — Event-Driven Execution
+Lambda functions are triggered by events from other AWS services or HTTP requests via API Gateway. A function runs for up to 15 minutes, uses the memory you allocate (128 MB to 10 GB), and is billed in 1ms increments only for the time it runs. When no requests are in flight, Lambda scales to zero — you pay nothing. This makes Lambda extremely cost-effective for intermittent, event-driven workloads. Lambda integrates natively with S3 (trigger on object upload), DynamoDB (trigger on table changes), SQS (process queue messages), EventBridge (cron schedules and event bus), and API Gateway (HTTP endpoint). A cold start occurs when Lambda needs to provision a new execution environment — this adds latency (10ms–1s depending on runtime). Provisioned Concurrency eliminates cold starts for latency-sensitive functions.
+
+__LI__ Trigger: S3 upload → Lambda resizes image and stores thumbnail
+__LI__ Trigger: API Gateway POST → Lambda validates and saves form submission to DynamoDB
+__LI__ Trigger: EventBridge schedule → Lambda generates daily report at 6am
+__LI__ Trigger: SQS message → Lambda processes order, sends confirmation email via SES
+
+__SUB__ Lambda Limits, Layers & Best Practices
+Lambda has hard limits that shape architecture decisions: 15-minute maximum execution time (use Step Functions or SQS for longer workflows), 10 GB maximum memory, 250 MB deployment package size (use Lambda Layers for large dependencies like NumPy or Pillow). Lambda Layers are shared code packages that multiple functions can reference — instead of packaging numpy into every data processing function, create a numpy Layer and reference it. The Lambda execution environment is ephemeral — do not store state in the local filesystem between invocations; use S3 for objects, DynamoDB or RDS for database state, and ElastiCache for session data. Configure a Dead Letter Queue (SQS or SNS) to capture events that failed processing after all retries — never silently drop failed events.
+
+__LI__ Stateless: no local filesystem persistence between invocations — use S3, DynamoDB, ElastiCache
+__LI__ Lambda Layers: share dependencies across functions — numpy, PIL, company utilities
+__LI__ Dead Letter Queue: capture failed events for inspection and reprocessing
+__LI__ Provisioned Concurrency: pre-warm environments — eliminate cold starts for P99 latency SLOs` },
+    { title: `ECS, EKS & Container Services on AWS`, content: `__H__ ECS, EKS & Container Services on AWS
+
+AWS provides multiple services for running containerised workloads, ranging from simple managed deployments to full Kubernetes orchestration.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — IIS / Windows deployment analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In traditional Windows deployments, you'd install your .NET application on a fixed IIS server. If the server crashes, someone manually restores it. If traffic spikes, someone manually provisions another server and adds it to the load balancer. Containers change this: your application is packaged as a Docker image — a self-contained box with <b>everything it needs</b> (the code, the runtime, the libraries, the config). ECS takes those containers and manages where they run, how many copies exist, and what happens when one crashes (it automatically replaces it). With Fargate, you don't even manage the underlying EC2 instances — you just say <b>"run 5 copies of my container with 1 vCPU and 2 GB RAM each"</b> and ECS handles the rest. Think of it as IIS + auto-healing + auto-scaling — without any server babysitting.</div></div>
+
+__SUB__ ECS — Elastic Container Service
+ECS is AWS's proprietary container orchestration service. You define Task Definitions (the blueprint for one or more containers — image, CPU, memory, port mappings, environment variables) and Services (how many copies of the task to run, how to load balance them). ECS runs on two launch types. EC2 launch type: containers run on EC2 instances you manage — more control, more responsibility. Fargate launch type: AWS manages the underlying compute — you specify only the CPU and memory your container needs and Fargate runs it on infrastructure invisible to you. Fargate is the default choice for new ECS workloads: no EC2 instance management, no cluster capacity planning, pay only for what your containers use.
+
+__LI__ Task Definition: the Docker Compose equivalent — image, CPU/memory, env vars, volumes
+__LI__ Service: desired count of tasks, load balancer integration, auto-scaling policy
+__LI__ Fargate: serverless containers — no EC2 to manage, pay per vCPU/memory per second
+__LI__ ECS + ECR: push container images to ECR (Elastic Container Registry), deploy via ECS
+
+__SUB__ EKS — Elastic Kubernetes Service
+EKS is AWS's managed Kubernetes service. AWS manages the Kubernetes control plane (the API server, etcd, the scheduler) — you manage the worker nodes (EC2 instances or Fargate pods). EKS is the right choice when you need full Kubernetes compatibility — for teams already experienced with Kubernetes, for multi-cloud portability, or for workloads that rely on specific Kubernetes APIs or ecosystem tools (Helm, Argo CD, Istio, Prometheus). For teams starting fresh, ECS with Fargate is simpler to operate and sufficient for most use cases. The full Kubernetes API surface is powerful but comes with significant operational complexity — control plane upgrades, node group management, networking plugins, RBAC configuration.` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Storage Services`,
+    topics: [
+    { title: `S3 — Simple Storage Service`, content: `__H__ S3 — Simple Storage Service
+
+S3 is one of AWS's oldest and most fundamental services — object storage at virtually unlimited scale. S3 stores data as objects inside buckets. An object consists of the data itself (up to 5 TB per object), a key (the object's name within the bucket), and metadata (key-value pairs). S3 is not a file system — there is no directory hierarchy, only a flat key namespace that can simulate folder structure with key prefixes.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — network file share analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In a Windows environment you'd use a UNC share (<code style="background:#fef3c7;padding:1px 4px;border-radius:3px;font-size:12px">\\fileserver\shared\reports\</code>) or SharePoint to store files. S3 is the cloud equivalent — but instead of a UNC path, each file (called an <b>object</b>) gets a URL: <code style="background:#fef3c7;padding:1px 4px;border-radius:3px;font-size:12px">https://my-bucket.s3.amazonaws.com/reports/Q1-2026.pdf</code>. Key differences: S3 scales to <b>unlimited capacity automatically</b> (no need to expand disk space), your data is replicated across 3 Availability Zones giving 11 nines of durability (far more resilient than any single file server), and it is accessible from anywhere on the internet with credentials — not just from inside the office network. You pay only for what you store, with no upfront capacity commitment.</div></div>
+
+__SUB__ S3 Storage Classes — Choosing the Right Tier
+S3 offers multiple storage classes that differ in durability, availability, retrieval time, and cost. S3 Standard is the default — 99.999999999% (11 nines) durability, 99.99% availability, millisecond access, and the highest per-GB cost. S3 Standard-IA (Infrequent Access) is for data accessed less than once a month — lower storage cost but retrieval fees apply. S3 One Zone-IA stores data in a single AZ — lower cost but no protection against AZ failure. S3 Glacier Instant Retrieval is for archives accessed once a quarter with millisecond retrieval. S3 Glacier Flexible Retrieval offers the lowest archive cost with retrieval times of minutes to 12 hours. S3 Intelligent-Tiering automatically moves objects between tiers based on access patterns — ideal when access patterns are unpredictable.
+
+__LI__ S3 Standard: active data, frequent access — highest cost, lowest latency
+__LI__ S3 Standard-IA: monthly access — 40% cheaper storage, retrieval fee per GB
+__LI__ S3 Glacier Instant: quarterly access — 68% cheaper than Standard, still millisecond retrieval
+__LI__ S3 Glacier Flexible: compliance archives — 90%+ cheaper, minutes-to-hours retrieval
+__LI__ S3 Intelligent-Tiering: unknown patterns — auto-moves between tiers, no retrieval fees
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fff7ed;border-radius:12px;border:1px solid #fed7aa"><div style="font-size:11px;font-weight:700;color:#9a3412;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">S3 Key Features for Production Use</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px"><div style="background:white;padding:12px;border-radius:8px;border:1px solid #fed7aa"><div style="font-weight:700;color:#EA580C;margin-bottom:6px">🔒 Security</div><div style="color:#374151;line-height:1.6">Block all public access by default. Use bucket policies for cross-account access. Enable SSE-S3 or SSE-KMS encryption. Enable S3 Object Lock for WORM compliance.</div></div><div style="background:white;padding:12px;border-radius:8px;border:1px solid #fed7aa"><div style="font-weight:700;color:#EA580C;margin-bottom:6px">📋 Versioning</div><div style="color:#374151;line-height:1.6">Enable versioning on critical buckets. Every overwrite creates a new version — recover from accidental deletes. Lifecycle rules auto-delete old versions after N days.</div></div><div style="background:white;padding:12px;border-radius:8px;border:1px solid #fed7aa"><div style="font-weight:700;color:#EA580C;margin-bottom:6px">🌐 Static Website</div><div style="color:#374151;line-height:1.6">S3 can serve a static website (HTML/CSS/JS) without a server. Combine with CloudFront for HTTPS, custom domain, and global CDN caching.</div></div><div style="background:white;padding:12px;border-radius:8px;border:1px solid #fed7aa"><div style="font-weight:700;color:#EA580C;margin-bottom:6px">⚡ Event Triggers</div><div style="color:#374151;line-height:1.6">S3 Event Notifications: trigger Lambda, SQS, or SNS on object PUT/DELETE. Pattern: upload image → Lambda resizes → store thumbnail.</div></div></div></div>
+
+__SUB__ S3 Security — Bucket Policies, ACLs & Presigned URLs
+S3 security has several layers. Block Public Access is an account-level and bucket-level setting that prevents any policy from making objects publicly readable — enable this by default on all buckets. Bucket policies are resource-based IAM policies that define who can access the bucket and objects — used for cross-account access and public static website access. ACLs (Access Control Lists) are the legacy permission mechanism — AWS now recommends disabling ACLs and using bucket policies instead. Presigned URLs are time-limited, cryptographically signed URLs that grant temporary access to a specific object without any credentials — ideal for letting a user download their own file without making the bucket public, or for letting an unauthenticated client upload directly to S3 (presigned PUT URL), bypassing your application server.
+
+__LI__ Block Public Access: enable on every bucket by default — can always be selectively relaxed
+__LI__ Bucket Policy: JSON IAM policy attached to bucket — cross-account, public static site, VPC endpoint
+__LI__ Presigned URL: time-limited signed URL for specific object — download without making bucket public
+__LI__ S3 Object Lock: WORM (Write Once Read Many) — prevent deletion for compliance periods` },
+    { title: `EBS, EFS & Elastic Block Storage`, content: `__H__ EBS, EFS & Elastic Block Storage
+
+S3 is object storage — for files, backups, and static assets. Compute needs block storage (like a hard drive attached to a server) and shared file storage. AWS provides these through EBS and EFS.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — hard drive / network share analogy</div><div style="font-size:13px;color:#374151;line-height:1.8"><b>EBS = the C:\ drive of your EC2 instance.</b> When you provision an EC2 instance, it gets a root EBS volume — that is where Windows Server or Linux is installed, just like a physical server's boot drive. Stop the EC2 instance (shut down the PC) — the EBS volume retains all data. Terminate the instance (decommission the machine) — the root volume is deleted by default, but you can detach it first and re-attach it to a new instance, exactly like pulling a hard drive from one PC and plugging it into another. EBS Snapshots are equivalent to Windows VSS (Volume Shadow Copy) — point-in-time backups you can restore from at any time. <b>EFS = a shared network drive</b> (like <code style="background:#fef3c7;padding:1px 4px;border-radius:3px;font-size:12px">\\fileserver\shared</code>) that multiple EC2 instances can mount simultaneously — useful when multiple app servers need to read and write the same files.</div></div>
+
+__SUB__ EBS — Elastic Block Store
+EBS provides persistent block storage volumes that attach to EC2 instances. Think of an EBS volume as a virtual hard drive — your EC2 instance sees it as a disk device and can format it with any file system. EBS volumes persist independently of the EC2 instance: if you stop or terminate the instance, the data remains. EBS comes in several types. gp3 (General Purpose SSD) is the default for most workloads — 3,000 IOPS baseline, up to 16,000 IOPS, cost-effective. io2 Block Express is high-performance SSD for mission-critical databases requiring >64,000 IOPS. st1 (Throughput Optimised HDD) is for big data and data warehouses that need sequential throughput. sc1 (Cold HDD) is the lowest cost option for infrequently accessed data. EBS volumes are locked to a single AZ — they cannot be directly shared across AZs.
+
+__LI__ gp3: default — 3,000 IOPS baseline, up to 16,000 IOPS, cheaper than gp2
+__LI__ io2: mission-critical DB — up to 256,000 IOPS, 99.999% durability
+__LI__ EBS Multi-Attach: io2 only — attach to up to 16 Nitro EC2 instances in same AZ
+__LI__ EBS Snapshots: point-in-time backups stored in S3 — restore to new volume in any AZ
+
+__SUB__ EFS — Elastic File System
+EFS provides managed NFS (Network File System) storage — a shared file system that multiple EC2 instances can mount simultaneously, even across multiple AZs. This solves the shared storage problem: if your application needs multiple servers to read and write the same files (user uploads, shared config, CMS content), EFS provides a POSIX-compliant file system accessible from any EC2 instance in the VPC. EFS scales automatically — there is no capacity to provision. You pay for the storage you use. EFS is appropriate when multiple EC2 instances need shared file access; for single-instance workloads, EBS is simpler and faster. EFS Infrequent Access tier automatically moves files not accessed for 30 days to a lower-cost tier.
+
+__LI__ EFS vs EBS: EFS = shared multi-instance NFS; EBS = single-instance block device
+__LI__ Multi-AZ by default: EFS data is distributed across AZs automatically
+__LI__ Performance modes: General Purpose (latency-sensitive) vs Max I/O (parallel heavy workloads)
+__LI__ EFS Access Points: POSIX-compliant access control — different apps see different root paths` }
+    ]
+  },
+  {
+    id: 4,
+    name: `Database Services`,
+    topics: [
+    { title: `RDS & Aurora — Managed Relational Databases`, content: `__H__ RDS & Aurora — Managed Relational Databases
+
+Amazon RDS (Relational Database Service) is a managed relational database service that automates the operational tasks of running a relational database — provisioning, patching, backups, failover — so you can focus on your schema and queries, not infrastructure.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — SQL Server on Windows analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In a traditional on-premises setup, your DBA team would provision a Windows Server, install SQL Server or Oracle, configure AlwaysOn Availability Groups for automatic failover, set up a backup schedule, monitor disk space, and apply SQL Server service packs every quarter — all manual. With RDS, <b>AWS handles every one of those tasks</b>. You get a connection endpoint (hostname + port), and you connect with SQL Server Management Studio, DBeaver, or any SQL client exactly as you would connect to an on-prem database. The difference: when you need failover (primary DB fails), RDS Multi-AZ promotes the standby automatically in under 2 minutes and updates the DNS endpoint — <b>your application reconnects to the same hostname</b> and continues. No DBA phone call at 3am, no manual promotion, no downtime announcement.</div></div>
+
+__SUB__ RDS Engine Choices & Multi-AZ Deployment
+RDS supports six database engines: MySQL, PostgreSQL, MariaDB, Oracle, Microsoft SQL Server, and Amazon Aurora. For new workloads, the choice is almost always Aurora or PostgreSQL-on-RDS. RDS Multi-AZ creates a synchronous standby replica in a different AZ — if the primary instance fails, RDS automatically fails over to the standby with typically less than 2 minutes of downtime. DNS is updated to point to the standby; your application reconnects and continues. Multi-AZ is not a read scaling solution — the standby is not accessible for reads; it exists solely for failover. For read scaling, use RDS Read Replicas: asynchronous copies of the primary that handle read traffic, reducing load on the primary.
+
+__LI__ Multi-AZ: synchronous standby in different AZ — automatic failover <2 min, same endpoint
+__LI__ Read Replica: asynchronous copy — scale read traffic, must use separate endpoint
+__LI__ RDS Proxy: connection pooling — solves Lambda's connection exhaustion problem
+__LI__ Automated backups: 1–35 day retention, point-in-time restore to any second in the window
+
+__SUB__ Amazon Aurora — AWS's Re-Engineered Relational Database
+Aurora is AWS's proprietary relational database engine, compatible with both MySQL and PostgreSQL but built on a distributed storage architecture that provides 5x the throughput of MySQL on the same hardware. Aurora's storage is decoupled from compute — a shared, distributed volume that automatically grows in 10 GB increments up to 128 TB, replicated 6 ways across 3 AZs. Aurora Serverless v2 automatically scales compute capacity from 0.5 ACUs to 128 ACUs in seconds, making it ideal for workloads with variable or unpredictable traffic. Aurora Global Database spans multiple AWS regions for disaster recovery with <1 second cross-region replication lag.
+
+__LI__ Aurora: MySQL/PostgreSQL compatible, 5x performance — choose over standard RDS for most new workloads
+__LI__ Aurora Serverless v2: auto-scales compute in seconds — variable traffic, dev/test, multi-tenant
+__LI__ Aurora Global: multi-region — primary + up to 5 read-only secondary regions, <1s replication
+__LI__ Aurora Parallel Query: accelerate analytical queries on the same operational database` },
+    { title: `DynamoDB — NoSQL at Massive Scale`, content: `__H__ DynamoDB — NoSQL at Massive Scale
+
+Amazon DynamoDB is a fully managed NoSQL key-value and document database built for single-digit millisecond performance at any scale. DynamoDB is the database powering some of the highest-traffic applications in the world — Amazon's shopping cart, Prime Day flash sales, gaming leaderboards.
+
+__SUB__ DynamoDB Data Model — Tables, Items, Keys & Indexes
+DynamoDB organises data into Tables containing Items (analogous to rows) which have Attributes (analogous to columns). Every item must have a primary key — either a partition key alone (simple primary key) or a partition key plus a sort key (composite primary key). The partition key determines which physical partition stores the item — choose a high-cardinality partition key to distribute data evenly and avoid hot partitions. Global Secondary Indexes (GSIs) allow you to query the table using a different partition key and sort key than the primary key — enabling multiple access patterns on the same table. Local Secondary Indexes (LSIs) share the primary partition key but use a different sort key.
+
+__LI__ Partition key: choose high cardinality (user_id, order_id) — avoid hot partitions (status, country)
+__LI__ Composite key: partition key + sort key — enables range queries: get all orders for user X after date Y
+__LI__ GSI: alternate key for queries — essential for access patterns beyond the primary key
+__LI__ DynamoDB max item size: 400 KB — store large binary data in S3, reference the key in DynamoDB
+
+__SUB__ DynamoDB Capacity, DAX & Streams
+DynamoDB offers two capacity modes. Provisioned mode: you specify read and write capacity units (RCUs and WCUs) — predictable traffic, lower cost, auto-scaling can adjust. On-demand mode: DynamoDB scales automatically to handle any request volume — no capacity planning, higher per-request cost, ideal for unpredictable spikes. DynamoDB Accelerator (DAX) is a fully managed in-memory cache for DynamoDB — microsecond read latency for cached data, with a simple API-compatible interface (no code changes needed). DynamoDB Streams records every change to a DynamoDB table (in order) and makes it available to Lambda functions — enabling event-driven architectures where database changes trigger downstream processing.
+
+__LI__ On-demand: auto-scale to millions of RPS instantly — no capacity planning, pay per request
+__LI__ Provisioned + auto-scaling: 20-40% cheaper for predictable traffic
+__LI__ DAX: microsecond reads for hot items — transparent cache, same API as DynamoDB
+__LI__ DynamoDB Streams: ordered changelog → Lambda → fan-out to other services` },
+    { title: `Redshift, ElastiCache & Purpose-Built Databases`, content: `__H__ Redshift, ElastiCache & Purpose-Built Databases
+
+AWS offers a wide portfolio of purpose-built databases, each optimised for a specific data model and access pattern. Using the right database for each use case is a key principle of the AWS Well-Architected Framework.
+
+__SUB__ Amazon Redshift — Cloud Data Warehousing
+Redshift is AWS's managed data warehouse — a columnar, massively parallel processing (MPP) database optimised for analytical queries over large datasets. Where RDS and Aurora are optimised for transactional OLTP workloads (many small, fast read/write operations), Redshift is optimised for OLAP (online analytical processing) — complex queries that aggregate millions of rows. Redshift stores data in columnar format (all values of a column stored together) rather than row format — this allows analytical queries that only need a few columns to skip the rest, dramatically reducing I/O. Redshift Serverless automatically scales computing capacity for your queries. Redshift Spectrum queries data directly in S3 without loading it — enabling queries across your S3 data lake.
+
+__LI__ OLAP: aggregate queries across millions of rows — monthly revenue by product, cohort analysis
+__LI__ Columnar storage: read only the columns your query needs — 10x+ I/O reduction for analytics
+__LI__ Redshift Serverless: no cluster to manage — scale compute for queries automatically
+__LI__ Spectrum: query S3 directly from Redshift — data lake + warehouse in one SQL interface
+
+__SUB__ ElastiCache — In-Memory Caching with Redis
+ElastiCache is AWS's managed in-memory caching service, available in two engines: Redis and Memcached. Redis is the standard choice — it supports rich data structures (lists, sorted sets, hash maps), optional persistence, pub/sub messaging, and atomic operations. Memcached is simpler and scales horizontally more easily but has no persistence. ElastiCache Redis sits between your application and your database — caching results that are expensive to compute or query repeatedly. Session storage, leaderboards, rate limiting counters, and hot database query results are the canonical use cases. A well-placed Redis cache can reduce database load by 80-90% for read-heavy workloads, dropping response times from 20-50ms (database query) to under 1ms.
+
+__RAW__ <div style="margin:1rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — RAM vs hard drive analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">Think of your database as the <b>hard drive</b> of your application — large capacity, durable, but relatively slow (10-50ms per query). ElastiCache is the <b>RAM</b> — tiny in comparison, volatile, but orders of magnitude faster (sub-millisecond reads). When a user loads a product listing page, your application queries the database for 200 products — that takes 30ms. With ElastiCache, the first request queries the database and stores the result in Redis. The <b>next 10,000 requests</b> get the same product list from Redis in 0.5ms, without touching the database at all. When a product is updated, your application invalidates or refreshes the Redis entry — ensuring the cache stays accurate. This is called the <b>Cache-Aside pattern</b>, the most common caching strategy in web applications.</div></div>
+
+__LI__ Cache-Aside: app checks Redis first → if miss, query DB → write result to Redis → serve
+__LI__ TTL (Time to Live): auto-expire cache entries after N seconds — prevent stale data
+__LI__ Redis Cluster: horizontally shard data across multiple nodes — scale to terabytes in memory
+__LI__ Session store: user session data in Redis — stateless EC2 instances, any server serves any user
+__LI__ Rate limiting: atomic INCR command counts requests per minute per IP — trivial in Redis
+
+__SUB__ DocumentDB, Neptune & Specialty Databases
+AWS offers a wide range of purpose-built databases for specific data models. Amazon DocumentDB is MongoDB-compatible — stores JSON documents with flexible schema, full text search, and horizontal scaling. Neptune is AWS's graph database — ideal for social networks, fraud detection, and knowledge graphs (nodes and edges, not rows and columns). Timestream is a managed time-series database optimised for IoT sensor data and application metrics — ingesting billions of data points efficiently and offering built-in time-series interpolation functions. QLDB (Quantum Ledger Database) is an immutable, cryptographically verifiable ledger — every transaction is permanently recorded and cannot be altered, ideal for financial audit trails and regulatory compliance.
+
+__LI__ DocumentDB: MongoDB-compatible — flexible schema, JSON documents, no rigid table structure
+__LI__ Neptune: graph — social networks, fraud detection, recommendation engines
+__LI__ Timestream: IoT and metrics — billions of time-series data points efficiently
+__LI__ QLDB: immutable audit ledger — financial transactions, compliance, tamper-proof history` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Networking`,
+    topics: [
+    { title: `VPC — Virtual Private Cloud Architecture`, content: `__H__ VPC — Virtual Private Cloud Architecture
+
+A VPC (Virtual Private Cloud) is your own isolated section of the AWS cloud — a logically isolated network that you define and control. Every resource you create in AWS (EC2 instances, RDS databases, Lambda functions in VPC mode) lives inside a VPC. Understanding VPC architecture is the foundation of AWS security and networking.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — office LAN / firewall analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">Think of a VPC exactly like your <b>company's private office network</b>. In a physical office, servers sit on a private LAN (192.168.x.x) completely invisible to the internet. External users can't reach them directly — they go through a firewall or DMZ server. A VPC mirrors this structure in the cloud. Your EC2 app servers and RDS databases live in <b>private subnets</b> — no internet-facing IP, unreachable from outside. The <b>Application Load Balancer sits in a public subnet</b> — like the DMZ — it accepts HTTPS from the internet and forwards requests inward to the private servers. The <b>NAT Gateway</b> is like the office router: it lets private servers initiate outbound connections (to download updates, call external APIs) without accepting unsolicited inbound traffic. Security Groups are like the Windows Firewall on each server — allowing only the ports your application actually uses.</div></div>
+
+__SUB__ Subnets, Route Tables & the Internet Gateway
+A VPC spans all AZs in a region and is divided into subnets — each subnet lives in a single AZ. Public subnets have a route to the internet via an Internet Gateway (IGW) — resources in a public subnet (like a load balancer) can be reached from the internet. Private subnets have no direct route to the internet — resources in private subnets (your EC2 app servers, RDS databases) cannot be reached directly from the internet. Private subnets use a NAT Gateway (Network Address Translation) in the public subnet to initiate outbound internet connections (software updates, API calls to external services) without accepting inbound connections. This layered architecture — public subnet for internet-facing load balancers, private subnet for application servers and databases — is the standard AWS security architecture.
+
+__LI__ Public subnet: has route 0.0.0.0/0 → Internet Gateway — internet-accessible
+__LI__ Private subnet: no direct internet route — protected from inbound internet traffic
+__LI__ NAT Gateway: in public subnet, allows private subnet resources to reach internet outbound only
+__LI__ Route table: controls routing — each subnet associated with one route table
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.5rem;background:#fff7ed;border-radius:12px;border:1px solid #fed7aa;overflow-x:auto"><div style="font-size:11px;font-weight:700;color:#9a3412;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">Standard 3-Tier VPC Architecture</div><div style="min-width:580px"><div style="background:#1e293b;border-radius:10px;padding:14px;position:relative"><div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:.1em;margin-bottom:10px">VPC — 10.0.0.0/16 (ap-southeast-1)</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px"><div style="background:#064e3b;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#6ee7b7;margin-bottom:6px">PUBLIC SUBNETS</div><div style="font-size:11px;color:#a7f3d0">AZ-1a: 10.0.1.0/24</div><div style="font-size:11px;color:#a7f3d0">AZ-1b: 10.0.2.0/24</div><div style="font-size:11px;color:#a7f3d0">AZ-1c: 10.0.3.0/24</div><div style="margin-top:8px;font-size:10px;color:#6ee7b7">ALB · NAT Gateway · Bastion</div></div><div style="background:#1e3a5f;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#93c5fd;margin-bottom:6px">PRIVATE SUBNETS</div><div style="font-size:11px;color:#bfdbfe">AZ-1a: 10.0.11.0/24</div><div style="font-size:11px;color:#bfdbfe">AZ-1b: 10.0.12.0/24</div><div style="font-size:11px;color:#bfdbfe">AZ-1c: 10.0.13.0/24</div><div style="margin-top:8px;font-size:10px;color:#93c5fd">EC2 App Servers · ECS Tasks</div></div><div style="background:#3b1212;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#fca5a5;margin-bottom:6px">DB SUBNETS</div><div style="font-size:11px;color:#fecaca">AZ-1a: 10.0.21.0/24</div><div style="font-size:11px;color:#fecaca">AZ-1b: 10.0.22.0/24</div><div style="font-size:11px;color:#fecaca">AZ-1c: 10.0.23.0/24</div><div style="margin-top:8px;font-size:10px;color:#fca5a5">RDS Aurora · ElastiCache</div></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#64748b;padding:0 4px"><div>↑ Internet Gateway → ALB (public)</div><div>NAT Gateway → internet (outbound only)</div><div>Security Groups on all layers</div></div></div></div></div>
+
+__SUB__ Security Groups & NACLs
+Security Groups are stateful virtual firewalls attached to individual EC2 instances, RDS instances, and Load Balancers. Stateful means: if you allow inbound traffic on port 443, the response traffic is automatically allowed outbound — you only need to manage inbound rules. Security Groups have no Deny rules — they are allow-lists only. Network ACLs (NACLs) are stateless firewalls attached to subnets — both inbound and outbound rules must be configured explicitly, and rules are evaluated in order. NACLs are the secondary layer of network defence — use them to block specific IP ranges at the subnet level. The typical architecture: Security Groups for fine-grained instance-level control, NACLs for broad subnet-level blocking.` },
+    { title: `Load Balancing, Route 53 & CloudFront`, content: `__H__ Load Balancing, Route 53 & CloudFront
+
+Distributing traffic, resolving DNS, and delivering content globally are handled by three distinct AWS services that together form the public-facing layer of any production AWS architecture.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — hardware load balancer / DNS analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In a traditional enterprise setup, you'd use a hardware load balancer (F5 BIG-IP, Citrix NetScaler, or Windows NLB) to distribute HTTP traffic across a web farm of IIS servers. The ALB is the AWS equivalent — but fully managed and infinitely scalable. Where a hardware load balancer routes based on IP and port, the <b>ALB understands HTTP deeply</b>: it can route <code style="background:#fef3c7;font-size:12px">/api/*</code> requests to one set of EC2 instances and <code style="background:#fef3c7;font-size:12px">/admin/*</code> to another — all in the same load balancer. Health checks automatically detect an unhealthy EC2 instance (like a crashed IIS app pool) and stop sending traffic to it — <b>no manual intervention or monitoring script required</b>. Route 53 is AWS's DNS service — it's what maps <code style="background:#fef3c7;font-size:12px">app.rashadnadeer.com</code> to your ALB's address, with built-in health checks and automatic failover if the primary endpoint goes down.</div></div>
+
+__SUB__ Elastic Load Balancing — ALB, NLB & Gateway
+Elastic Load Balancing (ELB) automatically distributes incoming traffic across multiple targets (EC2 instances, containers, Lambda functions) in multiple AZs. The Application Load Balancer (ALB) operates at Layer 7 (HTTP/HTTPS) and supports content-based routing: route /api/* to the API target group, route /images/* to the image service, route requests from mobile clients to a different target group. ALB also supports WebSockets, HTTP/2, and can authenticate users with Cognito or OIDC before forwarding requests. The Network Load Balancer (NLB) operates at Layer 4 (TCP/UDP) — it handles millions of requests per second with ultra-low latency, and is used for performance-critical applications. The Gateway Load Balancer (GWLB) is used for deploying inline network security appliances (firewalls, IDS/IPS) transparently.
+
+__LI__ ALB: Layer 7, content-based routing, WebSocket, auth — standard for web apps and APIs
+__LI__ NLB: Layer 4, millions RPS, static IP, TLS pass-through — gaming, IoT, high-performance APIs
+__LI__ ALB listener rules: route /api → API target group, /admin → admin service, default → web app
+__LI__ Health checks: ALB removes unhealthy targets automatically — no manual intervention
+
+__SUB__ Route 53 — DNS & Traffic Routing Policies
+Route 53 is AWS's highly available and scalable DNS service with 100% SLA. Beyond basic DNS resolution, Route 53 provides advanced traffic routing policies. Simple routing: one record, one IP. Weighted routing: split traffic by percentage — send 10% to new version for canary testing. Latency-based routing: Route 53 routes each user to the region that provides lowest latency for them. Failover routing: primary endpoint health-checked; if it fails, traffic automatically routes to the standby. Geolocation routing: route UAE users to the UAE endpoint, EU users to the Frankfurt endpoint — for data sovereignty and localisation. Route 53 Health Checks monitor endpoints and can trigger failover or CloudWatch alarms if endpoints become unhealthy.
+
+__LI__ Weighted: 90% → v1, 10% → v2 — canary deployments, A/B testing
+__LI__ Latency-based: automatically routes to lowest-latency region — transparent to users
+__LI__ Geolocation: UAE → ap-middle-east-1, EU → eu-west-1 — data sovereignty, localisation
+__LI__ Failover: primary health-checked; secondary (static S3 page) serves if primary is down` }
+    ]
+  },
+  {
+    id: 6,
+    name: `Monitoring & DevOps on AWS`,
+    topics: [
+    { title: `CloudWatch, CloudTrail & X-Ray`, content: `__H__ CloudWatch, CloudTrail & X-Ray
+
+Observability on AWS is built on three foundational services: CloudWatch for metrics and logs, CloudTrail for API audit logging, and X-Ray for distributed tracing.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — Task Manager / Event Viewer analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In Windows, you'd use <b>Task Manager</b> for real-time CPU/memory on one machine, <b>Performance Monitor</b> to plot historical trends, and <b>Event Viewer</b> to read error logs. If you had 50 servers, you'd have to log into each one individually. CloudWatch does all three — for <b>every AWS service in your account, from one place</b>. EC2 CPU, RDS query latency, Lambda error count, ALB request rate — all automatically collected, no agent setup needed. You set <b>Alarms</b> that fire actions: send an email when RDS disk space drops below 20 GB, trigger Auto Scaling when CPU exceeds 70%, or stop a non-prod EC2 instance at 6pm to save cost. CloudTrail adds the audit layer: every API call ever made in your account — who created that S3 bucket, who deleted that security group rule, when did someone log in — all recorded with timestamp, IP address, and IAM identity.</div></div>
+
+__SUB__ Amazon CloudWatch — Metrics, Logs & Alarms
+CloudWatch is the central monitoring service for AWS — it collects and stores metrics (numerical time-series data) and logs (text event records) from AWS services and your applications. Every AWS service publishes metrics to CloudWatch automatically: EC2 publishes CPU utilisation, network in/out, disk read/write. RDS publishes database connections, query latency, free storage space. Lambda publishes invocations, duration, errors, and throttles. You can publish custom application metrics to CloudWatch from any code using the PutMetricData API. CloudWatch Alarms monitor a metric against a threshold and trigger actions: scale up an Auto Scaling group when CPU > 70%, send an SNS notification when error count exceeds 10 per minute, or stop an EC2 instance outside business hours.
+
+__LI__ Built-in metrics: EC2 CPU, network, disk · RDS connections, latency · Lambda duration, errors
+__LI__ Custom metrics: PutMetricData API — application-level metrics from any code
+__LI__ CloudWatch Alarms: threshold → SNS notification, Auto Scaling action, Lambda trigger
+__LI__ CloudWatch Logs Insights: query logs with a SQL-like language — find all 5xx errors in last hour
+
+__SUB__ AWS X-Ray — Distributed Tracing
+X-Ray provides end-to-end distributed tracing — it records the path of a request through your distributed application (API Gateway → Lambda → DynamoDB → SQS → another Lambda) and shows you where time is spent and where errors occur. Each request generates a trace containing segments (one per service touched) and subsegments (granular within each service). The X-Ray Service Map visualises your application's architecture as a graph with latency and error rate for each component. This makes it immediately obvious which service is the bottleneck or the source of errors in a complex microservices architecture. X-Ray requires the X-Ray SDK to be installed in your application and an X-Ray daemon (or Lambda layer) to collect and forward trace data.
+
+__LI__ Trace: end-to-end request journey — API Gateway → Lambda → DynamoDB → result
+__LI__ Service Map: visual architecture graph with P50/P99 latency and error % per node
+__LI__ Sampling: trace 5% of requests by default — configurable, reduces cost at high traffic
+__LI__ Annotations: custom key-value tags on traces — filter traces by customer_id, order_id` },
+    { title: `CloudFormation & Infrastructure as Code on AWS`, content: `__H__ CloudFormation & Infrastructure as Code on AWS
+
+Managing AWS infrastructure manually through the console leads to configuration drift, undocumented changes, and environments that cannot be reproduced. CloudFormation is AWS's native IaC service.
+
+__SUB__ CloudFormation — Declarative AWS Infrastructure
+CloudFormation allows you to define your entire AWS infrastructure — VPCs, subnets, security groups, EC2 instances, RDS databases, S3 buckets, IAM roles, Lambda functions — as a template in JSON or YAML. You submit the template to CloudFormation, it creates a Stack, and provisions all the resources in the correct order, handling dependencies automatically (it knows it must create the VPC before the subnet, the subnet before the EC2 instance). CloudFormation treats your infrastructure as a single unit — you can update the stack by submitting a modified template, and CloudFormation will calculate a change set (what will be added, modified, or deleted) that you can review before applying. If a stack update fails, CloudFormation automatically rolls back to the previous state.
+
+__LI__ Template: JSON or YAML — Parameters, Resources, Outputs sections
+__LI__ Stack: a collection of AWS resources managed as a single unit
+__LI__ Change Set: preview what will change before applying — review before you execute
+__LI__ Rollback: automatic rollback to previous state if any resource creation fails
+
+__SUB__ AWS CDK & CodePipeline
+The AWS CDK (Cloud Development Kit) allows you to define infrastructure using familiar programming languages — TypeScript, Python, Java, C# — instead of YAML. CDK code is synthesised into CloudFormation templates. The CDK's type system and IDE integration catch configuration errors before deployment; abstractions (Constructs) encapsulate common patterns (an ApplicationLoadBalancedFargateService construct creates ALB + ECS service + security groups + IAM roles in one line). AWS CodePipeline is a fully managed CI/CD service that orchestrates the stages of your release pipeline: source (CodeCommit, GitHub, S3) → build (CodeBuild) → test → deploy (CodeDeploy, CloudFormation, ECS). Together, CDK + CodePipeline = infrastructure and application changes deployed safely and automatically from a Git commit.
+
+__LI__ CDK: infrastructure in TypeScript/Python — type safety, IDE autocomplete, reusable constructs
+__LI__ CDK L3 constructs: ApplicationLoadBalancedFargateService = ALB + ECS + security groups in 5 lines
+__LI__ CodePipeline: source → build → test → deploy — fully managed, zero servers to manage
+__LI__ CodeBuild: managed build service — runs your tests and builds your artifacts in Docker containers` }
+    ]
+  },
+  {
+    id: 7,
+    name: `Secrets Manager & Systems Manager`,
+    topics: [
+    { title: `AWS Secrets Manager — Credentials the Right Way`, content: `__H__ AWS Secrets Manager — Credentials the Right Way
+
+AWS Secrets Manager is a fully managed service for storing, retrieving, rotating, and auditing secrets — database passwords, API keys, OAuth tokens, TLS private keys — that your applications need at runtime. It solves one of the most common and dangerous security anti-patterns in enterprise software: credentials hardcoded in application config files.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — web.config / app.config password problem</div><div style="font-size:13px;color:#374151;line-height:1.8">In a traditional Windows application, the database connection string lives in <code style="background:#fef3c7;font-size:12px">web.config</code>: <code style="background:#fef3c7;font-size:12px">connectionString="Server=mydb;Password=MyPassword123"</code>. That password is visible to every developer with source code access, ends up in version control history, and is the same value on every server. Changing it requires updating every config file across every server and restarting IIS — a manual, error-prone process usually deferred until a security incident. Secrets Manager eliminates this entirely: your application calls the Secrets Manager API at startup — <b>"give me the database password"</b> — and receives the current value. The password is never in any file, never in any repo. When the DBA rotates the password, Secrets Manager updates it <b>automatically and simultaneously</b> in both the database and the secret store, with zero application downtime.</div></div>
+
+__SUB__ How Your Application Uses Secrets Manager
+At startup, your EC2 instance or Lambda function calls the Secrets Manager API using its IAM role — no hardcoded credentials needed to authenticate, because IAM handles it. The application retrieves the secret as a JSON string: {'username': 'app_user', 'password': 'xK9#mN2pQ7'}. Your code parses the JSON and uses the values to build the database connection. IAM policies control which applications can access which secrets — your payment service's IAM role can retrieve only the payment database secret; it cannot access the user database secret or any other service's credentials. This is least-privilege credential access. All secret retrieval calls are logged in CloudTrail — you have a complete audit trail of which application retrieved which secret, at what time, from which IP.
+
+__LI__ IAM Role + Secrets Manager: no hardcoded passwords anywhere — applications authenticate via role
+__LI__ Audit trail: every GetSecretValue call logged in CloudTrail — who accessed what, when
+__LI__ Least privilege: IAM policy ensures each service can only read its own secrets
+__LI__ Cross-region replication: replicate secrets to multiple regions for disaster recovery
+
+__SUB__ Automatic Secret Rotation
+The most powerful Secrets Manager feature is automatic rotation. You configure a rotation schedule (e.g., every 30 days) and a Lambda function that performs the rotation. Secrets Manager invokes the Lambda, which generates a new password, updates the database to accept the new password while keeping the old one briefly valid during the rotation window, then updates the Secrets Manager secret value. Your applications — which always retrieve the latest secret at startup or via caching with a short TTL — pick up the new password automatically without any restart or redeployment. This means your database passwords rotate every 30 days as required by security compliance (PCI-DSS, ISO 27001, HIPAA) with zero operational overhead.
+
+__LI__ Rotation Lambda: generates new password → updates DB → updates secret — atomic, zero downtime
+__LI__ Rotation schedule: every 30/60/90 days — meets PCI-DSS, ISO 27001, HIPAA requirements
+__LI__ RDS native rotation: built-in rotation support for MySQL, PostgreSQL, Oracle — no custom Lambda needed
+__LI__ SDK caching: AWS SDK caches secrets in memory, refreshes when TTL expires — minimise API calls` },
+    { title: `AWS Systems Manager (SSM) — Fleet Management Without SSH`, content: `__H__ AWS Systems Manager (SSM) — Fleet Management Without SSH
+
+AWS Systems Manager (SSM) is a management plane for your EC2 instances and on-premises servers. It allows you to manage, patch, configure, run commands on, and troubleshoot your entire fleet of servers — without ever opening an SSH or RDP port. SSM is the operational backbone for EC2 fleets at scale.
+
+__RAW__ <div style="margin:1.5rem 0;padding:1.25rem 1.5rem;background:#fef3c7;border-radius:10px;border-left:4px solid #EA580C"><div style="font-size:11px;font-weight:700;color:#92400e;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💡 How it compares — RDP / Group Policy / SCCM analogy</div><div style="font-size:13px;color:#374151;line-height:1.8">In Windows environments, remote server management means three things: <b>RDP</b> (port 3389) to log in interactively, <b>PowerShell remoting</b> (WinRM, port 5985) to run scripts remotely, and <b>SCCM / Group Policy</b> to push patches and configuration to machines in bulk. Keeping RDP and WinRM ports open is a major security risk — they are among the most targeted attack vectors on the internet. SSM replaces all three without opening any ports. <b>Session Manager</b> = RDP without port 3389. <b>Run Command</b> = PowerShell remoting across the whole fleet. <b>Patch Manager</b> = SCCM automated patching. <b>Parameter Store</b> = Group Policy preferences / registry for application config. The SSM Agent (pre-installed on AWS AMIs) communicates outbound only over HTTPS to AWS — no inbound ports required on your security groups.</div></div>
+
+__SUB__ Session Manager — Secure Shell Access Without Open Ports
+Session Manager is the most immediately impactful SSM capability. It provides a fully audited, browser-based or CLI-based terminal session to any EC2 instance with the SSM Agent installed — without any SSH keys, without any open inbound ports, and without a bastion host. The session is authenticated via IAM: only principals with the ssm:StartSession permission can open sessions to specific instances. All session activity (every command typed, every output) is logged to CloudWatch Logs and optionally to an S3 bucket for audit purposes. This makes SSM Session Manager not just more secure than SSH, but actually more auditable — you have a complete, tamper-proof record of what happened during every remote session.
+
+__LI__ No open ports: security groups need no inbound rules — SSM Agent connects outbound to AWS
+__LI__ IAM-controlled access: ssm:StartSession permission controls who can connect to which instances
+__LI__ Full session audit log: every keystroke recorded in CloudWatch Logs and optionally S3
+__LI__ Works through NAT: instances in private subnets with no public IP — fully supported via VPC endpoint
+
+__SUB__ Run Command, Patch Manager & Parameter Store
+SSM Run Command executes scripts across your EC2 fleet simultaneously. Run a bash or PowerShell script on 1 or 1,000 instances in parallel — results are captured centrally in CloudWatch Logs. Use cases: deploy an application configuration update across all app servers at once, restart a service on every instance matching a tag, collect system inventory data from the fleet. SSM Patch Manager automates OS patching on a schedule. Define a Patch Baseline (which security patches to apply, which to exclude), a Maintenance Window (Sunday 2am–4am), and target instances by tag (Environment=Production). Patch Manager applies the approved patches, reboots instances if required, and reports compliance — which instances are fully patched, which are missing patches. SSM Parameter Store provides a centralised, version-controlled, IAM-controlled configuration store for non-secret application values: database hostnames, feature flag settings, API endpoints, environment-specific config. Unlike Secrets Manager, Parameter Store Standard tier is free — ideal for config that doesn't need rotation.
+
+__LI__ Run Command: run bash/PowerShell across all tagged instances — no SSH keys, results in CloudWatch
+__LI__ Patch Manager: define baseline + maintenance window → auto-patch fleet → compliance report
+__LI__ Parameter Store: centralised config store — /myapp/prod/db_host, /myapp/prod/feature_flags
+__LI__ Parameter Store vs Secrets Manager: use Parameter Store for non-sensitive config (free), Secrets Manager for passwords (paid, with rotation)` }
+    ]
+  },
+  {
+    id: 8,
+    name: `Well-Architected Framework`,
+    topics: [
+    { title: `The Six Pillars — Building World-Class AWS Systems`, content: `__H__ The Six Pillars — Building World-Class AWS Systems
+
+The AWS Well-Architected Framework is a set of guiding principles developed from years of reviewing tens of thousands of customer architectures. It is organised into six pillars, each addressing a critical dimension of cloud architecture quality. Every production AWS workload should be reviewed against these pillars — either using the AWS Well-Architected Tool in the console or through a formal AWS review.
+
+__SUB__ Pillar 1 — Operational Excellence
+Operational Excellence is about running and monitoring systems to deliver business value and continually improving processes. Key principles: perform operations as code (use CloudFormation, CDK, AWS Systems Manager for all operational tasks — no manual console operations in production); make frequent, small, reversible changes (small deployments are safer, easier to debug, and easier to roll back); anticipate failure (conduct game days, run chaos engineering exercises, practice runbooks before you need them in an incident); learn from all operational events (blameless postmortems, track metrics on operational health, not just application health). The measure of Operational Excellence is time to detect, time to mitigate, and change failure rate.
+
+__LI__ Operations as code: no manual changes — CloudFormation, SSM Automation, CDK
+__LI__ Small reversible changes: feature flags, canary deployments, automated rollback
+__LI__ Runbooks: documented, tested procedures for every operational scenario
+__LI__ Postmortems: blameless, with documented action items and owners
+
+__SUB__ Pillar 2 — Security
+Security means protecting information, systems, and assets. Key principles: implement a strong identity foundation (least privilege IAM, MFA everywhere, no hardcoded credentials, use IAM roles); enable traceability (CloudTrail, Config, and GuardDuty — log everything, alert on anomalies); apply security at all layers (WAF at the edge, Security Groups at the instance, NACLs at the subnet, encryption at rest and in transit, KMS for key management); automate security best practices (use AWS Config rules and Security Hub to continuously evaluate compliance); protect data in transit and at rest (TLS everywhere, SSE-KMS for S3 and RDS, enable EBS encryption by default); prepare for security events (incident response runbooks, pre-provisioned forensic accounts).
+
+__LI__ Least privilege: every IAM entity has exactly the permissions it needs — no more
+__LI__ Encryption: S3 SSE-KMS, RDS encryption, EBS encryption, TLS for all transit
+__LI__ Detective controls: GuardDuty + CloudTrail + Security Hub — real-time threat detection
+__LI__ Incident response: tested playbooks, forensic accounts, isolation procedures` },
+    { title: `Pillars 3–6 — Reliability, Performance, Cost & Sustainability`, content: `__H__ Pillars 3–6 — Reliability, Performance, Cost & Sustainability
+
+The remaining four pillars address the operational, financial, and environmental dimensions of cloud architecture.
+
+__SUB__ Pillar 3 — Reliability
+Reliability is about ensuring workloads perform their intended function correctly and consistently. Key principles: automatically recover from failure (design for self-healing — Auto Scaling, RDS Multi-AZ, ELB health checks remove the manual recovery step); test recovery procedures (use chaos engineering, regularly restore from backups, test failover); scale horizontally (distribute load across many small resources rather than vertically scaling one large resource — horizontal scaling is more resilient and more flexible); stop guessing capacity (use Auto Scaling to provision the right amount of capacity at the right time, not the amount you fear you'll need at peak). The reliability pillar demands that you define Recovery Time Objective (RTO — how long can the system be down?) and Recovery Point Objective (RPO — how much data can be lost?) and architect to meet them.
+
+__LI__ RTO: max acceptable downtime — measure in minutes for critical workloads
+__LI__ RPO: max acceptable data loss — archive to S3 Glacier with point-in-time RDS backups
+__LI__ Multi-AZ: survive AZ failure without downtime — standard for production
+__LI__ Multi-Region: survive region failure — Global Aurora, Route 53 failover, S3 Cross-Region Replication
+
+__SUB__ Pillar 4 — Performance Efficiency
+Performance Efficiency means using computing resources efficiently and maintaining efficiency as demand changes. Key principles: democratise advanced technologies (use managed ML, analytics, and database services instead of building from scratch — SageMaker, Redshift, Neptune, instead of running your own Spark cluster); go global in minutes (deploy to multiple regions with a few CloudFormation commands — serve global users from the nearest region); use serverless architectures (Lambda, Fargate, Aurora Serverless — remove the operational burden of server management, scale elastically); experiment more often (try different instance types, storage configurations, and caching strategies — the cloud makes experimentation cheap).
+
+__LI__ ElastiCache: cache hot DB queries — reduce latency from 10ms to sub-ms, reduce DB load
+__LI__ CDN: CloudFront — cache static assets globally, reduce origin load by 90%+
+__LI__ Right-sizing: use AWS Compute Optimiser recommendations — often 40% cost reduction
+__LI__ Serverless: Lambda + DynamoDB + API Gateway — zero capacity planning, scales automatically
+
+__SUB__ Pillars 5 & 6 — Cost Optimisation & Sustainability
+Cost Optimisation means running systems to deliver business value at the lowest price point. Use the right pricing model (Savings Plans and Reserved Instances for stable baseline, Spot for batch); right-size instances (AWS Compute Optimiser analyses CloudWatch metrics and recommends smaller or more appropriate instance types); implement cloud financial management (tagging all resources for cost allocation, using AWS Cost Explorer and Budgets with alerts, reviewing Trusted Advisor recommendations monthly); turn off unused resources (shut down dev/test environments outside business hours using Instance Scheduler — an 8-hour workday saves 66% of compute cost). Sustainability means minimising the environmental impact of cloud workloads — use the most efficient instance types (Graviton/ARM instances use up to 60% less energy than equivalent x86 instances), maximise resource utilisation (avoid over-provisioned idle resources), and choose regions powered by renewable energy.
+
+__LI__ Savings Plans: commit to $/hr spend, save up to 66% vs on-demand — most flexible RI alternative
+__LI__ Spot Instances: 70-90% discount for interruptible workloads — batch processing, ML training
+__LI__ Graviton3 (ARM): 40% better price-performance than x86 — and 60% less energy
+__LI__ Cost Explorer + Budgets: visibility and alerts — eliminate surprise bills
+
+__RAW__ <div style="margin:1.5rem 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">⚙️</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Operational Excellence</div><div style="font-size:11px;color:#374151">Ops as code · Small reversible changes · Learn from failures</div></div><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">🔐</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Security</div><div style="font-size:11px;color:#374151">Least privilege · Encryption everywhere · Traceability</div></div><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">🛡️</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Reliability</div><div style="font-size:11px;color:#374151">Multi-AZ · Auto-recover · Test recovery · Scale horizontally</div></div><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">⚡</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Performance Efficiency</div><div style="font-size:11px;color:#374151">Serverless · CDN · Caching · Right instance type</div></div><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">💰</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Cost Optimisation</div><div style="font-size:11px;color:#374151">Savings Plans · Spot · Right-size · Kill idle resources</div></div><div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px"><div style="font-size:16px;margin-bottom:6px">🌱</div><div style="font-weight:800;color:#EA580C;font-size:13px;margin-bottom:4px">Sustainability</div><div style="font-size:11px;color:#374151">Graviton · Renewable regions · Maximise utilisation</div></div></div>` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#EA580C">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

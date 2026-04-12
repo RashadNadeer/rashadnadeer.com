@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Week 4 — Building a Referral Program | PM Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{navy:'#0C1220',accent:'#4F62F5',teal:'#0D9488',surface:'#EDF2F7',dark:'#111827',warm:'#FAFAF8'},fontFamily:{sans:['Inter','ui-sans-serif','system-ui','sans-serif']}}}}</script>
+    <style>
+        html{scroll-behavior:smooth}body{font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#EDF2F7}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:8px}
+        ::selection{background:rgba(79,98,245,0.18);color:inherit}
+        .day-panel{display:none}.day-panel.active{display:block}
+        .day-pill{padding:.5rem 1.25rem;border-radius:9999px;font-size:.8rem;font-weight:600;border:2px solid #e2e8f0;color:#64748b;background:#fff;cursor:pointer;transition:all .2s}
+        .day-pill:hover{border-color:#4F62F5;color:#4F62F5}
+        .day-pill.active{background:#4F62F5;border-color:#4F62F5;color:#fff}
+        .day-pill.done{background:#f0fdf4;border-color:#86efac;color:#16a34a}
+        .day-pill.done.active{background:#4F62F5;border-color:#4F62F5;color:#fff}
+        .note-block{background:#fffbeb;border-left:4px solid #f59e0b;padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:1.25rem 0}
+        .verbatim-block{background:#f8faff;border-left:4px solid #4F62F5;padding:1.25rem 1.5rem;border-radius:0 10px 10px 0;margin:1.25rem 0}
+        .task-item{display:flex;align-items:flex-start;gap:.75rem;padding:1rem 1.25rem;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:.75rem}
+        .resource-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;margin-bottom:.75rem;transition:border-color .2s,box-shadow .2s}
+        .resource-card:hover{border-color:#4F62F5;box-shadow:0 4px 16px -4px rgba(79,98,245,.12)}
+        .content-body h2{font-size:1.4rem;font-weight:800;color:#0C1220;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #EDF2F7}
+        .content-body h3{font-size:1.05rem;font-weight:700;color:#1e293b;margin-top:1.5rem;margin-bottom:.5rem}
+        .content-body p{font-size:.95rem;line-height:1.85;color:#374151;margin-bottom:1rem}
+        .content-body ul{list-style:disc;padding-left:1.5rem;margin-bottom:1rem}
+        .content-body ol{list-style:decimal;padding-left:1.5rem;margin-bottom:1rem}
+        .content-body li{font-size:.95rem;line-height:1.8;color:#374151;margin-bottom:.35rem}
+        .content-body strong{color:#0C1220;font-weight:700}
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <meta name="description" content="PM Learning Week 4 — product metrics, north star, OKRs, and execution excellence." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/pm-w4.html" />
+</head>
+<body class="bg-warm text-dark">
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="index.html" class="text-gray-200 font-bold text-xl tracking-tight">Mohammad Rashad Nadeer Kutty</a>
+        <div class="flex items-center gap-6">
+            <a href="learn.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5"><i class="fas fa-arrow-left text-xs"></i> Learning Hub</a>
+            <a href="learn.html" class="bg-accent text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">PM Module</a>
+        </div>
+    </div>
+</nav>
+
+<div class="pt-20 pb-0 bg-navy border-b border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 py-3 flex items-center gap-2 text-xs text-gray-500">
+        <a href="learn.html" class="hover:text-gray-300 transition-colors">Learning Hub</a>
+        <i class="fas fa-chevron-right text-[9px]"></i>
+        <a href="learn.html" class="hover:text-gray-300 transition-colors">Product Management</a>
+        <i class="fas fa-chevron-right text-[9px]"></i>
+        <span class="text-accent font-semibold">Week 4</span>
+    </div>
+</div>
+
+<div class="bg-navy pb-8">
+    <div class="max-w-[1400px] mx-auto px-10 pt-8">
+        <div class="flex flex-wrap items-start justify-between gap-6 mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="inline-flex items-center gap-1.5 bg-accent/20 text-accent text-xs font-bold px-3 py-1 rounded-full">Week 4 of 7</span>
+                    <span class="inline-flex items-center gap-1.5 bg-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full"><i class="fas fa-check text-[10px]"></i> Completed</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight">Building a Referral Program</h1>
+                <p class="text-gray-400 text-sm max-w-xl">In this assignment, you will develop a referral program strategy aimed at growth and reducing customer acquisition costs (CAC).</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="pm-w3.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 text-sm rounded-lg transition-colors flex items-center gap-2"><i class="fas fa-arrow-left text-xs"></i> Week 3</a>
+                <a href="pm-w5.html" class="px-4 py-2 bg-accent hover:bg-indigo-500 text-white text-sm rounded-lg transition-colors flex items-center gap-2">Week 5 <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2" id="day-pills">
+            <button onclick="showDay(1)" id="pill-1" class="day-pill done active"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 1</button>
+            <button onclick="showDay(2)" id="pill-2" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 2</button>
+            <button onclick="showDay(3)" id="pill-3" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 3</button>
+            <button onclick="showDay(4)" id="pill-4" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 4</button>
+            <button onclick="showDay(5)" id="pill-5" class="day-pill done"><i class="fas fa-check-circle mr-1.5 text-[11px]"></i>Day 5</button>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-[1400px] mx-auto px-10 py-10">
+    <div class="grid lg:grid-cols-4 gap-8">
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">This Week</div>
+                    <div class="font-bold text-navy text-sm mb-1">Product Growth</div>
+                    <div class="text-gray-500 text-xs">Self-Study Topic</div>
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Assignment</div>
+                        <div class="font-semibold text-navy text-xs">Disney+ — Referral Program Strategy</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Resources</div>
+                    <div class="space-y-2">
+                        <a href="https://www.lennysnewsletter.com/p/this-week-16-building-a-referrals" target="_blank" class="flex items-start gap-2 text-xs text-gray-600 hover:text-accent transition-colors">
+                            <i class="fas fa-external-link-alt text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>
+                            Lenny's Newsletter — Building Referrals
+                        </a>
+                        <a href="https://andrewchen.com/how-to-design-a-referral-program/" target="_blank" class="flex items-start gap-2 text-xs text-gray-600 hover:text-accent transition-colors">
+                            <i class="fas fa-external-link-alt text-accent mt-0.5 flex-shrink-0 text-[10px]"></i>
+                            Andrew Chen — How to Design a Referral Program
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Day Progress</div>
+                    <div class="space-y-1.5" id="day-progress">
+                        <div onclick="showDay(1)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-1">
+                            <i class="fas fa-check-circle text-green-500 text-[11px]"></i>
+                            <span class="text-gray-600">Day 1 — Company Background</span>
+                        </div>
+                        <div onclick="showDay(2)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-2">
+                            <i class="fas fa-check-circle text-green-500 text-[11px]"></i>
+                            <span class="text-gray-600">Day 2 — Referral Program Design</span>
+                        </div>
+                        <div onclick="showDay(3)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-3">
+                            <i class="fas fa-check-circle text-green-500 text-[11px]"></i>
+                            <span class="text-gray-600">Day 3 — Growth Loops and Segments</span>
+                        </div>
+                        <div onclick="showDay(4)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-4">
+                            <i class="fas fa-check-circle text-green-500 text-[11px]"></i>
+                            <span class="text-gray-600">Day 4 — Build the Strategy Doc</span>
+                        </div>
+                        <div onclick="showDay(5)" class="flex items-center gap-2 text-xs cursor-pointer rounded-lg px-2 py-1.5 hover:bg-surface transition-colors" id="prog-5">
+                            <i class="fas fa-check-circle text-green-500 text-[11px]"></i>
+                            <span class="text-gray-600">Day 5 — Finalise + Submit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="lg:col-span-3">
+
+            <!-- ═══════════════ DAY 1 ═══════════════ -->
+            <div id="day-1" class="day-panel active">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 1 — Monday</div>
+                            <h2 class="text-xl font-extrabold text-navy">Company Background and Scenario</h2>
+                        </div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+
+                        <div class="note-block">
+                            <p class="text-sm text-amber-800 font-medium m-0">Start by reading the full assignment. Understand the company, the problem, and what is being asked before anything else.</p>
+                        </div>
+
+                        <h2>Assignment Overview</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <div class="grid sm:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <div class="text-xs font-semibold text-gray-400 mb-1">Status</div>
+                                    <div class="font-semibold text-navy">Completed</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-semibold text-gray-400 mb-1">Week</div>
+                                    <div class="font-semibold text-navy">Week 4</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-indigo-100">
+                                <div class="text-xs font-semibold text-gray-400 mb-1">Description</div>
+                                <p class="text-sm text-gray-700 m-0">In this assignment, you will develop a referral program strategy aimed at growth and reducing customer acquisition costs (CAC).</p>
+                            </div>
+                        </div>
+
+                        <h2>Company Background</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">Disney+ is a popular over-the-top (OTT) streaming platform that offers a vast library of movies, TV shows, and original content.</p>
+                        </div>
+
+                        <h2>Scenario</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">While Disney+ has a strong user base, they have recently noticed a slowdown in user acquisition rates and higher-than-expected customer acquisition costs.</p>
+                            <p class="text-gray-800 mt-3 m-0">The company recognises the potential of word-of-mouth marketing and the power of referrals in driving user acquisition, growth, and reducing customer acquisition costs.</p>
+                            <p class="text-gray-800 mt-3 m-0">They believe that by tapping into their existing user base and incentivising them to refer the platform to their social circles, they can effectively acquire new users at a lower cost compared to traditional marketing channels.</p>
+                        </div>
+
+                        <h2>Problem Statement</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 font-semibold m-0">How can Disney+ design and implement an effective referral program that incentivises existing users to invite others to join the platform?</p>
+                        </div>
+
+                        <h2>What You Need to Produce</h2>
+                        <div class="space-y-3 mt-4">
+                            <div class="task-item">
+                                <div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-accent text-xs font-bold">1</span></div>
+                                <div>
+                                    <div class="font-semibold text-navy text-sm">Referral Program Strategy Document</div>
+                                    <p class="text-gray-500 text-xs mt-0.5 m-0">A comprehensive strategy covering incentive structure, mechanics, user segments, and success metrics.</p>
+                                </div>
+                            </div>
+                            <div class="task-item">
+                                <div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-accent text-xs font-bold">2</span></div>
+                                <div>
+                                    <div class="font-semibold text-navy text-sm">4 Key Components</div>
+                                    <p class="text-gray-500 text-xs mt-0.5 m-0">Incentive structure, program mechanics, user segment analysis, and key metrics — all addressed in your document.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button onclick="showDay(2)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 2 — Referral Program Design <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- ═══════════════ DAY 2 ═══════════════ -->
+            <div id="day-2" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 2 — Tuesday</div>
+                            <h2 class="text-xl font-extrabold text-navy">Study: How to Design a Referral Program</h2>
+                        </div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resource Listed in Notes</div>
+                            <a href="https://andrewchen.com/how-to-design-a-referral-program/" target="_blank" class="text-navy font-bold text-base hover:text-accent transition-colors">Andrew Chen — How to Design a Referral Program</a>
+                        </div>
+
+                        <h2>Why Referral Programs Work</h2>
+                        <p>Referral programs are one of the most cost-efficient growth mechanisms because they leverage <strong>trust</strong>. A recommendation from a friend carries more weight than any advertisement. When an existing user refers a new user, the new user arrives with higher intent to stay.</p>
+                        <p>The core logic: your existing users do the acquisition work for you, and you reward them for it — while the cost of the reward is almost always less than the cost of acquiring the same user through paid channels.</p>
+
+                        <h2>The Anatomy of a Referral Program</h2>
+                        <div class="grid md:grid-cols-2 gap-4 my-4">
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">The Referrer</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">The existing user who shares. They need a reason to share — a reward that feels worth the social effort. Incentives can be monetary (discounts, credits) or non-monetary (status, exclusive content).</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">The Referred</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">The new user who is invited. They need a reason to act on the invitation rather than ignore it. A join-incentive (like a free trial extension or discounted first month) reduces friction significantly.</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">The Mechanic</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">The sharing method — unique link, code, or direct invite. Must be frictionless. If sharing requires too many steps, most users will abandon before completing the referral.</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">The Trigger</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">When and how does the program surface to the user? After a positive interaction (just watched a great show) is far more effective than a cold prompt at signup.</p>
+                            </div>
+                        </div>
+
+                        <h2>Incentive Structures to Consider for Disney+</h2>
+                        <div class="bg-navy rounded-xl p-5 text-sm my-4 space-y-3">
+                            <div class="flex gap-4">
+                                <div class="text-accent font-bold w-36 flex-shrink-0">Free Month Credit</div>
+                                <div class="text-gray-300">Referrer gets 1 free month when referred user subscribes. Classic, easy to understand, high perceived value.</div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="text-accent font-bold w-36 flex-shrink-0">Dual-Sided</div>
+                                <div class="text-gray-300">Both referrer and referred get a reward. Increases the referred user's motivation to sign up. Higher cost but better conversion.</div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="text-accent font-bold w-36 flex-shrink-0">Exclusive Access</div>
+                                <div class="text-gray-300">Early access to new shows or exclusive content for top referrers. Non-monetary but high perceived value for Disney fans.</div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="text-accent font-bold w-36 flex-shrink-0">Tiered Rewards</div>
+                                <div class="text-gray-300">More referrals = bigger rewards. Creates ongoing motivation to keep sharing rather than stopping after the first referral.</div>
+                            </div>
+                        </div>
+
+                        <div class="note-block mt-6">
+                            <p class="text-sm text-amber-800 font-medium m-0">Today: Read the Andrew Chen article in full. Pay close attention to the sections on double-sided incentives, viral loops, and referral program mechanics. Tomorrow you will study the Lenny's Newsletter resource on building referrals alongside growth loop theory.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(1)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 1</button>
+                    <button onclick="showDay(3)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 3 — Growth Loops and Segments <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- ═══════════════ DAY 3 ═══════════════ -->
+            <div id="day-3" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 3 — Wednesday</div>
+                            <h2 class="text-xl font-extrabold text-navy">Study: Product Growth and User Segments</h2>
+                        </div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resource Listed in Notes</div>
+                            <a href="https://www.lennysnewsletter.com/p/this-week-16-building-a-referrals" target="_blank" class="text-navy font-bold text-base hover:text-accent transition-colors">Lenny's Newsletter — Building a Referrals Program</a>
+                        </div>
+
+                        <h2>Product Growth: The Big Picture</h2>
+                        <p>Product growth is about <strong>sustainable, compounding acquisition</strong>. Paid ads scale linearly — spend more, get more users, but stop spending and growth stops. Referral-driven growth is different: each new user can bring in more users, creating a compounding loop.</p>
+
+                        <h3>The Referral Growth Loop</h3>
+                        <div class="bg-navy rounded-xl p-5 text-sm my-4 space-y-2">
+                            <div class="text-white font-bold mb-2 text-center">The Referral Growth Loop</div>
+                            <div class="flex items-center justify-center gap-2 flex-wrap">
+                                <div class="bg-accent/20 text-accent rounded-lg px-3 py-2 text-xs font-semibold">Existing User</div>
+                                <i class="fas fa-arrow-right text-gray-500 text-xs"></i>
+                                <div class="bg-white/10 text-gray-200 rounded-lg px-3 py-2 text-xs">Sends Referral</div>
+                                <i class="fas fa-arrow-right text-gray-500 text-xs"></i>
+                                <div class="bg-white/10 text-gray-200 rounded-lg px-3 py-2 text-xs">New User Joins</div>
+                                <i class="fas fa-arrow-right text-gray-500 text-xs"></i>
+                                <div class="bg-white/10 text-gray-200 rounded-lg px-3 py-2 text-xs">Gets Value</div>
+                                <i class="fas fa-arrow-right text-gray-500 text-xs"></i>
+                                <div class="bg-accent/20 text-accent rounded-lg px-3 py-2 text-xs font-semibold">Becomes Referrer</div>
+                            </div>
+                        </div>
+
+                        <h2>User Segment Analysis for Disney+</h2>
+                        <p>Not all Disney+ users are equally likely to refer. Understanding segments helps you target the referral program where it will have the greatest impact.</p>
+
+                        <div class="grid md:grid-cols-2 gap-4 my-4">
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">Family Households</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">High LTV, emotionally connected to Disney content. Likely to refer to other families with children. Best referral incentive: extra screen / profile access or bundled subscription discount.</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">Young Adults (18–30)</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">Engaged with Marvel and Star Wars content. High social media activity — more likely to share via social channels. Motivated by status and exclusive content access.</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">Sports Fans (Disney+ Bundle)</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">Subscribed for ESPN access alongside Disney+. Referral potential around sports season openers. Price-sensitive — monetary incentives work best.</p>
+                            </div>
+                            <div class="resource-card">
+                                <div class="font-bold text-navy text-sm mb-2">International Markets</div>
+                                <p class="text-gray-500 text-xs leading-relaxed m-0">High growth markets (India, Southeast Asia) with strong word-of-mouth culture. Referral programs can be especially effective where paid marketing is expensive or less trusted.</p>
+                            </div>
+                        </div>
+
+                        <h2>Key Metrics for a Referral Program</h2>
+                        <ul>
+                            <li><strong>Referral Rate</strong> — percentage of existing users who send at least one referral</li>
+                            <li><strong>Conversion Rate</strong> — percentage of referred users who actually subscribe</li>
+                            <li><strong>CAC via Referral</strong> — total referral cost ÷ new subscribers acquired via referrals</li>
+                            <li><strong>K-factor</strong> — average number of new users each existing user generates (viral coefficient)</li>
+                            <li><strong>LTV of Referred Users</strong> — do referred users retain longer than non-referred users?</li>
+                        </ul>
+
+                        <div class="note-block mt-6">
+                            <p class="text-sm text-amber-800 font-medium m-0">Today: Read the Lenny's Newsletter article. Take note of real examples and what made those referral programs work or fail. Day 4 is full assignment work.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(2)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 2</button>
+                    <button onclick="showDay(4)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 4 — Build the Strategy Doc <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- ═══════════════ DAY 4 ═══════════════ -->
+            <div id="day-4" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-accent/5 border-b border-gray-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-accent mb-1">Day 4 — Thursday</div>
+                            <h2 class="text-xl font-extrabold text-navy">Assignment Work — Build the Strategy Document</h2>
+                        </div>
+                        <span class="bg-green-50 text-green-600 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Done</span>
+                    </div>
+                    <div class="p-8 content-body">
+
+                        <div class="note-block">
+                            <p class="text-sm text-amber-800 font-medium m-0">Assignment work day. Apply everything you studied on Days 2 and 3. Work through all 4 key components of the referral strategy today.</p>
+                        </div>
+
+                        <h2>Your Task — From the Notes</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 font-semibold m-0">Develop a comprehensive referral program strategy for Disney+, addressing the following key components:</p>
+                            <ol class="mt-2 space-y-2 m-0">
+                                <li class="text-gray-800">Propose an incentive structure for the referral program that motivates existing users to participate and refer new users. Consider different types of incentives and their potential impact on user behaviour and cost-effectiveness.</li>
+                                <li class="text-gray-800">Outline the mechanics of the referral program, including the referral process, tracking mechanisms, and the user experience for both the referrer and the referred user.</li>
+                                <li class="text-gray-800">Identify and analyse different user segments within Disney+'s existing user base. Discuss how the referral program can be tailored or targeted to specific segments for maximum effectiveness.</li>
+                                <li class="text-gray-800">Define key metrics to measure the success of the referral program.</li>
+                            </ol>
+                        </div>
+
+                        <h2>Guidance for Each Section</h2>
+
+                        <h3>Component 1 — Incentive Structure</h3>
+                        <p>Compare at least two incentive models (e.g., one-sided vs two-sided, monetary vs non-monetary). Justify your choice based on Disney+'s user base and business model. Consider cost per acquisition and what the reward is worth relative to a standard subscription price.</p>
+
+                        <h3>Component 2 — Mechanics</h3>
+                        <p>Map the full referral journey: How does a user get a referral link? How do they share it? What does the referred user see? How is the reward tracked and delivered? Think about edge cases: what if the link expires, or the referred user cancels before the trial period ends?</p>
+
+                        <h3>Component 3 — User Segments</h3>
+                        <p>Do not treat all Disney+ users as one group. Identify at least 2–3 distinct segments (families, young adults, sports fans, international markets) and explain which segment will be the primary target for the referral program and why.</p>
+
+                        <h3>Component 4 — Key Metrics</h3>
+                        <p>Define the metrics that will tell you whether the referral program is working. Include both leading indicators (referral rate, click-through rate on referral links) and lagging indicators (CAC reduction, K-factor, LTV of referred users).</p>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(3)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 3</button>
+                    <button onclick="showDay(5)" class="flex items-center gap-2 bg-accent hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Day 5 — Finalise + Submit <i class="fas fa-arrow-right text-xs"></i></button>
+                </div>
+            </div>
+
+            <!-- ═══════════════ DAY 5 ═══════════════ -->
+            <div id="day-5" class="day-panel">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="bg-green-50 border-b border-green-100 px-8 py-5 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-widest text-teal mb-1">Day 5 — Friday</div>
+                            <h2 class="text-xl font-extrabold text-navy">Finalise Strategy and Submit</h2>
+                        </div>
+                        <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0"><i class="fas fa-check mr-1"></i>Submitted</span>
+                    </div>
+                    <div class="p-8 content-body">
+
+                        <h2>Full Task — From the Notes</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 font-semibold m-0">Develop a comprehensive referral program strategy for Disney+, addressing the following key components:</p>
+                            <ol class="mt-2 space-y-2">
+                                <li class="text-gray-800">Propose an incentive structure for the referral program that motivates existing users to participate and refer new users. Consider different types of incentives and their potential impact on user behaviour and cost-effectiveness.</li>
+                                <li class="text-gray-800">Outline the mechanics of the referral program, including the referral process, tracking mechanisms, and the user experience for both the referrer and the referred user.</li>
+                                <li class="text-gray-800">Identify and analyse different user segments within Disney+'s existing user base. Discuss how the referral program can be tailored or targeted to specific segments for maximum effectiveness.</li>
+                                <li class="text-gray-800">Define key metrics to measure the success of the referral program.</li>
+                            </ol>
+                        </div>
+
+                        <h2>Submission Guidelines — From the Notes</h2>
+                        <div class="verbatim-block">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3">From the Notes — Verbatim</div>
+                            <p class="text-gray-800 m-0">You can submit the assignment as a link to a document outlining your referral program strategy. Feel free to choose any platform like Notion or Google Docs to create the document.</p>
+                            <p class="text-gray-800 mt-3 m-0">If you use external data from any source, please mention the source in the assignment.</p>
+                            <p class="text-gray-800 mt-3 m-0">Please remember that it's more important to attempt and get feedback on the assignment than to strive for perfection and not submit it.</p>
+                        </div>
+
+                        <h2>Final Checklist Before Submitting</h2>
+                        <div class="space-y-2 mt-4">
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Incentive structure proposed with rationale for the choice</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Program mechanics fully described — referral flow for both referrer and referred</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">At least 2–3 user segments identified and analysed</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Key metrics defined including both leading and lagging indicators</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">External data sources cited if used</span></div>
+                            <div class="task-item"><i class="fas fa-check-circle text-green-500 mt-0.5 flex-shrink-0"></i><span class="text-sm text-gray-700">Document shared as a public link</span></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button onclick="showDay(4)" class="flex items-center gap-2 border border-gray-200 hover:border-accent hover:text-accent text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"><i class="fas fa-arrow-left text-xs"></i> Day 4</button>
+                    <a href="pm-w5.html" class="flex items-center gap-2 bg-teal hover:bg-teal/90 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">Next: Week 5 <i class="fas fa-arrow-right text-xs"></i></a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<footer class="bg-navy mt-16 py-6 border-t border-white/10">
+    <div class="max-w-[1400px] mx-auto px-10 flex flex-wrap items-center justify-between gap-4 text-sm">
+        <div class="text-gray-500">Week 4 of 7 — Product Management Module</div>
+        <div class="flex items-center gap-4">
+            <a href="pm-w3.html" class="text-gray-400 hover:text-white transition-colors flex items-center gap-1"><i class="fas fa-arrow-left text-xs"></i> Week 3</a>
+            <a href="learn.html" class="text-gray-400 hover:text-white transition-colors">Learning Hub</a>
+            <a href="pm-w5.html" class="text-accent hover:text-white transition-colors flex items-center gap-1">Week 5 <i class="fas fa-arrow-right text-xs"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    function showDay(n) {
+        document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#day-progress > div').forEach(d => {
+            d.classList.remove('bg-accent/5', 'font-semibold');
+        });
+        const panel = document.getElementById('day-' + n);
+        const pill  = document.getElementById('pill-' + n);
+        const prog  = document.getElementById('prog-' + n);
+        if (panel) panel.classList.add('active');
+        if (pill)  pill.classList.add('active');
+        if (prog)  { prog.classList.add('bg-accent/5', 'font-semibold'); }
+        window.scrollTo({ top: 280, behavior: 'smooth' });
+        window.location.hash = 'day-' + n;
+    }
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#day-')) {
+            const n = parseInt(hash.replace('#day-', ''));
+            if (n >= 1 && n <= 5) showDay(n);
+        }
+    });
+</script>
+
+</body>
+</html>

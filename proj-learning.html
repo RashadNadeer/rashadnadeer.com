@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Management | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:#f1f5f9; } ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; }
+        .sidebar-list::-webkit-scrollbar { width:3px; } .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(124,58,237,.08); border-left-color:rgba(124,58,237,.4); }
+        .week-item.active { background:rgba(124,58,237,.12); border-left-color:#7C3AED; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#7C3AED; border-color:#7C3AED; background:rgba(124,58,237,.1); }
+        .week-item.active .view-btn { color:#7C3AED; border-color:rgba(124,58,237,.5); background:rgba(124,58,237,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#7C3AED; background:rgba(124,58,237,.02); box-shadow:0 2px 8px rgba(124,58,237,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#7C3AED; }
+        .template-card { display:flex; align-items:center; gap:14px; padding:14px 20px; border:1.5px dashed #ddd6fe; border-radius:10px; margin-bottom:8px; background:rgba(124,58,237,.03); transition:all .15s; text-decoration:none; }
+        .template-card:hover { border-color:#7C3AED; background:rgba(124,58,237,.07); box-shadow:0 2px 8px rgba(124,58,237,.08); }
+        .template-icon { width:36px; height:36px; background:rgba(124,58,237,.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .template-title { font-size:14px; font-weight:600; color:#1e293b; }
+        .template-meta { font-size:11px; color:#7C3AED; font-weight:500; margin-top:2px; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#7C3AED; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#7C3AED; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#7C3AED; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete Project Management learning module — PMBOK, initiation through closure, risk management, earned value, and PMP concepts." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/proj-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(124,58,237,.15); color:#7C3AED">
+            <i class="fas fa-clipboard-list text-[9px]"></i> Project Management
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" onmouseover="this.style.color='#7C3AED'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">Project Management</div>
+                <div class="sidebar-week-count">5 modules &middot; 11 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">PM Fundamentals</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">PMBOK Framework</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Schedule & Cost</span>
+            <span class="week-meta">3 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Risk & Stakeholders</span>
+            <span class="week-meta">2 topics + 4 templates</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">Quality & Agile PM</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(124,58,237,.1)">
+                        <i class="fas fa-clipboard-list text-2xl" style="color:#7C3AED"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">Project Management</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar — covering PMBOK fundamentals, scheduling, EVM, risk management, stakeholder engagement, and Agile PM approaches.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">5 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">11 Topics</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">4 Templates</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `PM Fundamentals`,
+    topics: [
+    { title: `What is a Project?`, content: `__H__ What is a Project?
+
+A project is a temporary endeavour undertaken to create a unique product, service, or result. The PMBOK (Project Management Body of Knowledge) definition is precise and important: temporary means there is a defined start and end date, unique means the output has never existed before, and progressive elaboration means the project plan gets more detailed as you learn more during execution.
+
+__SUB__ The Triple Constraint
+Every project operates within three competing constraints: scope (what must be delivered), time (by when), and cost (with how much). These three are interdependent — change one and the others are affected. Quality is often placed at the centre because it is the output that emerges from how well the three constraints are managed. A project that delivers on time and budget but with poor quality has failed.
+
+__LI__ Scope: the totality of work that must be done — adding scope without adjusting time or cost is a recipe for failure
+__LI__ Time: the schedule — milestones, dependencies, critical path, and final delivery date
+__LI__ Cost: the budget — labour, materials, licences, infrastructure, contingency
+__LI__ Quality: the standard the deliverable must meet — defined in acceptance criteria and quality plan
+__LI__ The iron triangle: fix any two constraints and the third must flex — or quality suffers
+
+__SUB__ Project vs Operations
+Projects and operations are often confused because they can involve the same people and the same systems. Operations are ongoing, repetitive, and continuous — running payroll, processing orders, or maintaining a website. Projects are temporary, unique, and have a defined end. A project might be implementing a new payroll system; the ongoing running of that system after go-live is operations.
+
+__LI__ Projects are temporary: they end when the objective is achieved, the objective cannot be achieved, or the project is cancelled
+__LI__ Operations are ongoing: they continue indefinitely to sustain the organisation
+__LI__ Projects create change; operations sustain and run the change that was created
+__LI__ The handover from project to operations is one of the most critical and most neglected transitions in PM` },
+    { title: `The PM Role & Leadership`, content: `__H__ The PM Role & Leadership
+
+The PM is responsible for the overall success of the project — but they achieve that success through people, not directly through technical work. A PM rarely writes the code, designs the product, or runs the tests. Their job is to create the conditions — the plan, the communication, the risk management, the stakeholder relationships — that allow the team to deliver.
+
+__SUB__ Technical PM Competencies
+Technical PM skills are the tools and techniques of the trade: Work Breakdown Structure (WBS), network diagrams, critical path analysis, Earned Value Management (EVM), risk registers, RACI matrices, change control. These are the instruments of structured project delivery. A PM who cannot build a credible schedule or read an EVM report is flying blind.
+
+__LI__ WBS: decomposing scope into manageable work packages that can be estimated and assigned
+__LI__ Critical Path Method (CPM): identifying the longest sequence of dependent tasks — which determines the project end date
+__LI__ EVM: measuring both cost and schedule performance with a single integrated metric system
+__LI__ Risk register: systematically identifying, assessing, and responding to project risks
+__LI__ Change control: ensuring scope changes are evaluated, approved, and tracked — not just absorbed
+
+__SUB__ Leadership & Communication
+The PMI estimates that project managers spend 90% of their time communicating. The PM manages stakeholders who have competing interests, a team that may span multiple organisations and time zones, and a sponsor who wants results without complexity. Leadership in this context means motivating without authority, resolving conflict without escalation, and maintaining focus when priorities shift.
+
+__LI__ Stakeholder management: identifying, understanding, and proactively engaging everyone with an interest in the project
+__LI__ Conflict resolution: turning disagreements into decisions without damaging relationships
+__LI__ Communication planning: who needs what information, in what format, how often, via which channel
+__LI__ Influencing without authority: most people on a project team don't report to the PM
+__LI__ Emotional intelligence: reading the room, managing reactions, and building trust under pressure` }
+    ]
+  },
+  {
+    id: 1,
+    name: `PMBOK Framework`,
+    topics: [
+    { title: `PMBOK 5 Process Groups`, content: `__H__ PMBOK 5 Process Groups
+
+The PMBOK organises project management activity into five Process Groups that represent the lifecycle of any project. The Process Groups are not phases — a large project may cycle through Planning and Executing multiple times. They describe the types of work done throughout the project, and understanding how they interact is fundamental to structured project delivery.
+
+__SUB__ Initiating & Planning
+Initiating establishes the project's existence and authorisation. The primary output is the Project Charter — the document that names the PM, states the project objective, lists high-level constraints and assumptions, and authorises the project to proceed. Without a charter, there is no formal project. Planning is where the detailed roadmap is created: scope, schedule, cost, risk, quality, communications, procurement, and stakeholder engagement plans all flow from this phase.
+
+__LI__ Project Charter: names the PM, states objective, grants authority, defines high-level constraints
+__LI__ Scope Management Plan: how scope will be defined, documented, validated, and controlled
+__LI__ Schedule: Work Breakdown Structure → Activity list → Network diagram → Critical path → Gantt chart
+__LI__ Budget: cost estimates → budget baseline → contingency reserves
+__LI__ Risk Plan: risk identification, qualitative analysis, response planning
+__LI__ Communications Plan: who gets what information, how often, via what channel
+
+__SUB__ Executing, Monitoring & Closing
+Executing is where the work gets done. The PM's role shifts to leadership, coordination, and decision-making rather than planning. Monitoring and Controlling runs parallel to execution — it compares actual performance to the plan and triggers corrective action when they diverge. Closing formally ends the project: contracts are closed, lessons learned are documented, deliverables are handed over, and the team is released.
+
+__LI__ Executing: direct and manage project work, manage quality, acquire and develop the team
+__LI__ Monitor and Control: compare actuals to plan, manage changes, validate scope, control risks
+__LI__ Integrated Change Control: formal process for evaluating and approving changes to scope, schedule, or cost
+__LI__ Closing: formal acceptance of deliverables, close contracts, document lessons learned, release resources
+__LI__ Project closure report: what was delivered, what it cost, what was learned — the institutional memory` },
+    { title: `PMBOK 10 Knowledge Areas`, content: `__H__ PMBOK 10 Knowledge Areas
+
+The PMBOK organises PM knowledge into 10 domains, each covering a distinct aspect of project management. The 5 Process Groups (Initiating through Closing) cut across all 10 Knowledge Areas — every area has activities that span the project lifecycle. Understanding all 10 is required for PMP certification and for managing complex programmes.
+
+__SUB__ The 10 Knowledge Areas at a Glance
+Each knowledge area represents a domain of PM expertise. Integration Management sits at the centre — it coordinates all other areas through the PM Plan and change control. Scope, Schedule, and Cost form the core triple constraint. Quality, Risk, and Procurement manage the conditions of delivery. Stakeholder and Communications manage the human side of the project. Resource Management covers the team and physical assets.
+
+__LI__ Integration: develop the PM Plan; manage, monitor, and close the project as an integrated whole
+__LI__ Scope: plan, define, create WBS, validate deliverables, control scope creep
+__LI__ Schedule: plan, define activities, sequence them, estimate durations, develop and control the schedule
+__LI__ Cost: plan, estimate, budget, and control costs — Earned Value Management lives here
+__LI__ Quality: plan quality, manage quality (QA), control quality (QC)
+__LI__ Resource: plan and acquire the team, develop team capability, manage team performance
+__LI__ Communications: plan, manage, and monitor project communications
+__LI__ Risk: plan, identify, analyse (qualitative and quantitative), respond to, and monitor risks
+__LI__ Procurement: plan, conduct, control, and close procurements and vendor contracts
+__LI__ Stakeholder: identify, plan engagement, manage and monitor stakeholder involvement
+
+__SUB__ Integration Management — The Glue
+Integration Management is the most senior knowledge area — it is the PM's responsibility to ensure all the other areas work together coherently. The Project Management Plan is the master document that combines all subsidiary plans. Integrated Change Control is the process that ensures any proposed change is properly evaluated before being approved — because changing scope affects schedule, which affects cost, which affects risk.
+
+__LI__ The PM Plan integrates all subsidiary plans — scope, schedule, cost, risk, communications, etc.
+__LI__ Integrated Change Control: every change must be evaluated for impact on scope, schedule, cost, and quality
+__LI__ Change requests that bypass this process create hidden scope creep and budget overruns
+__LI__ The project charter and PM Plan together define the full baseline against which performance is measured` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Schedule & Cost`,
+    topics: [
+    { title: `Work Breakdown Structure (WBS)`, content: `__H__ Work Breakdown Structure (WBS)
+
+The WBS is the foundation of project planning. It is a hierarchical decomposition of the total project scope into smaller, manageable components. Everything the project must deliver — every deliverable, every work package — is captured in the WBS. If it's not in the WBS, it's not in scope. If it's in the WBS, it must be delivered. This 100% rule makes the WBS the most precise scope definition tool in project management.
+
+__SUB__ Building a WBS
+Start at the top level with the project name, then decompose into major deliverables, then into sub-deliverables, and finally into Work Packages — the lowest level of the WBS. Work packages are small enough to be estimated, assigned to a single owner, and tracked. Each Work Package then becomes the basis for Activity definition in schedule planning.
+
+__LI__ Level 1: Project name — the total scope
+__LI__ Level 2: Major deliverables or phases — e.g., Design, Build, Test, Deploy
+__LI__ Level 3: Sub-deliverables within each major deliverable
+__LI__ Work Packages (bottom level): discrete, estimable units of work with a single owner
+__LI__ WBS dictionary: defines scope, acceptance criteria, and owner for each work package
+__LI__ 100% Rule: WBS captures 100% of scope — nothing is included that isn't in scope; nothing in scope is omitted
+
+__SUB__ Scope Creep — The WBS as a Defence
+Scope creep is the gradual, unofficial expansion of project scope without a corresponding adjustment to schedule or budget. It is one of the most common causes of project overruns. The WBS, combined with an Integrated Change Control process, is the PM's primary defence. Any request that isn't in the WBS is a change — and changes require formal evaluation before work begins.
+
+__LI__ Scope creep symptoms: team working on things not in the plan, budget and schedule slipping without obvious cause
+__LI__ Gold plating: team adds features they think stakeholders want — also scope creep
+__LI__ Change control process: every scope change is formally documented, assessed for impact, and approved by the sponsor
+__LI__ Freeze the baseline once planning is complete — all subsequent changes are delta from this baseline` },
+    { title: `Critical Path Method (CPM) & Scheduling`, content: `__H__ Critical Path Method (CPM) & Scheduling
+
+The Critical Path Method identifies the longest sequence of dependent activities through the project network — this sequence determines the minimum project duration. Any delay to a task on the critical path directly delays the project end date. Understanding the critical path tells the PM where to focus management attention, where schedule compression is possible, and where float exists.
+
+__SUB__ Building the Schedule
+Schedule development follows a logical sequence: define activities (from WBS work packages), sequence them using dependency types, estimate durations for each, develop the network diagram, calculate the critical path, and assign resources to check feasibility. The result is the schedule baseline — the time-phased plan against which actual progress is measured.
+
+__LI__ Finish-to-Start (FS): the most common dependency — Task B cannot start until Task A finishes
+__LI__ Leads: Task B can start before Task A finishes — used to compress schedule
+__LI__ Lags: a waiting period between tasks — e.g., concrete must cure for 24 hours before the next task
+__LI__ Float (slack): the amount of time a task can be delayed without delaying the project — critical path tasks have zero float
+__LI__ Near-critical paths: tasks with very small float — second biggest risk if critical path tasks are well managed
+
+__SUB__ Schedule Compression Techniques
+When the schedule baseline doesn't meet the required delivery date, the PM must compress. Two main techniques exist. Crashing adds resources to critical path tasks to shorten their duration — it increases cost but reduces time. Fast-tracking overlaps tasks that were originally planned sequentially — it reduces time but increases risk since you're doing work before its predecessor is complete.
+
+__LI__ Crashing: add resources (people, shifts, equipment) to shorten critical path task duration — costs more
+__LI__ Fast-tracking: start a task before its predecessor finishes — free but increases rework risk
+__LI__ Resource levelling: smooth resource demand by adjusting task timing — may extend schedule
+__LI__ Critical chain: buffer management approach that adds a project buffer at the end and feeds buffers on merging paths` },
+    { title: `Earned Value Management (EVM)`, content: `__H__ Earned Value Management (EVM)
+
+EVM is the gold standard for measuring project performance because it integrates scope, schedule, and cost into a single measurement system. Instead of simply comparing budget spent to plan, EVM measures how much work was actually completed relative to both the plan and the cost. It gives the PM an objective view of whether the project is ahead or behind on both time and money simultaneously.
+
+__SUB__ The Core EVM Metrics
+Three values underpin EVM. Planned Value (PV) is the budgeted cost of work that was scheduled to be done by now. Earned Value (EV) is the budgeted cost of work actually completed. Actual Cost (AC) is what was actually spent. From these three numbers, you can derive schedule and cost performance, and forecast project completion.
+
+__LI__ PV (Planned Value): how much work should have been done by now, in budget terms
+__LI__ EV (Earned Value): how much work has actually been completed, in budget terms
+__LI__ AC (Actual Cost): how much has actually been spent
+__LI__ SV (Schedule Variance): EV - PV — negative means behind schedule
+__LI__ CV (Cost Variance): EV - AC — negative means over budget
+__LI__ SPI (Schedule Performance Index): EV / PV — below 1.0 means behind schedule
+__LI__ CPI (Cost Performance Index): EV / AC — below 1.0 means over budget
+
+__SUB__ EVM Forecasting
+EVM's greatest value is forecasting. Using current performance indices, you can calculate Estimate at Completion (EAC) — the predicted total project cost at the current performance rate. This gives the sponsor and PM early warning of cost overruns with enough time to take corrective action.
+
+__LI__ EAC (most common): BAC / CPI — estimate at completion assuming current cost performance continues
+__LI__ EAC (optimistic): AC + (BAC - EV) — assumes remaining work will be done at budget
+__LI__ TCPI (To-Complete Performance Index): (BAC - EV) / (BAC - AC) — CPI needed to finish on budget
+__LI__ TCPI > 1.0: must work more efficiently than to date to recover — usually unrealistic if significantly above 1
+__LI__ EVM requires a solid baseline — poor WBS and estimates make EVM numbers meaningless` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Risk & Stakeholders`,
+    topics: [
+    { title: `Risk Management`, content: `__H__ Risk Management
+
+Risk management is about identifying uncertainty and doing something about it before it becomes a problem. Proactive risk management is one of the clearest differentiators between experienced and inexperienced project managers. The reactive PM firefights crises; the proactive PM identifies risks early, plans responses, and often prevents the crisis from happening at all.
+
+__SUB__ The Risk Management Process
+Risk management follows a six-step process: Plan (how will we manage risk on this project?), Identify (what could go wrong?), Qualitative Analysis (how likely and how serious is each risk?), Quantitative Analysis (for major risks, what is the numeric probability and impact?), Response Planning (what will we do about each risk?), and Monitor and Control (are our responses working? have new risks emerged?).
+
+__LI__ Risk identification tools: brainstorming, SWOT analysis, risk breakdown structure (RBS), checklists, expert interviews
+__LI__ Qualitative analysis: probability x impact matrix — categorises each risk as High/Medium/Low
+__LI__ Quantitative analysis: decision trees, Monte Carlo simulation — numerical probability and expected value
+__LI__ Risk responses for threats: Avoid (eliminate the cause), Transfer (insurance/contract), Mitigate (reduce probability or impact), Accept (acknowledge and monitor)
+__LI__ Risk responses for opportunities: Exploit, Enhance, Share, Accept
+__LI__ Residual risk: risk remaining after response; Secondary risk: new risk created by the response
+
+__SUB__ The Risk Register
+The risk register is the central document of risk management — every identified risk is logged here with its description, probability, impact, risk score (probability x impact), owner, planned response, and current status. The risk register is a living document — it is reviewed in every status meeting and updated throughout the project as risks materialise, new risks emerge, and responses are executed.
+
+__LI__ Risk ID: unique identifier for tracking and tracing
+__LI__ Description: cause → risk event → effect — e.g., 'Key developer unavailability could delay the API build, potentially pushing the delivery date by 2 weeks'
+__LI__ Probability: High / Medium / Low or 0.1–0.9
+__LI__ Impact: High / Medium / Low or financial/schedule impact estimate
+__LI__ Risk score: Probability x Impact — used to prioritise which risks get most attention
+__LI__ Owner: the one person accountable for monitoring the risk and executing the response
+__LI__ Response: Avoid / Transfer / Mitigate / Accept — with specific actions and trigger points` },
+    { title: `Stakeholder & Communications Management`, content: `__H__ Stakeholder & Communications Management
+
+Stakeholder management is not a soft skill — it is a critical project management discipline. Projects fail because of stakeholder issues at least as often as they fail because of technical problems. A sponsor who loses confidence pulls funding. A resistant user community sabotages adoption. A senior stakeholder who is not informed becomes an unexpected obstacle at go-live.
+
+__SUB__ Stakeholder Identification & Power-Interest Grid
+Stakeholder identification should happen early and be revisited throughout the project — stakeholders change, organisations restructure, and new affected parties emerge. The Power-Interest Grid is the most commonly used tool for stakeholder prioritisation: plot each stakeholder by their power (ability to affect the project) and interest (level of concern about the project), then tailor your engagement approach accordingly.
+
+__LI__ High Power / High Interest: manage closely — sponsor, key decision-makers, most affected business units
+__LI__ High Power / Low Interest: keep satisfied — senior executives who must approve but don't engage daily
+__LI__ Low Power / High Interest: keep informed — end users, subject matter experts
+__LI__ Low Power / Low Interest: monitor only — broader organisation, tangential departments
+__LI__ Stakeholder analysis is not a one-time exercise — update the grid as the project evolves
+
+__SUB__ RACI Matrix & Communication Planning
+The RACI matrix defines who is Responsible (does the work), Accountable (owns the outcome), Consulted (input before decisions), and Informed (notified after decisions) for every major deliverable or decision. It eliminates role confusion — one of the most common sources of project dysfunction. The Communications Plan operationalises engagement: who gets what information, via which channel, how often, and in what format.
+
+__LI__ One Accountable per row — having multiple accountable people means nobody is truly accountable
+__LI__ Too many Consulteds slow decisions down — only include those whose input is genuinely needed
+__LI__ Communications Plan: identifies audience, message type, channel, frequency, and owner
+__LI__ Status reports should be tailored to the audience — sponsors want RAG and decisions; teams want task-level detail
+__LI__ Over-communication is less common than under-communication — when in doubt, inform proactively` }
+    ]
+  },
+  {
+    id: 4,
+    name: `Quality & Agile PM`,
+    topics: [
+    { title: `Quality & Procurement Management`, content: `__H__ Quality & Procurement Management
+
+Quality management in projects is about building quality in, not inspecting it out after the fact. The cost of finding and fixing a defect increases dramatically the later it is discovered — a requirement error found in planning costs a fraction of the same error found after delivery. Procurement management involves selecting and managing vendors, contracts, and external resource relationships throughout the project.
+
+__SUB__ QA vs QC — Prevention vs Detection
+Quality Assurance (QA) is process-focused and proactive — it audits and improves the processes used to produce deliverables to prevent defects from occurring. Quality Control (QC) is product-focused and reactive — it inspects deliverables to detect defects that have already occurred. Both are necessary, but QA investment reduces the QC burden over time.
+
+__LI__ QA: process audits, standards adherence, team capability development, process improvement
+__LI__ QC: testing, inspection, review, validation against acceptance criteria
+__LI__ Cost of quality: prevention costs (QA) + appraisal costs (QC) + failure costs (defects found and fixed)
+__LI__ Cost of poor quality: internal failure (defects found before delivery) + external failure (defects found after delivery)
+__LI__ Seven quality tools: cause-and-effect diagram, control charts, flowchart, histogram, Pareto chart, scatter diagram, check sheets
+
+__SUB__ Procurement & Contract Types
+Contract type determines how risk is shared between buyer and seller. Fixed-price contracts put cost risk on the seller — if it costs more than expected, the seller absorbs the difference. Cost-reimbursable contracts put cost risk on the buyer — the buyer pays whatever it costs. Time and Materials contracts are often used when scope cannot be well-defined upfront.
+
+__LI__ Fixed Price (FP): buyer knows the cost; seller bears cost risk — good when scope is well-defined
+__LI__ Cost Plus Fixed Fee (CPFF): buyer pays cost plus a fixed fee — seller bears little risk
+__LI__ Cost Plus Incentive Fee (CPIF): seller earns more for beating cost targets — aligns incentives
+__LI__ Time and Materials (T&M): pay per hour/unit — used when scope is unclear; buyer bears cost risk
+__LI__ Procurement documents: RFI (information), RFQ (quotes), RFP (proposals) — used progressively as scope solidifies` },
+    { title: `Agile PM & Hybrid Delivery`, content: `__H__ Agile PM & Hybrid Delivery
+
+The 2021 PMP exam update acknowledged that the real world doesn't choose between Waterfall and Agile — most organisations use both, often on the same project. Hybrid delivery combines predictive planning at the programme level with iterative delivery at the team level. Understanding when and how to blend these approaches is a critical competency for modern project managers.
+
+__SUB__ When to Use Predictive vs Agile
+Predictive (Waterfall) PM works best when requirements are well-understood and stable, technology risk is low, regulatory compliance requires comprehensive upfront documentation, and the project involves physical deliverables that can't be built iteratively. Agile works best when requirements will evolve, fast feedback is more valuable than a comprehensive plan, and the team can deliver working software in short iterations.
+
+__LI__ Predictive: stable requirements, regulated industries, physical construction, large fixed-price contracts
+__LI__ Agile: evolving requirements, software development, innovation projects, user experience work
+__LI__ Hybrid: use Waterfall for planning and governance, Agile for delivery iterations
+__LI__ Common hybrid: fixed scope and budget governed predictively, but delivery managed in Sprints
+__LI__ The PMP exam (2024): ~50% predictive, ~50% Agile/Hybrid content — both worlds must be understood
+
+__SUB__ PMP Certification — What You Need to Know
+The PMP (Project Management Professional) is the gold standard PM certification, recognised globally. It requires 36 months of project management experience with a 4-year degree (or 60 months with a high school diploma), 35 hours of PM education, and a 180-question exam with a 230-minute time limit. The exam is split roughly equally between predictive and Agile/Hybrid content.
+
+__LI__ Exam domains: People (42%) — leadership and team management; Process (50%) — project lifecycle; Business Environment (8%) — strategy and compliance
+__LI__ Exam format: 180 questions, 230 minutes, includes multiple-choice, drag-and-drop, and matching questions
+__LI__ PMI Ethics: fairness, responsibility, respect, and honesty — tested throughout the exam
+__LI__ PDUs (Professional Development Units): 60 PDUs every 3 years to maintain certification
+__LI__ Preparation: PMBOK Guide + Agile Practice Guide + practice exams — the exam tests application, not memorisation` }
+    ]
+  }
+];
+
+const TEMPLATES = [{ name: `Project Risk Register`, file: `assets/templates/Project Risk Register.xlsx`, icon: `fa-triangle-exclamation` },
+    { name: `Project Status Report (RAG)`, file: `assets/templates/Project Status Report (RAG).xlsx`, icon: `fa-traffic-light` },
+    { name: `Resource & Capacity Planner`, file: `assets/templates/Resource & Capacity Planner.xlsx`, icon: `fa-people-group` },
+    { name: `Change Request Log`, file: `assets/templates/Change Request Log.xlsx`, icon: `fa-arrows-rotate` }];
+const TEMPLATE_MODULE = 3;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    let tmpl = '';
+    if (id === TEMPLATE_MODULE) {
+        tmpl = '<div class="mt-6 mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Templates</div>' +
+            TEMPLATES.map(t =>
+                '<a class="template-card" href="' + t.file + '" download>' +
+                '<div class="template-icon"><i class="fas ' + t.icon + ' text-sm" style="color:#7C3AED"></i></div>' +
+                '<div><div class="template-title">' + t.name + '</div>' +
+                '<div class="template-meta"><i class="fas fa-download text-[9px] mr-1"></i>Download Excel Template</div></div></a>'
+            ).join('');
+    }
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics' +
+        (id === TEMPLATE_MODULE ? ' &nbsp;&middot;&nbsp; 4 templates' : '') + '</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards + tmpl;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#7C3AED">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>

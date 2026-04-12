@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lean & Six Sigma | Mohammad Rashad Nadeer Kutty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy:'#0C1220', accent:'#4F62F5', teal:'#0D9488', surface:'#EDF2F7', dark:'#111827', warm:'#FAFAF8' },
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { height:100%; margin:0; overflow:hidden; }
+        body { font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; background:#FAFAF8; }
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:#f1f5f9; }
+        ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        #app { display:flex; flex:1; height:calc(100vh - 52px); overflow:hidden; }
+        #sidebar { width:280px; min-width:280px; background:#0C1220; display:flex; flex-direction:column; overflow:hidden; }
+        .sidebar-header { padding:20px 20px 14px; border-bottom:1px solid rgba(255,255,255,.08); flex-shrink:0; }
+        .sidebar-module-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+        .sidebar-module-title { font-size:15px; font-weight:700; color:#f1f5f9; }
+        .sidebar-week-count { font-size:11px; color:#475569; margin-top:4px; }
+        .sidebar-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:#1e293b transparent; }
+        .sidebar-list::-webkit-scrollbar { width:3px; }
+        .sidebar-list::-webkit-scrollbar-thumb { background:#1e293b; }
+        .week-item { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; cursor:pointer; border-left:3px solid transparent; transition:all .15s ease; gap:10px; }
+        .week-item:hover { background:rgba(22,163,74,.08); border-left-color:rgba(22,163,74,.4); }
+        .week-item.active { background:rgba(22,163,74,.12); border-left-color:#16A34A; }
+        .week-info { flex:1; min-width:0; }
+        .week-name { display:block; font-size:13px; font-weight:600; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .week-item.active .week-name { color:#e2e8f0; }
+        .week-meta { display:block; font-size:11px; color:#475569; margin-top:2px; }
+        .view-btn { flex-shrink:0; font-size:11px; font-weight:600; color:#475569; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:3px 10px; cursor:pointer; transition:all .15s; }
+        .view-btn:hover { color:#16A34A; border-color:#16A34A; background:rgba(22,163,74,.1); }
+        .week-item.active .view-btn { color:#16A34A; border-color:rgba(22,163,74,.5); background:rgba(22,163,74,.12); }
+        #right-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+        #state-welcome { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        #state-topics { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        #state-notes { display:none; padding:32px 40px; width:100%; box-sizing:border-box; }
+        .topic-card { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all .15s ease; background:white; gap:16px; }
+        .topic-card:hover { border-color:#16A34A; background:rgba(22,163,74,.02); box-shadow:0 2px 8px rgba(22,163,74,.08); }
+        .topic-card-title { font-size:14px; font-weight:600; color:#1e293b; line-height:1.4; }
+        .topic-card-arrow { color:#cbd5e1; font-size:12px; flex-shrink:0; transition:color .15s; }
+        .topic-card:hover .topic-card-arrow { color:#16A34A; }
+        .notes-content { font-size:15px; line-height:1.9; color:#374151; }
+        .notes-content p { margin-bottom:1.15rem; }
+        .notes-content .section-title { font-size:1.2rem; font-weight:800; color:#0C1220; margin-top:2.25rem; margin-bottom:0.75rem; padding-bottom:0.45rem; border-bottom:2px solid #EDF2F7; }
+        .notes-content .sub-title { font-size:0.95rem; font-weight:700; color:#16A34A; margin-top:1.5rem; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .notes-content .bullet { display:flex; gap:10px; margin-bottom:0.55rem; color:#374151; align-items:flex-start; }
+        .notes-content .bullet::before { content:"→"; color:#16A34A; flex-shrink:0; font-weight:700; font-size:13px; margin-top:3px; }
+        .notes-content strong { color:#0C1220; font-weight:700; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; transition:color .15s; margin-bottom:24px; padding:6px 0; }
+        .back-btn:hover { color:#16A34A; }
+        .section-sep { border:none; border-top:2px solid #EDF2F7; margin:2rem 0; }
+        @media(max-width:768px) { #sidebar { display:none; } #state-topics, #state-notes { padding:20px; } }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV27KZBRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV27KZBRD');
+    </script>
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+    <meta name="description" content="Complete Lean & Six Sigma learning module — DMAIC, value stream mapping, 8 wastes, statistical process control, and Lean-Agile integration." />
+
+    <link rel="canonical" href="https://rashadnadeer.com/lean-learning.html" />
+</head>
+<body>
+    <header class="bg-navy border-b border-white/10 py-3 px-6 flex items-center justify-between sticky top-0 z-50" style="height:52px">
+        <a href="learn.html" class="flex items-center gap-2 text-gray-400 hover:text-gray-200 text-sm font-medium transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Learning Hub
+        </a>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full" style="background:rgba(22,163,74,.15); color:#16A34A">
+            <i class="fas fa-chart-bar text-[9px]"></i> Lean & Six Sigma
+        </span>
+        <a href="index.html" class="text-gray-400 text-sm font-medium transition-colors flex items-center gap-1.5" style="--tw-text-opacity:1" onmouseover="this.style.color='#16A34A'" onmouseout="this.style.color=''">
+            <i class="fas fa-home text-xs"></i> Home
+        </a>
+    </header>
+    <div id="app">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-module-label">Learning Module</div>
+                <div class="sidebar-module-title">Lean & Six Sigma</div>
+                <div class="sidebar-week-count">8 modules &middot; 15 topics</div>
+            </div>
+            <div class="sidebar-list">
+        <div class="week-item" data-week="0" onclick="selectWeek(0)">
+          <div class="week-info">
+            <span class="week-name">Lean Origins</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(0)">View</button>
+        </div>
+        <div class="week-item" data-week="1" onclick="selectWeek(1)">
+          <div class="week-info">
+            <span class="week-name">The 8 Wastes — DOWNTIME</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(1)">View</button>
+        </div>
+        <div class="week-item" data-week="2" onclick="selectWeek(2)">
+          <div class="week-info">
+            <span class="week-name">Value Stream Mapping</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(2)">View</button>
+        </div>
+        <div class="week-item" data-week="3" onclick="selectWeek(3)">
+          <div class="week-info">
+            <span class="week-name">Six Sigma Overview</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(3)">View</button>
+        </div>
+        <div class="week-item" data-week="4" onclick="selectWeek(4)">
+          <div class="week-info">
+            <span class="week-name">DMAIC Process</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(4)">View</button>
+        </div>
+        <div class="week-item" data-week="5" onclick="selectWeek(5)">
+          <div class="week-info">
+            <span class="week-name">Statistical Tools</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(5)">View</button>
+        </div>
+        <div class="week-item" data-week="6" onclick="selectWeek(6)">
+          <div class="week-info">
+            <span class="week-name">Lean Tools</span>
+            <span class="week-meta">2 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(6)">View</button>
+        </div>
+        <div class="week-item" data-week="7" onclick="selectWeek(7)">
+          <div class="week-info">
+            <span class="week-name">Lean in Software</span>
+            <span class="week-meta">1 topics</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); selectWeek(7)">View</button>
+        </div>
+            </div>
+        </aside>
+        <main id="right-panel">
+            <div id="state-welcome">
+                <div class="text-center max-w-md">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgba(22,163,74,.1)">
+                        <i class="fas fa-chart-bar text-2xl" style="color:#16A34A"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-navy mb-3">Lean & Six Sigma</h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Select a module from the sidebar to explore detailed notes — from the Toyota Production System and the 8 wastes through value stream mapping, DMAIC, statistical tools, and Lean applied to software delivery.</p>
+                    <div class="flex flex-wrap gap-2 justify-center text-xs text-gray-400">
+                        <span class="bg-surface px-3 py-1 rounded-full">8 Modules</span>
+                        <span class="bg-surface px-3 py-1 rounded-full">15 Topics</span>
+                    </div>
+                </div>
+            </div>
+            <div id="state-topics"></div>
+            <div id="state-notes"></div>
+        </main>
+    </div>
+<script>
+const WEEKS = [
+  {
+    id: 0,
+    name: `Lean Origins`,
+    topics: [
+    { title: `The Toyota Production System`, content: `__H__ The Toyota Production System
+
+The Toyota Production System (TPS) is the intellectual foundation of everything we now call Lean. Developed in post-World War II Japan by Taiichi Ohno and Shigeo Shingo, TPS emerged from a fundamental constraint: Toyota had no capital to build large inventories or invest in mass-production machinery. The solution was to eliminate everything that didn't directly create value for the customer — not as a cost-cutting measure but as a philosophical orientation that permanently changed manufacturing and, eventually, software development.
+
+__SUB__ Just-in-Time and Jidoka — The Two Pillars
+TPS rests on two pillars. Just-in-Time (JIT) means producing only what is needed, when it is needed, in the quantity needed — and not one unit more. JIT eliminates overproduction, the most serious of all wastes because it consumes resources and hides quality problems. The kanban system — visual signals that trigger production only when the downstream process needs more — is the operational mechanism of JIT. Jidoka, the second pillar, translates roughly as 'automation with a human touch'. It means building quality in at the source rather than inspecting it in at the end. In TPS, any worker can stop the production line when a defect is detected — and this right to stop is not a concession but a requirement. Passing a defect downstream multiplies the cost of fixing it; stopping immediately and fixing the root cause permanently eliminates the defect from the system.
+
+__LI__ Just-in-Time: produce only what is pulled by downstream demand — no batching, no buffer stock
+__LI__ Jidoka: stop and fix problems immediately — never pass a defect to the next process
+__LI__ Andon cord: the visual signal that any worker pulls to stop the line when a defect is found
+__LI__ Poka-yoke: mistake-proofing devices that make defects physically impossible or immediately visible` },
+    { title: `Lean Thinking — Five Principles`, content: `__H__ Lean Thinking — Five Principles
+
+James Womack and Daniel Jones distilled the lessons of TPS into five principles in their 1996 book Lean Thinking. These principles apply as directly to knowledge work and software delivery as they do to physical manufacturing — the medium changes but the logic is identical.
+
+__SUB__ The Five Principles
+The first principle is Define Value — and it must be defined from the customer's perspective, not the producer's. Value is what the customer is willing to pay for. Everything else is waste. The second principle is Map the Value Stream: see all the steps required to deliver value, from raw material to customer, and identify which steps add value, which are necessary non-value-adding (required but wasteful, like regulatory reporting), and which are pure waste. The third principle is Create Flow: once waste is removed, the remaining value-adding steps should flow smoothly from one to the next without batching, queuing, or interruption. The fourth principle is Establish Pull: rather than pushing work based on forecasts, produce only when the downstream customer pulls. The fifth principle is Pursue Perfection: this is not a destination but a direction — a continuous commitment to improving the system, eliminating waste, and moving closer to the ideal of defect-free, on-demand, zero-waste value delivery.
+
+__LI__ Define Value: what the customer values and is willing to pay for — not what's easy to measure
+__LI__ Map Value Stream: end-to-end view of all steps — identify value-added, necessary waste, and pure waste
+__LI__ Create Flow: eliminate batching and queuing so value flows without interruption
+__LI__ Establish Pull: produce only when there is demand — kanban systems make pull visible
+__LI__ Pursue Perfection: continuous improvement toward the ideal — kaizen, never settling
+
+__SUB__ Lean in Software Delivery
+The five principles translate directly into modern software delivery. Defining value means ensuring every story in the backlog solves a real user or business problem — not building features because they are technically interesting. Mapping the value stream means understanding how long it takes from a user need being identified to it being in production (often weeks or months, mostly spent waiting). Creating flow means reducing batch sizes (smaller stories, more frequent releases), eliminating handoffs, and removing approval bottlenecks. Pull means not starting new work until existing work is completed and delivered. Perfection means retrospectives, continuous integration, and ongoing process improvement.` }
+    ]
+  },
+  {
+    id: 1,
+    name: `The 8 Wastes — DOWNTIME`,
+    topics: [
+    { title: `DOWNTIME Wastes — D to N`, content: `__H__ DOWNTIME Wastes — D to N
+
+The eight wastes of Lean — remembered through the acronym DOWNTIME — are the categories of activity that consume resources without creating value. Taiichi Ohno originally identified seven wastes (muda) in manufacturing; the eighth — Non-utilised talent — was added as Lean was applied to knowledge work. Understanding the wastes is not an academic exercise: it is a practical tool for examining any process and identifying where improvement effort will have the greatest impact.
+
+__SUB__ Defects — The Most Visible Waste
+Defects are any output that does not meet customer requirements and must be reworked, repaired, or discarded. In manufacturing, a defect is a physical product that fails quality inspection. In software, defects are bugs, but the concept extends further: incorrect requirements that cause the wrong thing to be built, misunderstood user stories that require rework in the sprint, and incomplete handoffs that cause the next team to redo work already done. Defects are expensive not just in the direct cost of rework but in the downstream costs they create — delayed releases, customer complaints, emergency fixes, and the damage to team morale from constant firefighting.
+
+__SUB__ Overproduction, Waiting, and Non-Utilised Talent
+Overproduction in software means building features that nobody asked for, building to a higher specification than required, or creating documentation nobody will read. It is the most wasteful of wastes because it consumes development capacity while producing nothing of value — and it creates inventory (unused code, untested features) that must be maintained indefinitely. Waiting is the most visible waste in knowledge work: blocked tickets waiting for dependencies, approval workflows that take days, build pipelines that take hours. In most software delivery processes, the actual work time is a fraction of the total elapsed time — the rest is waiting. Non-utilised talent is the waste that was absent from Ohno's original seven: failing to engage the knowledge, skills, and creativity of the people closest to the work. In both manufacturing and software, the people doing the work understand the problems most clearly — not involving them in solving those problems wastes their most valuable asset.
+
+__LI__ Overproduction: building unused features, over-documenting, gold-plating functionality
+__LI__ Waiting: blocked tickets, approval queues, slow pipelines, waiting for environments
+__LI__ Non-utilised talent: decisions made by managers without input from the people doing the work` },
+    { title: `DOWNTIME Wastes — T to E`, content: `__H__ DOWNTIME Wastes — T to E
+
+The second half of the DOWNTIME acronym covers four wastes that are particularly pervasive in knowledge work and software delivery — and particularly invisible because they leave no physical trace.
+
+__SUB__ Transportation and Inventory
+Transportation waste in manufacturing means physically moving materials unnecessarily. In software and business processes, the equivalent is handoffs: moving work from one team to another, transferring files by email instead of a shared system, requiring sign-off from a manager before each step can proceed. Each handoff introduces delay, creates the opportunity for information loss, and adds no value. Inventory waste in manufacturing is the cost of materials sitting in warehouses. In software, inventory is work in progress that has been started but not completed and delivered: unfinished features in branches, stories in 'done' that haven't been deployed, backlogs of hundreds of items that will never be built. Inventory hides problems, consumes carrying costs (it must be maintained and kept relevant), and delays the discovery of whether the work creates value.
+
+__SUB__ Motion, Extra Processing, and the Invisible Nature of Software Waste
+Motion waste in manufacturing is unnecessary physical movement by workers. In knowledge work it is context switching, unclear processes that require constant clarification, searching for information that should be findable, and meetings that could have been documentation. Extra processing is doing more work than the customer requires: creating a 30-slide deck when a one-pager would do, running a six-week requirements process for a two-day feature, or implementing configurability for requirements that will never change. The critical insight about software waste is that it is almost entirely invisible. Unlike a factory floor where inventory piles up in physical stacks and motion waste is observable, knowledge work waste is hidden in blocked Jira tickets, siloed team communication, and requirements documents that nobody will ever read.
+
+__LI__ Transportation: handoffs between teams, email-based file transfers, sequential approval chains
+__LI__ Inventory: undeployed features, large backlogs, work in progress that isn't flowing to done
+__LI__ Motion: context switching between too many projects, searching for information that should be documented
+__LI__ Extra processing: over-engineering, gold-plating, documentation beyond what the next step actually needs` }
+    ]
+  },
+  {
+    id: 2,
+    name: `Value Stream Mapping`,
+    topics: [
+    { title: `What is a Value Stream Map?`, content: `__H__ What is a Value Stream Map?
+
+A Value Stream Map (VSM) is a visual representation of every step involved in delivering value from a customer request to a delivered outcome, showing both the information flows and the material flows, and capturing the time spent at each step. Developed as part of the Toyota Production System and popularised in Lean literature by Mike Rother and John Shook, VSM is the most powerful single tool for understanding where waste lives in a process.
+
+__SUB__ The Insight That VSM Reveals
+The most striking finding from virtually every VSM exercise is the ratio of value-added time to total elapsed time. In most business processes — from order fulfilment to software development to loan approval — the actual time spent doing work (processing time) is between 5% and 20% of the total end-to-end elapsed time. The other 80-95% is waiting: work sitting in queues, waiting for approvals, waiting for the next team to have capacity, waiting for a system to respond. This ratio is rarely visible without a VSM because each team only sees their own step; nobody sees the full journey. The VSM makes the whole journey visible in a single diagram, and the waiting times that were invisible become the most obvious targets for improvement.
+
+__SUB__ Current State and Future State
+VSM work follows a standard sequence: first, map the current state with rigorous accuracy — walk the process, time each step, count the inventory at each queue, map the information flows. The current state map is a baseline, and accuracy matters: an idealised version of how the process is supposed to work will not reveal where the waste actually is. Second, analyse the current state to identify the biggest sources of waste: the longest queues, the most frequent defects, the most painful handoffs. Third, design the future state: a map of how the process should work after improvement. The future state map is not a wish list — it is a realistic, achievable target that guides the improvement programme. The gap between current and future state becomes the roadmap for kaizen projects.` },
+    { title: `Building and Reading a VSM`, content: `__H__ Building and Reading a VSM
+
+A VSM uses a standardised visual vocabulary that allows anyone familiar with the notation to read and understand it. Learning to read VSMs correctly is as important as learning to create them.
+
+__SUB__ VSM Components
+Process boxes represent the steps where work is actually done — they show the cycle time (how long it takes to process one unit), the uptime or reliability of the step, and any other relevant performance data. Push arrows (straight arrows) indicate that work is pushed forward regardless of downstream demand. Pull arrows (looping arrows) indicate that work is only pulled when the downstream process signals it is ready. Inventory triangles appear between process boxes and show the quantity of work waiting in the queue. The timeline at the bottom of the map is perhaps the most revealing element: it shows process time (value-added) below the line and wait time (non-value-added) above the line, making the ratio immediately visible. The summary at the right of the timeline shows total lead time and total value-added time — the numbers that tell you how much room for improvement exists.
+
+__LI__ Process box: step where work is done — shows cycle time, reliability, operator count
+__LI__ Inventory triangle: work queued between steps — shows quantity and time waiting
+__LI__ Push arrow: work moved forward on a schedule — typical in batch-and-queue systems
+__LI__ Pull arrow: work triggered by downstream demand — the lean ideal
+__LI__ Timeline: value-added time below the line, wait time above — the visual proof of waste` }
+    ]
+  },
+  {
+    id: 3,
+    name: `Six Sigma Overview`,
+    topics: [
+    { title: `Six Sigma — Origins and Philosophy`, content: `__H__ Six Sigma — Origins and Philosophy
+
+Six Sigma was developed at Motorola in 1986 by engineer Bill Smith, and later refined and popularised by General Electric under Jack Welch in the 1990s. The name comes from statistics: sigma (σ) is the standard deviation, and six sigma means the process is producing outputs within six standard deviations of the mean. At that level, the defect rate is 3.4 per million opportunities — effectively zero defects.
+
+__SUB__ Variation as the Enemy of Quality
+The philosophical insight of Six Sigma is that variation is the root cause of quality problems. Every defect, every customer complaint, every failed delivery is the result of a process that produced an outcome outside acceptable limits. The Six Sigma answer is to understand variation statistically — measure it precisely, identify its sources, and reduce it systematically until the process is so consistent that defects become essentially impossible. This approach differs from Lean's waste focus: Lean attacks activities that don't add value; Six Sigma attacks variation in activities that do add value. Together they are more powerful than either alone.
+
+__LI__ 1σ: 690,000 DPMO — a process so variable it fails 69% of the time
+__LI__ 3σ: 66,800 DPMO — common in many business processes before improvement
+__LI__ 4σ: 6,210 DPMO — many well-managed industrial processes
+__LI__ 6σ: 3.4 DPMO — the target: near-perfect consistency` },
+    { title: `Lean Six Sigma — The Integration`, content: `__H__ Lean Six Sigma — The Integration
+
+Lean and Six Sigma address the two complementary root causes of poor quality and inefficient delivery. Lean eliminates the waste — the non-value-adding activities, the waiting, the overproduction — that makes processes slow and expensive. Six Sigma reduces the variation — the inconsistency, the unpredictability, the random failures — that makes processes unreliable and defect-prone. Lean Six Sigma applies both toolkits together under the DMAIC improvement methodology.
+
+__SUB__ The Belt Structure
+Six Sigma uses a belt certification structure borrowed loosely from martial arts to indicate the level of statistical and methodological expertise. White Belt practitioners understand the basic concepts of Six Sigma and can participate in improvement projects. Yellow Belt practitioners can contribute to projects and conduct limited data analysis. Green Belt practitioners lead improvement projects on a part-time basis while maintaining their regular role — they have sufficient statistical knowledge to use the full DMAIC toolkit. Black Belts are full-time improvement practitioners who lead complex, high-impact projects and coach Green Belts. Master Black Belts are the organisation's Six Sigma experts — they design and deploy the improvement programme, develop other belts, and advise leadership on strategy.
+
+__LI__ White Belt: awareness-level understanding — can participate in improvement events
+__LI__ Yellow Belt: can support projects and perform basic data collection and analysis
+__LI__ Green Belt: leads projects part-time — full DMAIC competency, statistical tools
+__LI__ Black Belt: full-time improvement leader — complex projects, statistical mastery, coaching
+__LI__ Master Black Belt: organisational capability builder — programme design, executive advisory` }
+    ]
+  },
+  {
+    id: 4,
+    name: `DMAIC Process`,
+    topics: [
+    { title: `DMAIC — The Five Phases`, content: `__H__ DMAIC — The Five Phases
+
+DMAIC is the Six Sigma improvement methodology: Define, Measure, Analyse, Improve, Control. It provides a structured, data-driven approach to solving quality problems and improving process performance. DMAIC is distinguished from other improvement methodologies by its insistence on data at every stage: you do not move from Measure to Analyse until you have sufficient data, and you do not move from Analyse to Improve until you have statistical evidence identifying the root causes.
+
+__SUB__ Define and Measure — Establishing the Foundation
+The Define phase establishes the project on a solid foundation. The project charter documents the business case, the problem statement, the scope, the goals (expressed as measurable targets), the team, and the timeline. The SIPOC diagram (Suppliers, Inputs, Process, Outputs, Customers) provides a high-level view of the process being improved, ensuring everyone has the same understanding of scope before detail work begins. Voice of Customer (VOC) analysis identifies the critical-to-quality (CTQ) characteristics that matter most to customers — the specific, measurable requirements that the improved process must satisfy. The Measure phase establishes the current performance baseline. Before any improvement can be made, you must measure how the process performs today — and before you trust the measurements, you must validate the measurement system itself. Measurement System Analysis (MSA) ensures that the variation you are measuring is process variation, not measurement error.
+
+__RAW__ <div style="margin:1.5rem 0;overflow-x:auto"><div style="display:flex;align-items:stretch;gap:3px;min-width:520px"><div style="flex:1;background:#dcfce7;border:2px solid #16A34A;border-radius:8px 0 0 8px;padding:14px 8px;text-align:center"><div style="font-size:15px;font-weight:900;color:#16A34A">D</div><div style="font-size:10px;font-weight:700;color:#1e293b;margin-top:3px">Define</div><div style="font-size:9px;color:#64748b;margin-top:3px">Charter · SIPOC · VOC</div></div><div style="flex:1;background:#dcfce7;border:2px solid #16A34A;border-left:none;padding:14px 8px;text-align:center"><div style="font-size:15px;font-weight:900;color:#16A34A">M</div><div style="font-size:10px;font-weight:700;color:#1e293b;margin-top:3px">Measure</div><div style="font-size:9px;color:#64748b;margin-top:3px">Baseline · Data · Sigma</div></div><div style="flex:1;background:#dcfce7;border:2px solid #16A34A;border-left:none;padding:14px 8px;text-align:center"><div style="font-size:15px;font-weight:900;color:#16A34A">A</div><div style="font-size:10px;font-weight:700;color:#1e293b;margin-top:3px">Analyse</div><div style="font-size:9px;color:#64748b;margin-top:3px">Root cause · Fishbone</div></div><div style="flex:1;background:#dcfce7;border:2px solid #16A34A;border-left:none;padding:14px 8px;text-align:center"><div style="font-size:15px;font-weight:900;color:#16A34A">I</div><div style="font-size:10px;font-weight:700;color:#1e293b;margin-top:3px">Improve</div><div style="font-size:9px;color:#64748b;margin-top:3px">Pilot · Implement</div></div><div style="flex:1;background:#dcfce7;border:2px solid #16A34A;border-left:none;border-radius:0 8px 8px 0;padding:14px 8px;text-align:center"><div style="font-size:15px;font-weight:900;color:#16A34A">C</div><div style="font-size:10px;font-weight:700;color:#1e293b;margin-top:3px">Control</div><div style="font-size:9px;color:#64748b;margin-top:3px">SPC · Control plan</div></div></div></div>
+
+__SUB__ The Analyse Phase — Finding the Vital Few Causes
+The Analyse phase is where the data is interrogated to identify the root causes of the problem — not the symptoms, and not the assumed causes, but the actual causes supported by data. The fishbone (Ishikawa) diagram organises potential causes into categories (Man, Method, Machine, Material, Measurement, Environment) to ensure a comprehensive brainstorm before any cause is dismissed or confirmed. Statistical hypothesis testing then determines which potential causes are statistically significant — whether the correlation between a suspected cause and the defect measure is real or could have occurred by chance. This discipline prevents the common failure of improvement projects that fix the assumed cause (which is usually the most obvious or the most politically convenient) rather than the actual cause.` },
+    { title: `Improve and Control Phases`, content: `__H__ Improve and Control Phases
+
+The Improve and Control phases are where the analysis is converted into lasting process change. They are also where most improvement projects fail — the analysis is thorough but the implementation is incomplete, or the improvements are made but the gains decay within months.
+
+__SUB__ The Improve Phase — Testing Before Committing
+The Improve phase generates potential solutions, evaluates them against the root causes identified in Analyse, and pilots the most promising solutions before full implementation. Piloting is not optional — it is the mechanism by which Six Sigma avoids the failure mode of implementing a 'solution' that turns out to make things worse. A well-designed pilot runs in a controlled subset of the process, with clear before-and-after metrics, and with enough time to observe whether the improvement is real and sustainable. Design of Experiments (DoE) allows multiple variables to be tested simultaneously in a structured way, identifying not just whether each variable has an effect but whether variables interact with each other in ways that amplify or cancel their individual effects.
+
+__SUB__ The Control Phase — Sustaining the Gains
+The Control phase is where Six Sigma projects most commonly fail to deliver permanent improvement. The improvements from the Improve phase must be locked in through statistical monitoring, process standardisation, and formal handover to the process owner. Statistical Process Control (SPC) charts monitor ongoing process performance, automatically distinguishing between common cause variation (normal process variation, requiring process redesign to reduce) and special cause variation (unusual events requiring immediate investigation). The control plan documents the monitoring system: what is measured, at what frequency, what the control limits are, and who is responsible for acting when the process goes out of control. Without a robust control plan, the process will gradually drift back toward the old performance as attention moves to the next project and old habits reassert themselves.
+
+__LI__ Control charts: ongoing monitoring with UCL and LCL — signals when the process needs attention
+__LI__ Control plan: who monitors what, at what frequency, and what actions are triggered by out-of-control signals
+__LI__ Process documentation: updated SOPs, work instructions, and training materials reflecting the new process
+__LI__ Formal handover: the project team transfers ownership to the process owner — with metrics and monitoring in place` }
+    ]
+  },
+  {
+    id: 5,
+    name: `Statistical Tools`,
+    topics: [
+    { title: `Pareto Analysis — The 80/20 Rule`, content: `__H__ Pareto Analysis — The 80/20 Rule
+
+The Pareto principle, named after Italian economist Vilfredo Pareto who observed that 80% of Italy's wealth was owned by 20% of the population, has proven to be one of the most robust empirical regularities in quality improvement: approximately 80% of the defects, errors, complaints, or costs come from approximately 20% of the causes. This is not a physical law but a consistent pattern that holds across industries, processes, and problem types — and it is the foundation of the most important prioritisation principle in quality improvement.
+
+__SUB__ The Pareto Chart and Practical Application
+A Pareto chart combines a bar chart (defect categories sorted by frequency, highest first) with a cumulative percentage line. The cumulative line makes the 80/20 point immediately visible: you can read off exactly which categories account for 80% of the problem. This changes the improvement conversation from 'we need to fix everything' to 'we need to fix these two or three things, and that will resolve most of the problem'. The practical power of Pareto analysis is that it prevents the common failure of spreading improvement effort evenly across all causes, which produces modest results across the board. Concentrating effort on the vital few causes produces dramatic improvement in the overall metric because those few causes are where the problem actually lives.
+
+__LI__ Sort defect categories by frequency, highest first — not alphabetically or by assumed importance
+__LI__ Plot the cumulative percentage line to identify the point where 80% of the problem is accounted for
+__LI__ Focus improvement effort entirely on the categories to the left of the 80% line
+__LI__ Repeat after improvement: the Pareto chart changes as causes are eliminated, revealing the next vital few` },
+    { title: `Control Charts — Monitoring Process Stability`, content: `__H__ Control Charts — Monitoring Process Stability
+
+Control charts, developed by Walter Shewhart at Bell Labs in the 1920s, are the primary statistical tool for monitoring whether a process is stable and predictable over time. They are the operational foundation of the Control phase in DMAIC and the mechanism by which Statistical Process Control (SPC) is implemented.
+
+__SUB__ How Control Charts Work
+A control chart plots individual measurements (or subgroup statistics) over time on a time series. Three lines are added to the chart: the centre line (the process mean), the Upper Control Limit (UCL), and the Lower Control Limit (LCL). These limits are calculated from the process data itself — they are typically set at three standard deviations above and below the mean, which corresponds to the range within which 99.73% of data points from a stable process will fall. A point outside the control limits is a signal: something unusual happened at that point, and investigation is required. Points within the limits but exhibiting non-random patterns (eight consecutive points on the same side of the centre line, two of three consecutive points near a control limit) are also signals of process instability.
+
+__LI__ UCL and LCL: three standard deviations from the mean — calculated from the process data, not customer specs
+__LI__ Point outside control limits: special cause variation — investigate and eliminate the cause
+__LI__ Non-random patterns: indicate systematic causes even when all points are within limits
+__LI__ Common cause: variation inherent in the process — reduced only by changing the process design
+
+__SUB__ Interpreting Control Charts in Context
+The distinction between common cause and special cause variation is essential for choosing the right response. Treating common cause variation as if it were special cause — reacting to every data point that moves up or down — is 'tampering': it increases variation rather than reducing it, and it wastes enormous management energy on normal process noise. The correct response to common cause variation is to redesign the process to reduce its inherent variability. The correct response to special cause variation is to investigate the specific event that caused the point to fall outside the control limits and eliminate that cause. Control charts make this distinction objective and data-based rather than intuitive and political.` }
+    ]
+  },
+  {
+    id: 6,
+    name: `Lean Tools`,
+    topics: [
+    { title: `5S — Workplace Organisation`, content: `__H__ 5S — Workplace Organisation
+
+5S is the foundational Lean tool for creating and maintaining an organised, clean, and standardised work environment. The five S's come from Japanese words — Seiri, Seiton, Seiso, Seiketsu, Shitsuke — translated variously but most usefully as Sort, Set in Order, Shine, Standardise, and Sustain. 5S is often the first Lean tool introduced in an organisation because it is visual, tangible, and immediately impactful, creating the conditions of order and visual management that more advanced Lean tools require.
+
+__SUB__ The Five Steps
+Sort means removing everything from the work area that is not needed for current work. This applies directly to shared drives, code repositories, and documentation libraries as much as to physical workspaces — removing obsolete files, archived processes that are no longer relevant, and duplicate documentation. Set in Order means organising everything that remains so it has a clear, permanent home and can be found immediately without searching — in software terms, clear folder structures, naming conventions, and documented locations for shared resources. Shine means cleaning and inspecting — identifying deterioration before it becomes failure, maintaining tools and environments in good working order. Standardise means creating standards that maintain the first three S's across the team so that the organised state is the default, not the exception. Sustain means building the discipline, habits, and management routines that maintain the standard over time, because the natural tendency of any system is to drift toward disorder.
+
+__LI__ Sort: remove unused tools, files, documentation, and dependencies from the work environment
+__LI__ Set in Order: clear naming conventions, folder structures, and documented locations for all shared resources
+__LI__ Shine: regularly review and refresh the environment — remove stale documentation, update out-of-date processes
+__LI__ Standardise: team agreements on structure, naming, and organisation that everyone follows
+__LI__ Sustain: regular 5S audits, visual management, and leadership attention to maintaining standards` },
+    { title: `Kaizen — Continuous Improvement Culture`, content: `__H__ Kaizen — Continuous Improvement Culture
+
+Kaizen is the Japanese word for improvement — specifically, continuous improvement through many small changes rather than occasional large ones. As a management philosophy, kaizen represents the belief that every employee at every level is responsible for continuously improving the work they do, and that the organisation's improvement capability is the sum of individual improvement contributions.
+
+__SUB__ Kaizen as a Cultural Shift
+The psychological shift that kaizen requires is profound and often underestimated. In a traditional organisation, the implicit contract is: management designs the work, workers execute it. Improvement is the responsibility of management, industrial engineers, or specialist teams. Kaizen rejects this contract: in a kaizen culture, every person who does a job is responsible for improving that job. They identify waste in their own work, propose changes, implement small improvements, and share what they learn. This requires management to create the psychological safety that makes suggestion safe, the structures that make improvement visible, and the recognition systems that reinforce improvement behaviour.
+
+__SUB__ Kaizen Events and Visual Management
+Kaizen events (also called kaizen blitzes or rapid improvement events) are structured, time-boxed improvement workshops that bring together the people who do the work to analyse a specific process and implement improvements in 3-5 days. The rapid timescale is deliberate: short events maintain momentum, force decision-making, and produce visible results quickly. Visual management is a prerequisite for kaizen: improvement cannot happen in processes that are invisible. Kanban boards, performance dashboards, process maps posted in shared spaces, and anomaly signals that are immediately visible to everyone create the shared awareness of current state that makes improvement conversations possible and specific rather than abstract and political.
+
+__LI__ Kaizen events: 3-5 day focused improvement workshops with the people who do the work
+__LI__ Suggestion systems: lightweight mechanisms for any employee to propose improvements — with rapid response
+__LI__ Visual management: kanban boards, dashboards, and performance metrics visible to the whole team
+__LI__ Standardised work: the foundation of kaizen — you cannot improve what is not yet standardised` }
+    ]
+  },
+  {
+    id: 7,
+    name: `Lean in Software`,
+    topics: [
+    { title: `Applying Lean Principles to Software Delivery`, content: `__H__ Applying Lean Principles to Software Delivery
+
+Lean thinking has found its most direct expression in software through the Agile and DevOps movements. Mary and Tom Poppendieck's work on Lean Software Development explicitly mapped Lean manufacturing principles to software delivery, and their seven wastes of software development provide a direct translation of the DOWNTIME framework into the language of product teams.
+
+__SUB__ The Seven Wastes of Software
+Poppendieck's seven wastes are: partially done work (code committed but not deployed — it carries risk without delivering value), extra features (code written but never used — it must be maintained forever), relearning (discovering things you already knew — knowledge not captured or shared), handoffs (passing work between people — information is always lost in translation), task switching (context switching between multiple simultaneous projects — proven to reduce quality and increase cycle time), delays (waiting for approvals, environments, decisions — the biggest source of waste in most delivery pipelines), and defects (bugs found and fixed after the fact — the most expensive form of waste). These seven wastes map almost exactly to the DOWNTIME model: the medium is different, the logic is identical.
+
+__LI__ Partially done work: features in branches or in 'done' columns that aren't deployed to production
+__LI__ Extra features: YAGNI — you aren't gonna need it; every line of code is a liability until proven valuable
+__LI__ Relearning: knowledge hoarded in individuals rather than documented in shared, accessible form
+__LI__ Handoffs: each handoff between teams or people introduces delay and information loss
+__LI__ Task switching: working on 5 things simultaneously means 5 things progress at 20% speed
+__LI__ Delays: approval queues, deployment windows, slow CI pipelines — the dominant waste in software
+__LI__ Defects: bugs discovered late cost 10-100x more to fix than bugs caught at the point of creation
+
+__SUB__ Kanban, WIP Limits, and Cycle Time
+Kanban boards are the most direct application of Lean visual management to software delivery. They make the flow of work visible, expose bottlenecks (columns that accumulate more cards than others), and provide the foundation for measurement. WIP limits — the maximum number of items that can be in each column simultaneously — enforce the pull system principle: work is only pulled forward when there is capacity to do it, rather than being pushed forward regardless of downstream capacity. Cycle time (the time from starting a piece of work to completing it) is the software equivalent of process time in a VSM, and reducing it is the primary performance goal of a lean software delivery system. Cumulative Flow Diagrams (CFDs) show how work accumulates and flows through the system over time — expanding bands reveal growing queues, and the horizontal distance between points on the input and output lines reveals the average cycle time.` }
+    ]
+  }
+];
+
+const TEMPLATES = [];
+const TEMPLATE_MODULE = -1;
+
+let activeWeek = null;
+function selectWeek(id) {
+    activeWeek = id;
+    document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector('.week-item[data-week="' + id + '"]');
+    if (item) item.classList.add('active');
+    showTopics(id);
+}
+function showTopics(id) {
+    const week = WEEKS[id];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-notes').style.display = 'none';
+    const el = document.getElementById('state-topics');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    const cards = week.topics.map((t, i) =>
+        '<div class="topic-card" onclick="showNotes(' + id + ',' + i + ')">' +
+        '<span class="topic-card-title">' + t.title + '</span>' +
+        '<i class="fas fa-chevron-right topic-card-arrow"></i></div>'
+    ).join('');
+    el.innerHTML =
+        '<div class="mb-7"><div class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Module</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy leading-tight">' + week.name + '</h1>' +
+        '<p class="text-sm text-gray-400 mt-1">' + week.topics.length + ' topics</p></div>' +
+        '<div class="mb-1 text-[11px] font-bold uppercase tracking-widest text-gray-400">Topics</div>' +
+        cards;
+}
+function formatContent(raw) {
+    let html = '';
+    const lines = raw.split('\n');
+    for (let line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith('__H__ ')) html += '<div class="section-title">' + t.slice(6) + '</div>';
+        else if (t.startsWith('__SUB__ ')) html += '<div class="sub-title">' + t.slice(8) + '</div>';
+        else if (t.startsWith('__LI__ ')) html += '<div class="bullet">' + t.slice(7) + '</div>';
+        else if (t.startsWith('__RAW__')) html += t.slice(7);
+        else html += '<p>' + t + '</p>';
+    }
+    return html;
+}
+function showNotes(id, idx) {
+    const week = WEEKS[id];
+    const topic = week.topics[idx];
+    document.getElementById('state-welcome').style.display = 'none';
+    document.getElementById('state-topics').style.display = 'none';
+    const el = document.getElementById('state-notes');
+    el.style.display = 'block';
+    document.getElementById('right-panel').scrollTop = 0;
+    el.innerHTML =
+        '<div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div>' +
+        '<div class="mb-1 text-xs font-semibold uppercase tracking-widest" style="color:#16A34A">' + week.name + '</div>' +
+        '<h1 class="text-2xl font-extrabold text-navy mb-6">' + topic.title + '</h1>' +
+        '<hr class="section-sep" />' +
+        '<div class="notes-content">' + formatContent(topic.content) + '</div>' +
+        '<div class="mt-10 pt-6 border-t border-gray-200"><div class="back-btn" onclick="showTopics(' + id + ')"><i class="fas fa-arrow-left text-xs"></i> Back to Topics</div></div>';
+}
+</script>
+</body>
+</html>
